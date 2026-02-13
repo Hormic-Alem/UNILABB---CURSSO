@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Práctica | QuickLearner</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .feedback {
+            font-size: 1rem;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body class="bg-light">
+<div class="container mt-5">
+    <h2>🧠 Modo Práctica - QuickLearner</h2>
+    <a href="{{ url_for('home') }}" class="btn btn-secondary mb-4">🏠 Volver al inicio</a>
+
+    
+
+    {% if questions %}
+        {% for q in questions %}
+            <div class="card mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">{{ q.category }}: {{ q.question }}</h5>
+                    {% for opt in q.options %}
+                        <button onclick="checkAnswer(this, '{{ q.answer | escape }}')" class="btn btn-outline-primary btn-sm me-2 mb-2">
+                            {{ opt }}
+                        </button>
+                    {% endfor %}
+                    <div class="feedback"></div> <!-- Aquí se muestra si es correcto o incorrecto -->
+                </div>
+            </div>
+        {% endfor %}
+    {% else %}
+        <p>No hay preguntas disponibles aún.</p>
+    {% endif %}
+</div>
+
+<script>
+    function checkAnswer(btn, correctAnswer) {
+        const container = btn.closest(".card-body");
+        const buttons = container.querySelectorAll("button");
+        const feedback = container.querySelector(".feedback");
+
+        // Desactivar todos los botones
+        buttons.forEach(b => b.disabled = true);
+
+        const selected = btn.textContent.trim();
+
+        if (selected === correctAnswer.trim()) {
+            btn.classList.remove("btn-outline-primary");
+            btn.classList.add("btn-success");
+            feedback.innerHTML = "<span class='text-success fw-bold'>✅ ¡Correcto!</span>";
+        } else {
+            btn.classList.remove("btn-outline-primary");
+            btn.classList.add("btn-danger");
+
+            // Marcar la respuesta correcta
+            buttons.forEach(b => {
+                if (b.textContent.trim() === correctAnswer.trim()) {
+                    b.classList.remove("btn-outline-primary");
+                    b.classList.add("btn-success");
+                }
+            });
+
+            feedback.innerHTML = "<span class='text-danger fw-bold'>❌ Incorrecto. Respuesta correcta: <u>" + correctAnswer + "</u></span>";
+        }
+    }
+</script>
+</body>
+</html>

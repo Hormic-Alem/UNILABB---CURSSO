@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ title if title else "QuickLearner" }}</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/home.css') }}">
+</head>
+
+<body>
+
+<div class="layout-container">
+
+    <!-- ============= SIDEBAR IZQUIERDO ============= -->
+    <aside class="sidebar">
+
+        <div class="sidebar-header">
+            <span class="sidebar-logo">🎓</span>
+            <h4 class="sidebar-title">QuickLearner</h4>
+        </div>
+
+        <ul class="sidebar-menu">
+
+            <!-- ===== USUARIO NORMAL ===== -->
+
+            <li class="sidebar-item">
+                <a href="{{ url_for('home') }}">
+                    <span class="icon">🏠</span> Inicio
+                </a>
+            </li>
+
+            <li class="sidebar-item">
+                <a href="{{ url_for('home') }}#cursos">
+                    <span class="icon">📘</span> Mis cursos
+                </a>
+            </li>
+
+            <li class="sidebar-item">
+                <a href="{{ url_for('home') }}#estadisticas">
+                    <span class="icon">📊</span> Estadísticas
+                </a>
+            </li>
+
+
+            <!-- ===== ADMIN ONLY ===== -->
+
+            {% if session.get("username") == "admin" %}
+
+            <hr class="text-light opacity-25">
+
+            <li class="sidebar-item">
+                <a href="{{ url_for('dashboard') }}">
+                    <span class="icon">⚙️</span> Administración
+                </a>
+            </li>
+
+            <!-- NUEVO 👉 USUARIOS -->
+            <li class="sidebar-item">
+                <a href="{{ url_for('admin_users') }}">
+                    <span class="icon">👥</span> Usuarios
+                </a>
+            </li>
+
+            <!-- PAGOS -->
+            <li class="sidebar-item">
+                <a href="{{ url_for('admin_payments') }}">
+                    <span class="icon">💳</span> Pagos
+                </a>
+            </li>
+
+            {% endif %}
+
+        </ul>
+
+    </aside>
+
+
+
+    <!-- ============= CONTENIDO PRINCIPAL ============= -->
+    <main class="main-content">
+
+        <!-- NAV SUPERIOR -->
+        <nav class="top-navbar shadow-sm">
+
+            <div></div>
+
+            {% if session.get('username') %}
+            <div class="top-profile">
+
+                {% if avatar_url %}
+                    <img src="{{ avatar_url }}" class="profile-img">
+                {% else %}
+                    <div class="profile-initial">
+                        {{ session.username[0].upper() }}
+                    </div>
+                {% endif %}
+
+                <span class="profile-name">Hola, {{ session.username }}</span>
+
+                <a href="{{ url_for('logout') }}" class="btn btn-danger btn-sm ms-3">Salir</a>
+
+            </div>
+            {% endif %}
+        </nav>
+
+
+        <!-- CONTENIDO DINÁMICO -->
+        <div class="content-wrapper">
+            {% block content %}{% endblock %}
+        </div>
+
+    </main>
+
+</div>
+
+</body>
+</html>

@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <title>Preguntas {{ page }} / {{ total_pages }} | QuickLearner</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+
+    <style>
+
+        :root {
+            --main-purple: #7b2cff;
+            --main-purple-light: #9a54ff;
+            --dark-bg: #0f0f0f;
+            --dark-card: #1c1c1c;
+        }
+
+        body {
+            background: #f4f3ff;
+            transition: 0.3s ease;
+        }
+
+        body.dark-mode {
+            background: var(--dark-bg);
+            color: white;
+        }
+
+        .quiz-container {
+            max-width: 980px;
+            margin: auto;
+            padding-bottom: 80px;
+        }
+
+        .quiz-header {
+            background: white;
+            padding: 20px 25px;
+            border-radius: 14px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 5px 18px rgba(0,0,0,.08);
+        }
+
+        body.dark-mode .quiz-header {
+            background: var(--dark-card);
+        }
+
+        .progress-bar-purple {
+            background: var(--main-purple);
+        }
+
+        .question-card {
+            padding: 22px;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+        }
+
+        body.dark-mode .question-card {
+            background: var(--dark-card);
+            border: 1px solid #333;
+        }
+
+        .btn-check:checked + .option-label {
+            background: var(--main-purple);
+            border-color: var(--main-purple);
+            color: white;
+        }
+
+        .option-label {
+            padding: 14px;
+            border-radius: 10px;
+            border: 2px solid #dcdcdc;
+            background: white;
+            margin-bottom: 10px;
+            width: 100%;
+            cursor: pointer;
+            font-weight: 500;
+        }
+
+        body.dark-mode .option-label {
+            background: #2e2e2e;
+            border-color: #555;
+        }
+
+        .submit-btn {
+            background: var(--main-purple);
+            border: none;
+            padding: 14px;
+            font-size: 20px;
+            border-radius: 14px;
+        }
+
+        .submit-btn:hover {
+            background: var(--main-purple-light);
+        }
+
+        /* TEMPORIZADOR */
+        #timerBox {
+            background: #ffeeee;
+            border-left: 6px solid #ff4444;
+            padding: 12px 18px;
+            border-radius: 12px;
+            margin-bottom: 18px;
+            font-size: 19px;
+            font-weight: 600;
+            color: #b10000;
+        }
+
+        body.dark-mode #timerBox {
+            background: #4b1e1e;
+            color: #ff7b7b;
+            border-left-color: #ff4747;
+        }
+
+    </style>
+</head>
+
+<body>
+
+<div class="quiz-container mt-4">
+
+    <div class="quiz-header mb-4">
+        <a href="{{ url_for('home') }}" class="btn btn-secondary">🏠 Inicio</a>
+
+        <button id="toggleDark" class="btn btn-outline-secondary">
+            🌙 Modo Oscuro
+        </button>
+    </div>
+
+    <h3 class="fw-bold mt-3 mb-3">📘 Preguntas {{ page }} de {{ total_pages }}</h3>
+
+    <!-- TEMPORIZADOR (NUEVO) -->
+    <div id="timerBox">
+        ⏳ Tiempo restante: <span id="timer">60</span> segundos
+    </div>
+
+    <div class="progress mb-4" style="height: 22px;">
+        <div class="progress-bar progress-bar-striped progress-bar-purple"
+             role="progressbar"
+             style="width: {{ progress }}%;">
+            {{ progress }}%
+        </div>
+    </div>
+
+    <form method="POST" id="quizForm" action="{{ url_for('quiz_by_category', category=category) }}">
+
+        {% for q in questions %}
+        {% set global_index = loop.index0 + ((page - 1) * 3) %}
+
+        <div class="question-card mb-4">
+
+            <h5 class="fw-bold mb-3">{{ q.category|capitalize }} • {{ q.question }}</h5>
+
+            {% for opt in q.options %}
+            <input type="radio"
+                   class="btn-check"
+                   name="question_{{ global_index }}"
+                   value="{{ opt }}"
+                   id="opt{{ global_index }}_{{ loop.index }}"
+                   required>
+
+            <label class="option-label" for="opt{{ global_index }}_{{ loop.index }}">
+                {{ opt }}
+            </label>
+            {% endfor %}
+
+        </div>
+        {% endfor %}
+
+        <button type="submit" class="btn btn-success w-100 submit-btn">
+            ✔ Enviar respuestas
+        </button>
+
+    </form>
+
+</div>
+
+<!-- DARK MODE -->
+<script>
+    const btn = document.getElementById("toggleDark");
+    const body = document.body;
+
+    if (localStorage.getItem("darkMode") === "on") {
+        body.classList.add("dark-mode");
+        btn.textContent = "☀️ Modo Claro";
+    }
+
+    btn.addEventListener("click", () => {
+        body.classList.toggle("dark-mode");
+
+        if (body.classList.contains("dark-mode")) {
+            localStorage.setItem("darkMode", "on");
+            btn.textContent = "☀️ Modo Claro";
+        } else {
+            localStorage.setItem("darkMode", "off");
+            btn.textContent = "🌙 Modo Oscuro";
+        }
+    });
+</script>
+
+<!-- TEMPORIZADOR AUTO-SUBMIT -->
+<script>
+    let timeLeft = 60; // ⏳ SEGUNDOS POR PÁGINA (CAMBIABLE)
+
+    const timerEl = document.getElementById("timer");
+    const form = document.getElementById("quizForm");
+
+    const countdown = setInterval(() => {
+        timeLeft--;
+        timerEl.textContent = timeLeft;
+
+        if (timeLeft <= 0) {
+            clearInterval(countdown);
+            form.submit(); // 🚀 ENVÍA AUTOMÁTICO AL TERMINAR TIEMPO
+        }
+    }, 1000);
+</script>
+
+</body>
+</html>

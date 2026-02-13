@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard | QuickLearner</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            background: radial-gradient(circle at top, #1b1329, #0a0713 80%);
+            font-family: "Poppins", sans-serif;
+            color: #eae3ff;
+            padding-bottom: 40px;
+        }
+
+        h2, h4 {
+            color: #d5caff;
+            font-weight: 600;
+        }
+
+        .panel-card {
+            background: rgba(40, 25, 65, 0.55);
+            backdrop-filter: blur(8px);
+            border-radius: 14px;
+            padding: 25px;
+            border: 1px solid rgba(138,108,255,0.3);
+            box-shadow: 0 0 18px rgba(138,108,255,0.25);
+            margin-bottom: 25px;
+        }
+
+        .neon-btn {
+            background: linear-gradient(45deg, #8a6cff, #5ad1ff);
+            border: none !important;
+            color: white !important;
+            font-weight: 600;
+            box-shadow: 0 0 12px #8a6cffb4;
+            transition: .25s;
+        }
+        .neon-btn:hover {
+            box-shadow: 0 0 22px #5ad1ff;
+            transform: translateY(-2px);
+        }
+
+        .neon-outline {
+            background: transparent;
+            border: 1px solid #8a6cff;
+            color: #cbbdff;
+            transition: .25s;
+        }
+        .neon-outline:hover {
+            background: rgba(138,108,255,0.3);
+            color: #fff;
+            box-shadow: 0 0 15px #8a6cffb4;
+        }
+
+        .neon-table {
+            border-radius: 10px;
+            overflow: hidden;
+            color: #fff;
+        }
+
+        .neon-table thead {
+            background: #2e1c52;
+            color: #d7caff;
+        }
+
+        .neon-table tbody tr {
+            background: rgba(255,255,255,0.05);
+        }
+
+        .neon-table tbody tr:hover {
+            background: rgba(90, 209, 255, 0.15);
+        }
+
+        .table ul {
+            margin: 0;
+            padding-left: 20px;
+        }
+
+        .btn-danger {
+            border-radius: 8px;
+        }
+
+        .panel-card p,
+        .panel-card .text-muted {
+            color: #ffffff !important;
+            opacity: 0.9;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container mt-4">
+
+    <h2 class="mb-4">📋 Panel de Control - Administrador</h2>
+
+    <!-- BOTONES SUPERIORES -->
+    <a href="{{ url_for('add_question') }}" class="btn neon-btn mb-3">
+        ➕ Añadir nueva pregunta
+    </a>
+
+    <!-- ✅ NUEVO BOTÓN PAGOS -->
+    <a href="{{ url_for('admin_payments') }}" class="btn neon-btn mb-3 ms-2">
+        💳 Ver pagos
+    </a>
+
+    <a href="{{ url_for('home') }}" class="btn neon-outline mb-3 float-end">
+        🏠 Volver al inicio
+    </a>
+
+    <div class="clearfix"></div>
+
+    <div class="panel-card">
+
+        <h4 class="mt-2 mb-3">📦 Importar preguntas (CSV o Excel)</h4>
+
+        <form action="{{ url_for('import_questions') }}"
+              method="POST"
+              enctype="multipart/form-data"
+              class="border p-3 rounded neon-table">
+
+            <label class="form-label fw-semibold">Seleccionar archivo</label>
+
+            <input type="file" name="file" accept=".csv, .xlsx, .xls"
+                   class="form-control mb-3" required>
+
+            <button class="btn neon-btn">📥 Importar archivo</button>
+
+            <p class="text-muted mt-3">
+                Formato requerido:<br>
+                <strong>category, question, option1, option2, option3, answer</strong><br>
+                ✔ Se crearán categorías nuevas automáticamente.
+            </p>
+
+        </form>
+
+    </div>
+
+    {% if questions %}
+        <div class="panel-card">
+
+            <h4 class="mb-3">📚 Preguntas registradas</h4>
+
+            <div class="table-responsive">
+                <table class="table neon-table table-striped align-middle">
+                    <thead>
+                        <tr>
+                            <th>Categoría</th>
+                            <th>Pregunta</th>
+                            <th>Opciones</th>
+                            <th>Respuesta Correcta</th>
+                            <th>Acción</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for q in questions %}
+                        <tr>
+                            <td>{{ q.category }}</td>
+                            <td>{{ q.question }}</td>
+                            <td>
+                                <ul>
+                                    {% for opt in q.options %}
+                                        <li>{{ opt }}</li>
+                                    {% endfor %}
+                                </ul>
+                            </td>
+                            <td>{{ q.answer }}</td>
+                            <td>
+                                <form method="POST" action="{{ url_for('delete_question', question_id=q.id) }}">
+                                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                    <button type="submit" class="btn btn-danger btn-sm">Eliminar</button>
+                                </form>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+    {% else %}
+        <p>No hay preguntas agregadas aún.</p>
+    {% endif %}
+
+</div>
+
+</body>
+</html>

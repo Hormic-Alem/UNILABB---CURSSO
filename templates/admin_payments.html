@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin - Pagos</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+</head>
+
+<body class="p-4 bg-light">
+
+    <div class="container">
+
+        <h2 class="mb-3">💳 Administrar Pagos</h2>
+
+        <a href="{{ url_for('home') }}" class="btn btn-secondary mb-4">
+            🏠 Volver al inicio
+        </a>
+
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover align-middle bg-white">
+                <thead class="table-dark text-center">
+                    <tr>
+                        <th>ID</th>
+                        <th>Correo</th>
+                        <th>Creado</th>
+                        <th>Estado</th>
+                        <th>Pagado el</th>
+                        <th>Acción</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for t in tickets %}
+                    <tr class="text-center">
+                        <td class="small">{{ t.id }}</td>
+
+                        <td>{{ t.email }}</td>
+
+                        <td class="small">
+                            {{ t.created_at if t.created_at else "—" }}
+                        </td>
+
+                        <td>
+                            {% if t.status == "paid" %}
+                                <span class="badge bg-success">Pagado</span>
+                            {% else %}
+                                <span class="badge bg-warning text-dark">Pendiente</span>
+                            {% endif %}
+                        </td>
+
+                        <td class="small">
+                            {% if t.status == "paid" %}
+                                {{ t.paid_at }}
+                            {% else %}
+                                —
+                            {% endif %}
+                        </td>
+
+                        <td>
+                            {% if t.status != "paid" %}
+                                <form method="POST" action="{{ url_for('admin_mark_paid', ticket_id=t.id) }}">
+                                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                    <button type="submit" class="btn btn-sm btn-success">
+                                        ✔ Marcar como pagado
+                                    </button>
+                                </form>
+                            {% else %}
+                                —
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+
+</body>
+</html>

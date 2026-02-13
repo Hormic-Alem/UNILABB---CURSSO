@@ -1,0 +1,141 @@
+[
+    {
+        "id": "f6032275",
+        "email": "developer.apoloalem@outlook.com",
+        "plan": "pro",
+        "amount": 499,
+        "payment_method": "mercado_pago_manual",
+        "status": "paid",
+        "created_at": "2026-02-10 09:45:41"
+    },
+    {
+        "id": "05cca391",
+        "email": "developer.apoloalem@outlook.com",
+        "plan": "pro",
+        "amount": 499,
+        "payment_method": "mercado_pago_manual",
+        "status": "paid",
+        "created_at": "2026-02-10 09:52:21"
+    },
+    {
+        "id": "c69f1618",
+        "email": "developer.apoloalem@outlook.com",
+        "plan": "pro",
+        "amount": 499,
+        "payment_method": "mercado_pago_manual",
+        "status": "pending",
+        "created_at": "2026-02-10 10:41:19"
+    },
+    {
+        "id": "32ff4338",
+        "email": "developer.apoloalem@outlook.com",
+        "plan": "pro",
+        "amount": 499,
+        "payment_method": "mercado_pago_manual",
+        "status": "pending",
+        "created_at": "2026-02-10 11:02:52"
+    },
+    {
+        "id": "1443b903",
+        "email": "developer.apoloalem@outlook.com",
+        "plan": "pro",
+        "amount": 499,
+        "payment_method": "mercado_pago_manual",
+        "status": "pending",
+        "created_at": "2026-02-10 11:03:36"
+    },
+    {
+        "id": "b3cd05c1",
+        "email": "developer.apoloalem@outlook.com",
+        "plan": "pro",
+        "amount": 499,
+        "payment_method": "mercado_pago_manual",
+        "status": "pending",
+        "created_at": "2026-02-10 11:06:39"
+    },
+    {
+        "id": "e54c4e07",
+        "email": "developer.apoloalem@outlook.com",
+        "plan": "pro",
+        "amount": 499,
+        "payment_method": "mercado_pago_manual",
+        "status": "pending",
+        "created_at": "2026-02-10 11:06:45"
+    },
+    {
+        "id": "32830e6a",
+        "email": "developer.apoloalem@outlook.com",
+        "plan": "pro",
+        "amount": 499,
+        "payment_method": "mercado_pago_manual",
+        "status": "pending",
+        "created_at": "2026-02-10 11:06:56"
+    },
+    {
+        "id": "4fb73db8",
+        "email": "developer.apoloalem@outlook.com",
+        "plan": "pro",
+        "amount": 499,
+        "payment_method": "mercado_pago_manual",
+        "status": "pending",
+        "created_at": "2026-02-10 11:12:59"
+    },
+    {
+        "id": "ef4f31de",
+        "email": "psic.apolo@hotmail.com",
+        "plan": "pro",
+        "amount": 499,
+        "payment_method": "mercado_pago_manual",
+        "status": "pending",
+        "created_at": "2026-02-10 11:48:05"
+    },
+    {
+        "id": "1120c53b",
+        "email": "abogado.apoloaleman@hotmail.com",
+        "plan": "pro",
+        "amount": 499,
+        "payment_method": "mercado_pago_manual",
+        "status": "paid",
+        "created_at": "2026-02-10 11:57:24",
+        "paid_at": "2026-02-10 11:57:33"
+    },
+    {
+        "id": "308c6e27",
+        "email": "carlosalem.ftss@hotmail.com",
+        "plan": "pro",
+        "amount": 499,
+        "payment_method": "mercado_pago_manual",
+        "status": "paid",
+        "created_at": "2026-02-10 12:02:41",
+        "paid_at": "2026-02-10 12:03:05"
+    },
+    {
+        "id": "3a30604f",
+        "email": "polinol125@gmail.com",
+        "plan": "pro",
+        "amount": 499,
+        "payment_method": "mercado_pago_manual",
+        "status": "paid",
+        "created_at": "2026-02-10 12:06:54",
+        "paid_at": "2026-02-10 12:07:19"
+    },
+    {
+        "id": "e3e55b94",
+        "email": "hormic@hotmail.com",
+        "plan": "pro",
+        "amount": 499,
+        "payment_method": "mercado_pago_manual",
+        "status": "pending",
+        "created_at": "2026-02-10 12:39:10"
+    },
+    {
+        "id": "a1fccd00",
+        "email": "stripe@hotmail.com",
+        "plan": "pro",
+        "amount": 499,
+        "payment_method": "mercado_pago_manual",
+        "status": "paid",
+        "created_at": "2026-02-10 14:47:07",
+        "paid_at": "2026-02-10 14:49:47"
+    }
+]

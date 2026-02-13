@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Completar pago | QuickLearner</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        body{
+            background: linear-gradient(135deg,#0f172a,#111827);
+            font-family: system-ui;
+            color: #ffffff !important;
+        }
+
+        /* FORZAR TEXTO BLANCO */
+        body, p, h1, h2, h3, h4, h5, li, small {
+            color: #ffffff !important;
+        }
+
+        .card-pay{
+            background:#1f2937;
+            border-radius:20px;
+            padding:40px;
+            box-shadow:0 30px 70px rgba(0,0,0,.6);
+        }
+
+        .step{
+            font-size:1.05rem;
+            margin-bottom:10px;
+        }
+
+        .btn-pay{
+            font-size:1.2rem;
+            font-weight:600;
+            padding:14px;
+        }
+
+        .support{
+            background:#334155;
+            border-radius:12px;
+            padding:15px;
+        }
+    </style>
+</head>
+
+<body class="d-flex align-items-center justify-content-center" style="min-height:100vh;">
+
+<div class="container">
+
+    <div class="card-pay text-center mx-auto" style="max-width:600px;">
+
+        <h1 class="fw-bold mb-3">🎉 ¡Cuenta creada correctamente!</h1>
+
+        <p class="lead">
+            Ya casi terminas. Solo realiza tu pago para activar tu acceso.
+        </p>
+
+        <hr>
+
+        <h5 class="mb-4 fw-bold">Sigue estos pasos:</h5>
+
+        <div class="text-start">
+            <div class="step">💳 1️⃣ Realiza tu pago en Mercado Pago</div>
+            <div class="step">📩 2️⃣ Nosotros validamos el comprobante</div>
+            <div class="step">🚀 3️⃣ Activamos tu cuenta automáticamente</div>
+        </div>
+
+        <!-- BOTÓN PRINCIPAL -->
+        <a href="https://mpago.la/1reUF3M"
+           class="btn btn-success btn-lg w-100 btn-pay mt-4">
+            💳 Pagar ahora con Mercado Pago
+        </a>
+
+        <hr class="my-4">
+
+        <!-- SOPORTE -->
+        <div class="support text-start small">
+            <strong>⚡ ¿Quieres activación más rápida?</strong><br><br>
+            Envía tu comprobante a:<br>
+            📩 correo@hotmail.com<br>
+            📱 WhatsApp: 777 130 4464
+        </div>
+
+        <div class="d-grid gap-2 mt-4">
+            <a href="mailto:correo@hotmail.com" class="btn btn-primary">
+                📧 Enviar comprobante por correo
+            </a>
+
+            <a href="https://wa.me/527771304464" target="_blank" class="btn btn-success">
+                💬 Enviar por WhatsApp
+            </a>
+
+            <a href="{{ url_for('login') }}" class="btn btn-light">
+                Ya pagué → Iniciar sesión
+            </a>
+        </div>
+
+    </div>
+
+</div>
+
+</body>
+</html>

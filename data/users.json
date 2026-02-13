@@ -1,0 +1,26 @@
+[
+    {
+        "username": "admin",
+        "email": "admin@example.com",
+        "password": "scrypt:32768:8:1$WutpIqAc3at3mfz7$66cd556e287f26f45b847cc8c5fdcd478f024dd69f12e79a7915c842e28a1c3aaab4f999a42a78f838a72a95fbf969a32d7417e3f3e2cd30d4dafcda28c1ea62",
+        "active": true,
+        "role": "admin",
+        "progress": {
+            "completed_questions": [],
+            "by_category": {}
+        },
+        "avatar_url": null
+    },
+    {
+        "username": "demo_user",
+        "email": "demo.user@example.com",
+        "password": "scrypt:32768:8:1$h7jcYb9RsYudZ1L3$ea4592e4faef5f47653c506fc2722288922934f43f58bb1428816db0cdec6371f3775d1d904ef92965894c4a068014361eb6e594fe31a790583b64ec6c16379f",
+        "active": false,
+        "role": "user",
+        "progress": {
+            "completed_questions": [],
+            "by_category": {}
+        },
+        "avatar_url": null
+    }
+]

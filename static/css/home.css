@@ -1,0 +1,554 @@
+/* ============================
+   LAYOUT GENERAL
+============================ */
+.layout-container {
+    display: flex;
+    min-height: 100vh;
+    width: 100%;
+    background: #0c0c1d;
+}
+
+/* ============================
+   SIDEBAR IZQUIERDO
+============================ */
+.sidebar {
+    width: 240px;
+    background: #13132b;
+    padding: 20px 15px;
+    color: white;
+    position: fixed;
+    left: 0;
+    top: 0;
+    bottom: 0;
+}
+
+.sidebar-header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.sidebar-logo {
+    font-size: 40px;
+}
+
+.sidebar-title {
+    font-weight: bold;
+    margin-top: 5px;
+    color: #b7b7ff;
+}
+
+.sidebar-menu {
+    list-style: none;
+    padding-left: 0;
+}
+
+.sidebar-item {
+    margin-bottom: 12px;
+}
+
+.sidebar-item a {
+    display: flex;
+    align-items: center;
+    padding: 10px 14px;
+    border-radius: 10px;
+    text-decoration: none;
+    color: white;
+    font-weight: 500;
+    background: #1c1c38;
+    transition: 0.2s;
+}
+
+.sidebar-item a:hover {
+    background: #6a5acd;
+}
+
+.sidebar-item .icon {
+    margin-right: 10px;
+}
+
+/* ============================
+   CONTENIDO PRINCIPAL
+============================ */
+.main-content {
+    flex-grow: 1;
+    margin-left: 240px;
+    display: flex;
+    flex-direction: column;
+}
+
+/* ============================
+   NAV SUPERIOR
+============================ */
+.top-navbar {
+    background: #121229;
+    padding: 12px 25px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.top-profile {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.profile-img,
+.profile-initial {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    background: #6a5acd;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: bold;
+    object-fit: cover;
+}
+
+.profile-name {
+    color: #dcdcff;
+    font-weight: 500;
+}
+
+/* ============================
+   CONTENEDOR DE PÁGINAS
+============================ */
+.content-wrapper {
+    padding: 30px;
+}
+
+/* ============================
+   TARJETAS NEÓN
+============================ */
+.neon-card {
+    background: linear-gradient(145deg, #191937, #0f0f2c);
+    border-radius: 22px;
+    box-shadow: 0 0 20px rgba(138,108,255,0.45);
+    border: 1px solid rgba(138,108,255,0.3);
+}
+
+/* ============================
+   LANDING / HERO
+============================ */
+.landing-body {
+    background: #0d0b25;
+}
+
+.landing-hero-wrapper {
+    width: 100%;
+    margin: 0;
+    padding: 0 6%;
+    background:
+        radial-gradient(circle at top left, rgba(138,108,255,0.35), transparent 40%),
+        radial-gradient(circle at bottom right, rgba(90,209,255,0.25), transparent 40%),
+        linear-gradient(135deg, #0b0b25, #07071a);
+}
+
+.landing-hero {
+    width: 100%;
+    min-height: 90vh;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: relative;
+}
+
+.landing-hero::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    backdrop-filter: blur(26px);
+    -webkit-backdrop-filter: blur(26px);
+    z-index: 0;
+}
+
+.landing-hero > * {
+    position: relative;
+    z-index: 1;
+}
+
+/* ============================
+   HERO TEXTO
+============================ */
+.hero-text h1 {
+    font-size: 3.6rem;
+    line-height: 1.15;
+}
+
+.hero-subtitle {
+    font-size: 1.45rem;
+    color: #e0e0ff;
+    max-width: 560px;
+}
+
+.hero-btn {
+    font-size: 1.25rem;
+    box-shadow: 0 0 35px rgba(138,108,255,0.6);
+}
+
+/* ============================
+   HERO IMAGEN
+============================ */
+.hero-img img {
+    border-radius: 26px;
+    box-shadow: 0 0 55px rgba(90,209,255,0.55);
+}
+
+/* ============================
+   TEXTO GRADIENTE
+============================ */
+.text-gradient {
+    background: linear-gradient(45deg, #8a6cff, #5ad1ff);
+    -webkit-background-clip: text;
+    color: transparent;
+}
+
+/* ============================
+   SECCIONES
+============================ */
+.section-title {
+    font-size: 2.8rem;
+    font-weight: 800;
+    color: white;
+}
+
+/* ============================
+   CURSOS
+============================ */
+.course-card-modern {
+    background: #161633;
+    border-radius: 22px;
+    overflow: hidden;
+    box-shadow: 0 4px 18px rgba(0,0,0,0.35);
+    border: 1px solid rgba(120,120,255,0.25);
+    transition: transform 0.25s ease;
+}
+
+.course-card-modern:hover {
+    transform: translateY(-6px);
+}
+
+.course-img-wrapper img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+}
+
+.course-info {
+    color: white;
+}
+
+.course-title {
+    font-size: 1.55rem;
+    font-weight: 700;
+}
+
+.course-sub {
+    font-size: 1.05rem;
+    color: #b5b5ff;
+}
+
+/* ============================
+   BOTONES NEÓN
+============================ */
+.neon-btn {
+    background: linear-gradient(90deg, #8a6cff, #5ad1ff);
+    border: none;
+    color: #fff;
+    font-weight: 600;
+    border-radius: 14px;
+}
+
+.neon-btn:hover {
+    opacity: 0.9;
+}
+
+/* ============================
+   ESTADÍSTICAS
+============================ */
+.stats-list {
+    list-style: none;
+    padding: 0;
+}
+
+.stats-list li {
+    background: #141432;
+    border-radius: 14px;
+    margin-bottom: 12px;
+    color: #eaeaff;
+    font-size: 1.3rem;
+    padding: 18px;
+}
+
+/* ============================
+   PRECIOS
+============================ */
+.pricing-desc {
+    font-size: 1.25rem;
+    color: #dcdcff;
+}
+
+.price-tag {
+    font-size: 3rem;
+    font-weight: 800;
+    color: white;
+}
+
+/* ============================
+   RESPONSIVE
+============================ */
+@media (max-width: 768px) {
+    .sidebar {
+        display: none;
+    }
+
+    .main-content {
+        margin-left: 0;
+    }
+
+    .landing-hero {
+        flex-direction: column;
+        text-align: center;
+        gap: 40px;
+    }
+
+    .hero-text h1 {
+        font-size: 2.4rem;
+    }
+
+    .hero-subtitle {
+        font-size: 1.1rem;
+        margin: auto;
+    }
+
+    .section-title {
+        font-size: 2.2rem;
+    }
+}
+
+
+
+/* ============================
+   SEPARADOR ENTRE SECCIONES
+============================ */
+.section-divider {
+    width: 100%;
+    height: 120px;
+    background: linear-gradient(
+        to bottom,
+        rgba(138,108,255,0.08),
+        rgba(0,0,0,0)
+    );
+}
+
+/* ============================
+   ESTADÍSTICAS – AJUSTE VISUAL
+============================ */
+.stats-section {
+    margin-top: 100px;
+}
+
+.stats-card {
+    max-width: 820px;
+    margin: auto;
+}
+
+.stats-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.stats-list li {
+    font-size: 1.3rem;
+    padding: 18px;
+    color: #eaeaff;
+    background: rgba(255,255,255,0.03);
+    border-radius: 14px;
+    margin-bottom: 14px;
+}
+
+/* ============================
+   PRICING PROFESIONAL
+============================ */
+.pricing-section {
+    margin-top: 120px;
+}
+
+.pricing-wrapper {
+    max-width: 420px;
+}
+
+.pricing-card {
+    position: relative;
+    border-radius: 26px;
+    box-shadow: 0 0 45px rgba(138,108,255,0.45);
+}
+
+.pricing-badge {
+    position: absolute;
+    top: -18px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: linear-gradient(90deg, #8a6cff, #5ad1ff);
+    color: #fff;
+    padding: 6px 18px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.pricing-title {
+    font-size: 2rem;
+    font-weight: 800;
+}
+
+.pricing-price span {
+    font-size: 3.2rem;
+    font-weight: 800;
+    color: white;
+}
+
+.pricing-price small {
+    display: block;
+    font-size: 1rem;
+    color: #cfcfff;
+}
+
+/* ============================
+   MOBILE
+============================ */
+@media (max-width: 768px) {
+    .pricing-wrapper {
+        width: 100%;
+    }
+
+    .pricing-price span {
+        font-size: 2.6rem;
+    }
+}
+
+
+/* ===== PRICING SECTION ===== */
+
+.pricing-section {
+    width: 100%;
+    padding: 120px 0;
+    background: radial-gradient(
+        circle at top,
+        rgba(130, 70, 255, 0.15),
+        rgba(13, 11, 40, 1) 70%
+    );
+}
+
+.pricing-container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 40px;
+    text-align: center;
+}
+
+/* TITULOS */
+.pricing-title {
+    font-size: 44px;
+    font-weight: 700;
+    margin-bottom: 12px;
+     color: #ffffff;
+}
+
+.pricing-subtitle {
+    font-size: 18px;
+    color: #ffffff;
+    margin-bottom: 60px;
+}
+
+/* CARD PRO */
+.pricing-card-pro {
+    position: relative;
+    margin: 0 auto;
+    max-width: 520px;
+    padding: 50px 45px;
+    border-radius: 22px;
+    background: linear-gradient(
+        180deg,
+        rgba(30, 25, 90, 0.95),
+        rgba(15, 13, 50, 0.95)
+    );
+    box-shadow:
+        0 0 0 1px rgba(140, 100, 255, 0.25),
+        0 30px 80px rgba(0, 0, 0, 0.6);
+         color: #ffffff;
+}
+
+/* BADGE */
+.badge-popular {
+    position: absolute;
+    top: -14px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 6px 16px;
+    font-size: 13px;
+    font-weight: 600;
+    border-radius: 999px;
+    background: linear-gradient(90deg, #9c6bff, #4fc3ff);
+    color: #0d0b28;
+}
+
+/* PLAN */
+.plan-name {
+    font-size: 26px;
+    font-weight: 600;
+    margin-bottom: 20px;
+}
+
+.plan-price {
+    margin-bottom: 35px;
+}
+
+.plan-price .price {
+    font-size: 56px;
+    font-weight: 700;
+}
+
+.plan-price .period {
+    display: block;
+    font-size: 16px;
+    color: #b7b7ff;
+}
+
+/* BENEFICIOS */
+.plan-benefits {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 45px;
+    text-align: left;
+}
+
+.plan-benefits li {
+    font-size: 16px;
+    padding: 10px 0;
+    color: #e4e4ff;
+}
+
+/* BOTON */
+.btn-pricing {
+    display: inline-block;
+    width: 100%;
+    padding: 14px 0;
+    font-size: 16px;
+    font-weight: 600;
+    text-align: center;
+    border-radius: 14px;
+    color: white;
+    background: linear-gradient(90deg, #9c6bff, #4fc3ff);
+    text-decoration: none;
+    box-shadow: 0 0 25px rgba(130, 70, 255, 0.4);
+    transition: all .2s ease;
+}
+
+.btn-pricing:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 0 35px rgba(130, 70, 255, 0.6);
+}

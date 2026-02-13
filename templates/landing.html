@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>QuickLearner - Aprende Fácil</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/home.css') }}">
+</head>
+
+<body class="landing-body">
+
+<!-- ================= HERO ================= -->
+<section class="landing-hero-wrapper">
+    <div class="landing-hero d-flex align-items-center justify-content-between">
+
+        <div class="hero-text">
+            <h1 class="fw-bold text-white">
+                La mejor plataforma para
+                <span class="text-gradient">preparación universitaria</span>
+            </h1>
+
+            <p class="hero-subtitle mt-4">
+                Cursos interactivos, simuladores tipo examen, estadísticas y práctica ilimitada.
+            </p>
+
+            <a href="{{ url_for('login') }}" class="btn neon-btn hero-btn mt-4 px-5 py-3">
+                Iniciar sesión
+            </a>
+        </div>
+
+        <div class="hero-img">
+            <img src="{{ url_for('static', filename='img/cursos/landing.png') }}" class="img-fluid">
+        </div>
+    </div>
+</section>
+
+
+<!-- ================= CURSOS ================= -->
+<section class="courses-section">
+    <h2 class="section-title text-center mb-5">Nuestros cursos</h2>
+
+    <div class="row g-5 justify-content-center mx-0">
+        {% for course in categories %}
+        <div class="col-lg-4 col-md-6">
+            <div class="course-card-modern">
+
+                <div class="course-img-wrapper">
+                    <img src="{{ url_for('static', filename='img/cursos/' ~ course|lower ~ '.jpg') }}"
+                         onerror="this.src='{{ url_for('static', filename='img/cursos/default.jpg') }}'"
+                         class="course-img">
+                </div>
+
+                <div class="course-info p-4">
+                    <h4 class="course-title">Curso de {{ course }}</h4>
+                    <p class="course-sub">
+                        Simulador tipo examen + práctica interactiva
+                    </p>
+
+                    <a href="{{ url_for('login') }}" class="btn neon-btn w-100 mt-3">
+                        Ver curso
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+
+
+<!-- ================= ESTADÍSTICAS ================= -->
+<section class="stats-section mt-5">
+    <div class="container">
+        <div class="stats-card neon-card p-5 text-center">
+            <h2 class="section-title mb-4">📊 Estadísticas globales</h2>
+
+            <ul class="stats-list">
+                <li>✔ 78% de aciertos globales</li>
+                <li>❌ 22% de errores globales</li>
+                <li>👥 640+ estudiantes activos</li>
+            </ul>
+        </div>
+    </div>
+</section>
+
+
+<!-- ================= PRICING ================= -->
+<section class="pricing-section">
+    <div class="pricing-container">
+
+        <h2 class="pricing-title">Planes y precios</h2>
+        <p class="pricing-subtitle">
+            Accede a todos los cursos, estadísticas avanzadas y simuladores premium
+        </p>
+
+        <div class="pricing-card-pro">
+
+            <div class="badge-popular">Recomendado</div>
+
+            <h3 class="plan-name">Plan Pro</h3>
+
+            <div class="plan-price">
+                <span class="price">$499</span>
+                <span class="period">MXN / mes</span>
+            </div>
+
+            <ul class="plan-benefits">
+                <li>✔ Acceso ilimitado a todos los cursos</li>
+                <li>✔ Simuladores tipo examen real</li>
+                <li>✔ Estadísticas avanzadas de desempeño</li>
+                <li>✔ Seguimiento de progreso personalizado</li>
+                <li>✔ Actualizaciones continuas de contenido</li>
+                <li>✔ Soporte prioritario</li>
+            </ul>
+
+
+            <!-- ================= BOTÓN INTELIGENTE ================= -->
+
+            {% if session.get('username') %}
+
+                <!-- USUARIO LOGUEADO -->
+                <p class="text-light text-center small mt-4 mb-2">
+                    ✅ Sesión activa como <strong>{{ session.username }}</strong><br>
+                    Compra con tu correo: <strong>{{ session.get('email','') }}</strong>
+                </p>
+
+                <form method="POST"
+                      action="{{ url_for('create_ticket') }}"
+                      class="mt-3">
+
+                    <!-- 🔥 FIX SEGURO -->
+                    <input type="hidden" name="email" value="{{ session.get('email','') }}">
+
+                    <button type="submit" class="btn-pricing w-100">
+                        Comprar acceso ahora
+                    </button>
+                </form>
+
+            {% else %}
+
+                <!-- NO LOGUEADO -->
+                <p class="text-light text-center small mt-4 mb-3">
+                    🔐 Primero crea una cuenta para poder comprar
+                </p>
+
+                <a href="{{ url_for('register') }}"
+                   class="btn-pricing w-100 text-center d-block">
+                    Crear cuenta
+                </a>
+
+                <a href="{{ url_for('login') }}"
+                   class="btn btn-outline-light w-100 mt-2">
+                    Ya tengo cuenta
+                </a>
+
+            {% endif %}
+
+
+            <p class="text-center text-muted small mt-3">
+                🔒 Pago seguro procesado por Mercado Pago
+            </p>
+
+
+            <!-- ================= ALTERNATIVAS ================= -->
+            <div class="mt-4 text-center">
+
+                <p class="text-warning small mb-2">
+                    ⚠️ Si pagas manualmente, envíanos tu comprobante para activar más rápido
+                </p>
+
+                <a href="https://mpago.la/1reUF3M"
+                   target="_blank"
+                   class="btn btn-outline-light w-100 mb-3">
+                    Pagar directamente con Mercado Pago
+                </a>
+
+                <p class="text-light small mb-2">
+                    O escanea el QR desde tu celular
+                </p>
+
+                <img src="{{ url_for('static', filename='img/qr/mercado_pago_qr.png') }}"
+                     alt="QR Mercado Pago"
+                     class="img-fluid"
+                     style="max-width: 160px;">
+            </div>
+
+        </div>
+    </div>
+</section>
+
+</body>
+</html>

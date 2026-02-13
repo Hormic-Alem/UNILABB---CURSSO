@@ -1,0 +1,156 @@
+{% extends "base.html" %}
+{% block content %}
+
+{% if session.get('username') %}
+
+<!-- ======================= TARJETA NEÓN DE PERFIL ======================= -->
+<div class="card neon-card mb-5 p-4">
+
+    <div class="d-flex align-items-center justify-content-between mb-4 neon-header">
+        <div>
+            <h3 class="text-white fw-bold mb-1">Hola, {{ session.username }}</h3>
+            <p class="text-light mb-0">Tu rendimiento general</p>
+        </div>
+
+        <div class="neon-avatar">
+            {% if avatar_url %}
+                <img src="{{ avatar_url }}" alt="Avatar">
+            {% else %}
+                <span>{{ session.username[0].upper() }}</span>
+            {% endif %}
+        </div>
+    </div>
+
+    <label class="text-white fw-semibold">Progreso total</label>
+    <div class="progress mb-4" style="height: 16px;">
+        <div class="progress-bar neon-progress" role="progressbar"
+             style="width: {{ total_percent }}%;">
+            {{ total_percent }}%
+        </div>
+    </div>
+
+    <div class="chart-wrapper">
+        <canvas id="progressChart"></canvas>
+    </div>
+</div>
+
+<!-- ======================= CURSOS ======================= -->
+<h2 class="text-center mb-4 text-white" id="cursos">Mis cursos</h2>
+
+<div class="row g-4 justify-content-center">
+
+{% for category in categories %}
+    <div class="col-md-6 col-lg-4">
+        <div class="course-card-modern">
+
+            <!-- ========== IMAGEN AUTOMÁTICA DEL CURSO ========== -->
+            <div class="course-img-wrapper">
+                <img 
+                    src="{{ url_for('static', filename='img/cursos/' ~ category|lower ~ '.jpg') }}"
+                    onerror="this.src='{{ url_for('static', filename='img/cursos/default.jpg') }}'"
+                    class="course-img">
+            </div>
+
+            <div class="course-info p-4">
+                <h5 class="course-title">Curso de {{ category|capitalize }}</h5>
+                <p class="course-sub">Práctica interactiva tipo examen</p>
+
+                <p class="progress-text">
+                    Progreso:
+                    {{ progress_by_category[category].completed }} /
+                    {{ progress_by_category[category].total }} preguntas
+                </p>
+
+                <div class="progress mb-3 modern-progress">
+                    <div class="progress-bar"
+                         style="width: {{ progress_by_category[category].percent }}%;">
+                         {{ progress_by_category[category].percent }}%
+                    </div>
+                </div>
+
+                <a href="{{ url_for('quiz_by_category', category=category) }}"
+                   class="btn neon-btn w-100 mb-2">
+                   Entrar al curso
+                </a>
+
+                <form action="{{ url_for('reset_category', category=category) }}" method="POST">
+                    <button class="btn neon-outline-btn w-100">Reiniciar curso</button>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endfor %}
+
+</div>
+
+<!-- ======================= ESTADÍSTICAS GLOBALES ======================= -->
+<div class="card neon-card mb-5 p-4 mt-5" id="estadisticas">
+
+    <h3 class="text-white fw-bold mb-4">📊 Estadísticas globales</h3>
+
+    <div class="table-responsive">
+        <table class="table table-dark table-striped align-middle neon-table">
+            <thead class="table-header">
+                <tr>
+                    <th>Pregunta</th>
+                    <th class="text-center">Correctas</th>
+                    <th class="text-center">Incorrectas</th>
+                    <th class="text-center">Error %</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for item in global_stats %}
+                <tr>
+                    <td class="fw-semibold">{{ item.question }}</td>
+                    <td class="text-center text-success fw-bold">{{ item.correct }}</td>
+                    <td class="text-center text-danger fw-bold">{{ item.wrong }}</td>
+                    <td class="text-center text-warning fw-bold">{{ item.error_percent }}%</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+</div>
+
+{% endif %}
+
+<!-- ======================= CARGA DE CHART.JS ======================= -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<!-- ======================= GRÁFICA ======================= -->
+<script>
+const ctx = document.getElementById("progressChart");
+
+new Chart(ctx, {
+    type: "doughnut",
+    data: {
+        labels: {{ chart_labels | tojson }},
+        datasets: [{
+            data: {{ chart_values | tojson }},
+            backgroundColor: ["#8a6cff","#5ad1ff","#ffcf66","#ff8b8b"],
+            borderWidth: 2
+        }]
+    },
+    options: {
+        cutout: "65%",
+        plugins: {
+            legend: {
+                position: "bottom",
+                labels: {
+                    color: "#ffffff",
+                    font: {
+                        family: "Poppins, sans-serif",
+                        size: 14.5,
+                        weight: "600"
+                    },
+                    padding: 18
+                }
+            }
+        }
+    }
+});
+</script>
+
+{% endblock %}

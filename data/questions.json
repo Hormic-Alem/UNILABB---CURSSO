@@ -1,0 +1,2070 @@
+[
+    {
+        "id": "eb30ce64",
+        "category": "PENSAMIENTO CIENTÍFICO",
+        "question": "¿Cuál es la función principal de la membrana celular?",
+        "options": [
+            "Regular el paso de sustancias",
+            "Producir energía",
+            "Almacenar ADN"
+        ],
+        "answer": "Regular el paso de sustancias"
+    },
+    {
+        "id": "be1772ef",
+        "category": "PENSAMIENTO CIENTÍFICO",
+        "question": "¿Qué organelo celular realiza la respiración celular?",
+        "options": [
+            "Mitocondria",
+            "Ribosoma",
+            "Núcleo"
+        ],
+        "answer": "Mitocondria"
+    },
+    {
+        "id": "625c5365",
+        "category": "PENSAMIENTO CIENTÍFICO",
+        "question": "¿Qué estructura contiene el material genético en células eucariotas?",
+        "options": [
+            "Núcleo",
+            "Citoplasma",
+            "Membrana"
+        ],
+        "answer": "Núcleo"
+    },
+    {
+        "id": "5dfe6098",
+        "category": "PENSAMIENTO CIENTÍFICO",
+        "question": "¿Qué postula la teoría de la evolución de Darwin?",
+        "options": [
+            "Selección natural",
+            "Uso y desuso",
+            "Creación fija"
+        ],
+        "answer": "Selección natural"
+    },
+    {
+        "id": "ad08be61",
+        "category": "PENSAMIENTO CIENTÍFICO",
+        "question": "¿Qué molécula transmite la herencia genética?",
+        "options": [
+            "ADN",
+            "ARN",
+            "Proteínas"
+        ],
+        "answer": "ADN"
+    },
+    {
+        "id": "f6f2163e",
+        "category": "PENSAMIENTO CIENTÍFICO",
+        "question": "¿Cuál es una función de las proteínas?",
+        "options": [
+            "Formar estructuras y enzimas",
+            "Almacenar energía",
+            "Transportar oxígeno únicamente"
+        ],
+        "answer": "Formar estructuras y enzimas"
+    },
+    {
+        "id": "73d62a93",
+        "category": "PENSAMIENTO CIENTÍFICO",
+        "question": "¿Qué biomolécula es la principal fuente de energía inmediata?",
+        "options": [
+            "Carbohidratos",
+            "Lípidos",
+            "Proteínas"
+        ],
+        "answer": "Carbohidratos"
+    },
+    {
+        "id": "c3886a8f",
+        "category": "PENSAMIENTO CIENTÍFICO",
+        "question": "¿Qué modelo atómico propuso que el átomo es indivisible?",
+        "options": [
+            "Dalton",
+            "Bohr",
+            "Rutherford"
+        ],
+        "answer": "Dalton"
+    },
+    {
+        "id": "51656f5b",
+        "category": "PENSAMIENTO CIENTÍFICO",
+        "question": "¿Qué tipo de enlace implica transferencia de electrones?",
+        "options": [
+            "Iónico",
+            "Covalente",
+            "Metálico"
+        ],
+        "answer": "Iónico"
+    },
+    {
+        "id": "16596bce",
+        "category": "PENSAMIENTO CIENTÍFICO",
+        "question": "¿En qué estado de la materia las partículas se mueven libremente?",
+        "options": [
+            "Gaseoso",
+            "Sólido",
+            "Líquido"
+        ],
+        "answer": "Gaseoso"
+    },
+    {
+        "id": "9d7eb2c6",
+        "category": "PENSAMIENTO CIENTÍFICO",
+        "question": "¿Qué fuerza permite que un objeto flote?",
+        "options": [
+            "Empuje",
+            "Fricción",
+            "Gravedad"
+        ],
+        "answer": "Empuje"
+    },
+    {
+        "id": "094ecedb",
+        "category": "PENSAMIENTO CIENTÍFICO",
+        "question": "¿Qué fenómeno se opone al movimiento entre superficies?",
+        "options": [
+            "Fricción",
+            "Flotación",
+            "Equilibrio"
+        ],
+        "answer": "Fricción"
+    },
+    {
+        "id": "ca480f6d",
+        "category": "PENSAMIENTO CIENTÍFICO",
+        "question": "¿Qué tipo de energía usan las neuronas para comunicarse?",
+        "options": [
+            "Eléctrica",
+            "Química",
+            "Mecánica"
+        ],
+        "answer": "Eléctrica"
+    },
+    {
+        "id": "f412b23c",
+        "category": "PENSAMIENTO CIENTÍFICO",
+        "question": "¿Qué ejemplo relaciona ciencia y salud?",
+        "options": [
+            "Vacunas",
+            "Artesanía",
+            "Pintura"
+        ],
+        "answer": "Vacunas"
+    },
+    {
+        "id": "d9c86f60",
+        "category": "PENSAMIENTO CIENTÍFICO",
+        "question": "¿Qué ocurre en una reacción química?",
+        "options": [
+            "Se forman nuevas sustancias",
+            "Se separan moléculas",
+            "Cambia el estado físico"
+        ],
+        "answer": "Se forman nuevas sustancias"
+    },
+    {
+        "id": "9be937bb",
+        "category": "PENSAMIENTO CIENTÍFICO",
+        "question": "¿Qué método separa líquidos con distinto punto de ebullición?",
+        "options": [
+            "Destilación",
+            "Filtración",
+            "Decantación"
+        ],
+        "answer": "Destilación"
+    },
+    {
+        "id": "74aa8c87",
+        "category": "PENSAMIENTO CIENTÍFICO",
+        "question": "¿Qué efecto puede tener el uso excesivo de químicos?",
+        "options": [
+            "Daño ambiental",
+            "Mayor biodiversidad",
+            "Mejor nutrición"
+        ],
+        "answer": "Daño ambiental"
+    },
+    {
+        "id": "2f307352",
+        "category": "PENSAMIENTO CIENTÍFICO",
+        "question": "¿Qué implica la manipulación genética?",
+        "options": [
+            "Modificar el ADN",
+            "Cambiar órganos",
+            "Alterar tejidos"
+        ],
+        "answer": "Modificar el ADN"
+    },
+    {
+        "id": "0c68fff9",
+        "category": "PENSAMIENTO CIENTÍFICO",
+        "question": "¿Qué mantiene a los planetas en sus órbitas?",
+        "options": [
+            "Gravitación",
+            "Electricidad",
+            "Fricción"
+        ],
+        "answer": "Gravitación"
+    },
+    {
+        "id": "537041b8",
+        "category": "PENSAMIENTO CIENTÍFICO",
+        "question": "¿Qué mide la velocidad?",
+        "options": [
+            "Distancia recorrida en tiempo",
+            "Fuerza aplicada",
+            "Cambio de dirección"
+        ],
+        "answer": "Distancia recorrida en tiempo"
+    },
+    {
+        "id": "13e3338f",
+        "category": "PENSAMIENTO CIENTÍFICO",
+        "question": "¿Qué avance mejoró las telecomunicaciones?",
+        "options": [
+            "Satélites",
+            "Imprenta",
+            "Telégrafo óptico"
+        ],
+        "answer": "Satélites"
+    },
+    {
+        "id": "80847768",
+        "category": "PENSAMIENTO CIENTÍFICO",
+        "question": "¿Qué tecnología se usa para medir temperatura corporal?",
+        "options": [
+            "Termómetro",
+            "Barómetro",
+            "Anemómetro"
+        ],
+        "answer": "Termómetro"
+    },
+    {
+        "id": "400fcc4f",
+        "category": "PENSAMIENTO CIENTÍFICO",
+        "question": "¿Qué alimento aporta más calorías por gramo?",
+        "options": [
+            "Lípidos",
+            "Proteínas",
+            "Carbohidratos"
+        ],
+        "answer": "Lípidos"
+    },
+    {
+        "id": "fc870128",
+        "category": "PENSAMIENTO CIENTÍFICO",
+        "question": "¿Qué distingue a una sustancia pura?",
+        "options": [
+            "Composición uniforme",
+            "Mezcla visible",
+            "Variación química"
+        ],
+        "answer": "Composición uniforme"
+    },
+    {
+        "id": "eafec033",
+        "category": "PENSAMIENTO CIENTÍFICO",
+        "question": "¿Qué tipo de energía tiene un objeto en movimiento?",
+        "options": [
+            "Cinética",
+            "Potencial",
+            "Química"
+        ],
+        "answer": "Cinética"
+    },
+    {
+        "id": "b6632170",
+        "category": "PENSAMIENTO CIENTÍFICO",
+        "question": "¿Qué tipo de energía se almacena por la posición?",
+        "options": [
+            "Potencial",
+            "Cinética",
+            "Eléctrica"
+        ],
+        "answer": "Potencial"
+    },
+    {
+        "id": "0935ea96",
+        "category": "PENSAMIENTO CIENTÍFICO",
+        "question": "¿Qué ocurre cuando una reacción libera calor?",
+        "options": [
+            "Es exotérmica",
+            "Es endotérmica",
+            "Es física"
+        ],
+        "answer": "Es exotérmica"
+    },
+    {
+        "id": "bc3f0832",
+        "category": "PENSAMIENTO CIENTÍFICO",
+        "question": "¿Qué materiales conducen electricidad?",
+        "options": [
+            "Metales",
+            "Plásticos",
+            "Madera"
+        ],
+        "answer": "Metales"
+    },
+    {
+        "id": "3459626b",
+        "category": "PENSAMIENTO CIENTÍFICO",
+        "question": "¿Qué es la electricidad?",
+        "options": [
+            "Movimiento de electrones",
+            "Movimiento de átomos",
+            "Flujo de energía térmica"
+        ],
+        "answer": "Movimiento de electrones"
+    },
+    {
+        "id": "523ed42a",
+        "category": "PENSAMIENTO CIENTÍFICO",
+        "question": "¿Qué caracteriza la biodiversidad en México?",
+        "options": [
+            "Alta variedad de especies",
+            "Pocas especies",
+            "Ecosistemas homogéneos"
+        ],
+        "answer": "Alta variedad de especies"
+    },
+    {
+        "id": "e2935885",
+        "category": "PENSAMIENTO CIENTÍFICO",
+        "question": "¿Qué relación existe entre tecnología y ciencia?",
+        "options": [
+            "La tecnología aplica el conocimiento científico",
+            "Son independientes",
+            "La ciencia depende de la tecnología"
+        ],
+        "answer": "La tecnología aplica el conocimiento científico"
+    },
+    {
+        "id": "a572c63b",
+        "category": "PENSAMIENTO CIENTÍFICO",
+        "question": "¿Qué proceso permite la adaptación de los seres vivos?",
+        "options": [
+            "Evolución",
+            "Migración",
+            "Fotosíntesis"
+        ],
+        "answer": "Evolución"
+    },
+    {
+        "id": "55fb69c7",
+        "category": "PENSAMIENTO CIENTÍFICO",
+        "question": "¿Qué permite la nutrición en los seres vivos?",
+        "options": [
+            "Obtener energía",
+            "Eliminar desechos",
+            "Reproducirse"
+        ],
+        "answer": "Obtener energía"
+    },
+    {
+        "id": "567b3970",
+        "category": "PENSAMIENTO CIENTÍFICO",
+        "question": "¿Qué ocurre con la energía en la cadena alimentaria?",
+        "options": [
+            "Se transfiere entre niveles",
+            "Se crea",
+            "Se destruye"
+        ],
+        "answer": "Se transfiere entre niveles"
+    },
+    {
+        "id": "dc8c3ae8",
+        "category": "PENSAMIENTO CIENTÍFICO",
+        "question": "¿Qué representa una evidencia científica?",
+        "options": [
+            "Datos observables",
+            "Opiniones",
+            "Creencias"
+        ],
+        "answer": "Datos observables"
+    },
+    {
+        "id": "b5d21087",
+        "category": "PENSAMIENTO CIENTÍFICO",
+        "question": "¿Qué disciplina estudia la materia y sus cambios?",
+        "options": [
+            "Química",
+            "Biología",
+            "Geología"
+        ],
+        "answer": "Química"
+    },
+    {
+        "id": "29547aa9",
+        "category": "PENSAMIENTO CIENTÍFICO",
+        "question": "¿Qué permite interpretar gráficos científicos?",
+        "options": [
+            "Comprender evidencias",
+            "Memorizar datos",
+            "Evitar análisis"
+        ],
+        "answer": "Comprender evidencias"
+    },
+    {
+        "id": "071889c9",
+        "category": "PENSAMIENTO CIENTÍFICO",
+        "question": "¿Qué tipo de cambio no altera la sustancia?",
+        "options": [
+            "Cambio físico",
+            "Cambio químico",
+            "Reacción"
+        ],
+        "answer": "Cambio físico"
+    },
+    {
+        "id": "6af71c07",
+        "category": "PENSAMIENTO MATEMÁTICO",
+        "question": "¿Cuál es el resultado de (x+3)²?",
+        "options": [
+            "x²+6x+9",
+            "x²+9",
+            "x²+3"
+        ],
+        "answer": "x²+6x+9"
+    },
+    {
+        "id": "559257fa",
+        "category": "PENSAMIENTO MATEMÁTICO",
+        "question": "¿Cuál es el MCD de 12 y 18?",
+        "options": [
+            "6",
+            "36",
+            "3"
+        ],
+        "answer": "6"
+    },
+    {
+        "id": "557c7995",
+        "category": "PENSAMIENTO MATEMÁTICO",
+        "question": "¿Cuál es el MCM de 4 y 6?",
+        "options": [
+            "12",
+            "24",
+            "6"
+        ],
+        "answer": "12"
+    },
+    {
+        "id": "04a342a9",
+        "category": "PENSAMIENTO MATEMÁTICO",
+        "question": "¿Cuál es la pendiente de la función y=2x+1?",
+        "options": [
+            "2",
+            "1",
+            "-2"
+        ],
+        "answer": "2"
+    },
+    {
+        "id": "484b734f",
+        "category": "PENSAMIENTO MATEMÁTICO",
+        "question": "¿Cuántos lados tiene un triángulo?",
+        "options": [
+            "3",
+            "4",
+            "5"
+        ],
+        "answer": "3"
+    },
+    {
+        "id": "7b7b79f4",
+        "category": "PENSAMIENTO MATEMÁTICO",
+        "question": "¿Qué número representa 0.25 en fracción?",
+        "options": [
+            "1/4",
+            "2/5",
+            "1/2"
+        ],
+        "answer": "1/4"
+    },
+    {
+        "id": "b2dca4d3",
+        "category": "PENSAMIENTO MATEMÁTICO",
+        "question": "¿Cuál es la media de 2,4 y 6?",
+        "options": [
+            "4",
+            "6",
+            "3"
+        ],
+        "answer": "4"
+    },
+    {
+        "id": "dbda5395",
+        "category": "PENSAMIENTO MATEMÁTICO",
+        "question": "¿Qué tipo de ángulo mide 90°?",
+        "options": [
+            "Recto",
+            "Agudo",
+            "Obtuso"
+        ],
+        "answer": "Recto"
+    },
+    {
+        "id": "1d32f5f9",
+        "category": "PENSAMIENTO MATEMÁTICO",
+        "question": "¿Cuál es el área de un cuadrado de lado 4?",
+        "options": [
+            "16",
+            "8",
+            "12"
+        ],
+        "answer": "16"
+    },
+    {
+        "id": "679fa5d3",
+        "category": "PENSAMIENTO MATEMÁTICO",
+        "question": "¿Qué representa el espacio muestral?",
+        "options": [
+            "Todos los resultados posibles",
+            "El resultado más probable",
+            "Un solo evento"
+        ],
+        "answer": "Todos los resultados posibles"
+    },
+    {
+        "id": "6cf6f300",
+        "category": "PENSAMIENTO MATEMÁTICO",
+        "question": "¿Resultado de 2³?",
+        "options": [
+            "8",
+            "6",
+            "9"
+        ],
+        "answer": "8"
+    },
+    {
+        "id": "6bd9912d",
+        "category": "PENSAMIENTO MATEMÁTICO",
+        "question": "¿Qué mide el perímetro?",
+        "options": [
+            "La suma de los lados",
+            "La superficie",
+            "El volumen"
+        ],
+        "answer": "La suma de los lados"
+    },
+    {
+        "id": "a31ded51",
+        "category": "PENSAMIENTO MATEMÁTICO",
+        "question": "¿Qué es una función lineal?",
+        "options": [
+            "Gráfica recta",
+            "Gráfica curva",
+            "No tiene gráfica"
+        ],
+        "answer": "Gráfica recta"
+    },
+    {
+        "id": "92865d4f",
+        "category": "PENSAMIENTO MATEMÁTICO",
+        "question": "¿Cuál es el resultado de x²+2x+1?",
+        "options": [
+            "(x+1)²",
+            "x(x+1)",
+            "x²+1"
+        ],
+        "answer": "(x+1)²"
+    },
+    {
+        "id": "75289100",
+        "category": "PENSAMIENTO MATEMÁTICO",
+        "question": "¿Probabilidad de obtener cara en una moneda?",
+        "options": [
+            "1/2",
+            "1/6",
+            "1"
+        ],
+        "answer": "1/2"
+    },
+    {
+        "id": "6fece61a",
+        "category": "PENSAMIENTO MATEMÁTICO",
+        "question": "¿Cuál es el resultado de 9²?",
+        "options": [
+            "81",
+            "18",
+            "72"
+        ],
+        "answer": "81"
+    },
+    {
+        "id": "8cb9c014",
+        "category": "PENSAMIENTO MATEMÁTICO",
+        "question": "¿Qué unidad mide capacidad?",
+        "options": [
+            "Litro",
+            "Metro",
+            "Kilogramo"
+        ],
+        "answer": "Litro"
+    },
+    {
+        "id": "fccd8859",
+        "category": "PENSAMIENTO MATEMÁTICO",
+        "question": "¿Qué tipo de número es 3/4?",
+        "options": [
+            "Racional",
+            "Irracional",
+            "Natural"
+        ],
+        "answer": "Racional"
+    },
+    {
+        "id": "905d8af1",
+        "category": "PENSAMIENTO MATEMÁTICO",
+        "question": "¿Qué figura cumple el teorema de Pitágoras?",
+        "options": [
+            "Triángulo rectángulo",
+            "Círculo",
+            "Cuadrado"
+        ],
+        "answer": "Triángulo rectángulo"
+    },
+    {
+        "id": "5f5b9b6b",
+        "category": "PENSAMIENTO MATEMÁTICO",
+        "question": "¿Qué mide la moda?",
+        "options": [
+            "Dato más frecuente",
+            "Promedio",
+            "Dato central"
+        ],
+        "answer": "Dato más frecuente"
+    },
+    {
+        "id": "4570991f",
+        "category": "PENSAMIENTO MATEMÁTICO",
+        "question": "¿Cuál es el resultado de (x+3)²?",
+        "options": [
+            "x²+6x+9",
+            "x²+9",
+            "x²+3"
+        ],
+        "answer": "x²+6x+9"
+    },
+    {
+        "id": "a6e6294b",
+        "category": "PENSAMIENTO MATEMÁTICO",
+        "question": "¿Cuál es el MCD de 12 y 18?",
+        "options": [
+            "6",
+            "36",
+            "3"
+        ],
+        "answer": "6"
+    },
+    {
+        "id": "f4818858",
+        "category": "PENSAMIENTO MATEMÁTICO",
+        "question": "¿Cuál es el MCM de 4 y 6?",
+        "options": [
+            "12",
+            "24",
+            "6"
+        ],
+        "answer": "12"
+    },
+    {
+        "id": "6ed8dc1b",
+        "category": "PENSAMIENTO MATEMÁTICO",
+        "question": "¿Cuál es la pendiente de la función y=2x+1?",
+        "options": [
+            "2",
+            "1",
+            "-2"
+        ],
+        "answer": "2"
+    },
+    {
+        "id": "3e8fbe25",
+        "category": "PENSAMIENTO MATEMÁTICO",
+        "question": "¿Cuántos lados tiene un triángulo?",
+        "options": [
+            "3",
+            "4",
+            "5"
+        ],
+        "answer": "3"
+    },
+    {
+        "id": "03261f58",
+        "category": "PENSAMIENTO MATEMÁTICO",
+        "question": "¿Qué número representa 0.25 en fracción?",
+        "options": [
+            "1/4",
+            "2/5",
+            "1/2"
+        ],
+        "answer": "1/4"
+    },
+    {
+        "id": "9c6a4e4c",
+        "category": "PENSAMIENTO MATEMÁTICO",
+        "question": "¿Cuál es la media de 2,4 y 6?",
+        "options": [
+            "4",
+            "6",
+            "3"
+        ],
+        "answer": "4"
+    },
+    {
+        "id": "02152a60",
+        "category": "PENSAMIENTO MATEMÁTICO",
+        "question": "¿Qué tipo de ángulo mide 90°?",
+        "options": [
+            "Recto",
+            "Agudo",
+            "Obtuso"
+        ],
+        "answer": "Recto"
+    },
+    {
+        "id": "3c5daaf8",
+        "category": "PENSAMIENTO MATEMÁTICO",
+        "question": "¿Cuál es el área de un cuadrado de lado 4?",
+        "options": [
+            "16",
+            "8",
+            "12"
+        ],
+        "answer": "16"
+    },
+    {
+        "id": "19d45cbc",
+        "category": "PENSAMIENTO MATEMÁTICO",
+        "question": "¿Qué representa el espacio muestral?",
+        "options": [
+            "Todos los resultados posibles",
+            "El resultado más probable",
+            "Un solo evento"
+        ],
+        "answer": "Todos los resultados posibles"
+    },
+    {
+        "id": "c4b63d68",
+        "category": "PENSAMIENTO MATEMÁTICO",
+        "question": "¿Resultado de 2³?",
+        "options": [
+            "8",
+            "6",
+            "9"
+        ],
+        "answer": "8"
+    },
+    {
+        "id": "42bedc02",
+        "category": "PENSAMIENTO MATEMÁTICO",
+        "question": "¿Qué mide el perímetro?",
+        "options": [
+            "La suma de los lados",
+            "La superficie",
+            "El volumen"
+        ],
+        "answer": "La suma de los lados"
+    },
+    {
+        "id": "8b601c01",
+        "category": "PENSAMIENTO MATEMÁTICO",
+        "question": "¿Qué es una función lineal?",
+        "options": [
+            "Gráfica recta",
+            "Gráfica curva",
+            "No tiene gráfica"
+        ],
+        "answer": "Gráfica recta"
+    },
+    {
+        "id": "ad56ba2e",
+        "category": "PENSAMIENTO MATEMÁTICO",
+        "question": "¿Cuál es el resultado de x²+2x+1?",
+        "options": [
+            "(x+1)²",
+            "x(x+1)",
+            "x²+1"
+        ],
+        "answer": "(x+1)²"
+    },
+    {
+        "id": "8eeb1c54",
+        "category": "PENSAMIENTO MATEMÁTICO",
+        "question": "¿Probabilidad de obtener cara en una moneda?",
+        "options": [
+            "1/2",
+            "1/6",
+            "1"
+        ],
+        "answer": "1/2"
+    },
+    {
+        "id": "ff590db2",
+        "category": "PENSAMIENTO MATEMÁTICO",
+        "question": "¿Cuál es el resultado de 9²?",
+        "options": [
+            "81",
+            "18",
+            "72"
+        ],
+        "answer": "81"
+    },
+    {
+        "id": "24f83e85",
+        "category": "PENSAMIENTO MATEMÁTICO",
+        "question": "¿Qué unidad mide capacidad?",
+        "options": [
+            "Litro",
+            "Metro",
+            "Kilogramo"
+        ],
+        "answer": "Litro"
+    },
+    {
+        "id": "3db28430",
+        "category": "PENSAMIENTO MATEMÁTICO",
+        "question": "¿Qué tipo de número es 3/4?",
+        "options": [
+            "Racional",
+            "Irracional",
+            "Natural"
+        ],
+        "answer": "Racional"
+    },
+    {
+        "id": "0e95e98c",
+        "category": "PENSAMIENTO MATEMÁTICO",
+        "question": "¿Qué figura cumple el teorema de Pitágoras?",
+        "options": [
+            "Triángulo rectángulo",
+            "Círculo",
+            "Cuadrado"
+        ],
+        "answer": "Triángulo rectángulo"
+    },
+    {
+        "id": "5416812d",
+        "category": "PENSAMIENTO MATEMÁTICO",
+        "question": "¿Qué mide la moda?",
+        "options": [
+            "Dato más frecuente",
+            "Promedio",
+            "Dato central"
+        ],
+        "answer": "Dato más frecuente"
+    },
+    {
+        "id": "96bcc399",
+        "category": "PENSAMIENTO MATEMÁTICO",
+        "question": "¿Cuál es el resultado de (x+3)²?",
+        "options": [
+            "x²+6x+9",
+            "x²+9",
+            "x²+3"
+        ],
+        "answer": "x²+6x+9"
+    },
+    {
+        "id": "4b1704e5",
+        "category": "PENSAMIENTO MATEMÁTICO",
+        "question": "¿Cuál es el MCD de 12 y 18?",
+        "options": [
+            "6",
+            "36",
+            "3"
+        ],
+        "answer": "6"
+    },
+    {
+        "id": "d368a60d",
+        "category": "PENSAMIENTO MATEMÁTICO",
+        "question": "¿Cuál es el MCM de 4 y 6?",
+        "options": [
+            "12",
+            "24",
+            "6"
+        ],
+        "answer": "12"
+    },
+    {
+        "id": "326e841a",
+        "category": "PENSAMIENTO MATEMÁTICO",
+        "question": "¿Cuál es la pendiente de la función y=2x+1?",
+        "options": [
+            "2",
+            "1",
+            "-2"
+        ],
+        "answer": "2"
+    },
+    {
+        "id": "d206a3cb",
+        "category": "PENSAMIENTO MATEMÁTICO",
+        "question": "¿Cuántos lados tiene un triángulo?",
+        "options": [
+            "3",
+            "4",
+            "5"
+        ],
+        "answer": "3"
+    },
+    {
+        "id": "2d3fa308",
+        "category": "PENSAMIENTO MATEMÁTICO",
+        "question": "¿Qué número representa 0.25 en fracción?",
+        "options": [
+            "1/4",
+            "2/5",
+            "1/2"
+        ],
+        "answer": "1/4"
+    },
+    {
+        "id": "ce6359f0",
+        "category": "PENSAMIENTO MATEMÁTICO",
+        "question": "¿Cuál es la media de 2,4 y 6?",
+        "options": [
+            "4",
+            "6",
+            "3"
+        ],
+        "answer": "4"
+    },
+    {
+        "id": "5fe34f5a",
+        "category": "PENSAMIENTO MATEMÁTICO",
+        "question": "¿Qué tipo de ángulo mide 90°?",
+        "options": [
+            "Recto",
+            "Agudo",
+            "Obtuso"
+        ],
+        "answer": "Recto"
+    },
+    {
+        "id": "fae8e1f0",
+        "category": "PENSAMIENTO MATEMÁTICO",
+        "question": "¿Cuál es el área de un cuadrado de lado 4?",
+        "options": [
+            "16",
+            "8",
+            "12"
+        ],
+        "answer": "16"
+    },
+    {
+        "id": "7ba6193b",
+        "category": "PENSAMIENTO MATEMÁTICO",
+        "question": "¿Qué representa el espacio muestral?",
+        "options": [
+            "Todos los resultados posibles",
+            "El resultado más probable",
+            "Un solo evento"
+        ],
+        "answer": "Todos los resultados posibles"
+    },
+    {
+        "id": "77fa373f",
+        "category": "REDACCIÓN INDIRECTA",
+        "question": "¿Cuál es una característica de la carta formal?",
+        "options": [
+            "Lenguaje coloquial",
+            "Lenguaje técnico y respetuoso",
+            "Uso de emoticonos"
+        ],
+        "answer": "Lenguaje técnico y respetuoso"
+    },
+    {
+        "id": "ef4f6408",
+        "category": "REDACCIÓN INDIRECTA",
+        "question": "Un artículo científico se caracteriza por:",
+        "options": [
+            "Opiniones personales sin fuente",
+            "Lenguaje subjetivo",
+            "Uso de citas y referencias"
+        ],
+        "answer": "Uso de citas y referencias"
+    },
+    {
+        "id": "d7db8e71",
+        "category": "REDACCIÓN INDIRECTA",
+        "question": "La monografía es un texto que:",
+        "options": [
+            "Resume varios temas",
+            "Desarrolla un solo tema de forma extensa",
+            "Cuenta una historia ficticia"
+        ],
+        "answer": "Desarrolla un solo tema de forma extensa"
+    },
+    {
+        "id": "f46f508e",
+        "category": "REDACCIÓN INDIRECTA",
+        "question": "El correo electrónico formal debe incluir:",
+        "options": [
+            "Saludos informales",
+            "Asunto claro y despedida",
+            "Abreviaturas excesivas"
+        ],
+        "answer": "Asunto claro y despedida"
+    },
+    {
+        "id": "afa7cada",
+        "category": "REDACCIÓN INDIRECTA",
+        "question": "La crónica deportiva se distingue por:",
+        "options": [
+            "Lenguaje científico",
+            "Narración de hechos deportivos",
+            "Uso exclusivo de tablas"
+        ],
+        "answer": "Narración de hechos deportivos"
+    },
+    {
+        "id": "92c30b21",
+        "category": "REDACCIÓN INDIRECTA",
+        "question": "Un eslogan busca principalmente:",
+        "options": [
+            "Informar datos técnicos",
+            "Persuadir y ser memorable",
+            "Explicar procesos largos"
+        ],
+        "answer": "Persuadir y ser memorable"
+    },
+    {
+        "id": "e05685fb",
+        "category": "REDACCIÓN INDIRECTA",
+        "question": "La concordancia nominal se da entre:",
+        "options": [
+            "Verbo y adverbio",
+            "Sustantivo y adjetivo",
+            "Pronombre y verbo"
+        ],
+        "answer": "Sustantivo y adjetivo"
+    },
+    {
+        "id": "0438970d",
+        "category": "REDACCIÓN INDIRECTA",
+        "question": "La concordancia verbal se refiere a:",
+        "options": [
+            "Tiempo y lugar",
+            "Relación sujeto-verbo",
+            "Uso de signos"
+        ],
+        "answer": "Relación sujeto-verbo"
+    },
+    {
+        "id": "2a654cc1",
+        "category": "REDACCIÓN INDIRECTA",
+        "question": "La correferencia permite:",
+        "options": [
+            "Evitar repeticiones innecesarias",
+            "Cambiar de tema",
+            "Agregar ejemplos"
+        ],
+        "answer": "Evitar repeticiones innecesarias"
+    },
+    {
+        "id": "457ad108",
+        "category": "REDACCIÓN INDIRECTA",
+        "question": "La elipsis consiste en:",
+        "options": [
+            "Repetir palabras clave",
+            "Omitir elementos sobreentendidos",
+            "Cambiar el significado"
+        ],
+        "answer": "Omitir elementos sobreentendidos"
+    },
+    {
+        "id": "defc3f6b",
+        "category": "REDACCIÓN INDIRECTA",
+        "question": "La sinonimia contextual implica:",
+        "options": [
+            "Palabras opuestas",
+            "Palabras equivalentes según contexto",
+            "Errores semánticos"
+        ],
+        "answer": "Palabras equivalentes según contexto"
+    },
+    {
+        "id": "70ae7b1d",
+        "category": "REDACCIÓN INDIRECTA",
+        "question": "La antonimia se refiere a:",
+        "options": [
+            "Palabras iguales",
+            "Palabras opuestas",
+            "Palabras homófonas"
+        ],
+        "answer": "Palabras opuestas"
+    },
+    {
+        "id": "138ddce8",
+        "category": "REDACCIÓN INDIRECTA",
+        "question": "Los marcadores textuales sirven para:",
+        "options": [
+            "Dividir sílabas",
+            "Organizar el discurso",
+            "Cambiar la ortografía"
+        ],
+        "answer": "Organizar el discurso"
+    },
+    {
+        "id": "8c837492",
+        "category": "REDACCIÓN INDIRECTA",
+        "question": "Un ejemplo de marcador textual es:",
+        "options": [
+            "Casa",
+            "Sin embargo",
+            "Lápiz"
+        ],
+        "answer": "Sin embargo"
+    },
+    {
+        "id": "080da94f",
+        "category": "REDACCIÓN INDIRECTA",
+        "question": "La grafofonética estudia:",
+        "options": [
+            "El significado de palabras",
+            "La relación entre fonemas y grafías",
+            "La sintaxis"
+        ],
+        "answer": "La relación entre fonemas y grafías"
+    },
+    {
+        "id": "a3cf013e",
+        "category": "REDACCIÓN INDIRECTA",
+        "question": "El uso correcto de la coma permite:",
+        "options": [
+            "Unir oraciones sin sentido",
+            "Mejorar la claridad del texto",
+            "Eliminar acentos"
+        ],
+        "answer": "Mejorar la claridad del texto"
+    },
+    {
+        "id": "294631ea",
+        "category": "REDACCIÓN INDIRECTA",
+        "question": "El punto y coma se usa para:",
+        "options": [
+            "Separar elementos complejos",
+            "Terminar un párrafo",
+            "Unir palabras"
+        ],
+        "answer": "Separar elementos complejos"
+    },
+    {
+        "id": "56465b92",
+        "category": "REDACCIÓN INDIRECTA",
+        "question": "Las palabras agudas llevan acento cuando:",
+        "options": [
+            "Terminan en consonante",
+            "Terminan en n, s o vocal",
+            "Nunca llevan acento"
+        ],
+        "answer": "Terminan en n, s o vocal"
+    },
+    {
+        "id": "dd2db27d",
+        "category": "REDACCIÓN INDIRECTA",
+        "question": "Las palabras graves se acentúan cuando:",
+        "options": [
+            "Terminan en n, s o vocal",
+            "No terminan en n, s o vocal",
+            "Siempre"
+        ],
+        "answer": "No terminan en n, s o vocal"
+    },
+    {
+        "id": "0be3905c",
+        "category": "REDACCIÓN INDIRECTA",
+        "question": "Las palabras esdrújulas:",
+        "options": [
+            "Nunca llevan acento",
+            "Siempre llevan acento",
+            "Solo a veces"
+        ],
+        "answer": "Siempre llevan acento"
+    },
+    {
+        "id": "bcbf0293",
+        "category": "REDACCIÓN INDIRECTA",
+        "question": "¿Cuál es una característica de la carta formal?",
+        "options": [
+            "Lenguaje coloquial",
+            "Lenguaje técnico y respetuoso",
+            "Uso de emoticonos"
+        ],
+        "answer": "Lenguaje técnico y respetuoso"
+    },
+    {
+        "id": "cf3258cc",
+        "category": "REDACCIÓN INDIRECTA",
+        "question": "Un artículo científico se caracteriza por:",
+        "options": [
+            "Opiniones personales sin fuente",
+            "Lenguaje subjetivo",
+            "Uso de citas y referencias"
+        ],
+        "answer": "Uso de citas y referencias"
+    },
+    {
+        "id": "ce0949bd",
+        "category": "REDACCIÓN INDIRECTA",
+        "question": "La monografía es un texto que:",
+        "options": [
+            "Resume varios temas",
+            "Desarrolla un solo tema de forma extensa",
+            "Cuenta una historia ficticia"
+        ],
+        "answer": "Desarrolla un solo tema de forma extensa"
+    },
+    {
+        "id": "679611c4",
+        "category": "REDACCIÓN INDIRECTA",
+        "question": "El correo electrónico formal debe incluir:",
+        "options": [
+            "Saludos informales",
+            "Asunto claro y despedida",
+            "Abreviaturas excesivas"
+        ],
+        "answer": "Asunto claro y despedida"
+    },
+    {
+        "id": "f69a0942",
+        "category": "REDACCIÓN INDIRECTA",
+        "question": "La crónica deportiva se distingue por:",
+        "options": [
+            "Lenguaje científico",
+            "Narración de hechos deportivos",
+            "Uso exclusivo de tablas"
+        ],
+        "answer": "Narración de hechos deportivos"
+    },
+    {
+        "id": "fd07ec32",
+        "category": "REDACCIÓN INDIRECTA",
+        "question": "Un eslogan busca principalmente:",
+        "options": [
+            "Informar datos técnicos",
+            "Persuadir y ser memorable",
+            "Explicar procesos largos"
+        ],
+        "answer": "Persuadir y ser memorable"
+    },
+    {
+        "id": "1ffc96eb",
+        "category": "REDACCIÓN INDIRECTA",
+        "question": "La concordancia nominal se da entre:",
+        "options": [
+            "Verbo y adverbio",
+            "Sustantivo y adjetivo",
+            "Pronombre y verbo"
+        ],
+        "answer": "Sustantivo y adjetivo"
+    },
+    {
+        "id": "41ea095e",
+        "category": "REDACCIÓN INDIRECTA",
+        "question": "La concordancia verbal se refiere a:",
+        "options": [
+            "Tiempo y lugar",
+            "Relación sujeto-verbo",
+            "Uso de signos"
+        ],
+        "answer": "Relación sujeto-verbo"
+    },
+    {
+        "id": "f04083a4",
+        "category": "REDACCIÓN INDIRECTA",
+        "question": "La correferencia permite:",
+        "options": [
+            "Evitar repeticiones innecesarias",
+            "Cambiar de tema",
+            "Agregar ejemplos"
+        ],
+        "answer": "Evitar repeticiones innecesarias"
+    },
+    {
+        "id": "326ebbd6",
+        "category": "REDACCIÓN INDIRECTA",
+        "question": "La elipsis consiste en:",
+        "options": [
+            "Repetir palabras clave",
+            "Omitir elementos sobreentendidos",
+            "Cambiar el significado"
+        ],
+        "answer": "Omitir elementos sobreentendidos"
+    },
+    {
+        "id": "a5238777",
+        "category": "REDACCIÓN INDIRECTA",
+        "question": "La sinonimia contextual implica:",
+        "options": [
+            "Palabras opuestas",
+            "Palabras equivalentes según contexto",
+            "Errores semánticos"
+        ],
+        "answer": "Palabras equivalentes según contexto"
+    },
+    {
+        "id": "54a6487d",
+        "category": "REDACCIÓN INDIRECTA",
+        "question": "La antonimia se refiere a:",
+        "options": [
+            "Palabras iguales",
+            "Palabras opuestas",
+            "Palabras homófonas"
+        ],
+        "answer": "Palabras opuestas"
+    },
+    {
+        "id": "6dd56865",
+        "category": "REDACCIÓN INDIRECTA",
+        "question": "Los marcadores textuales sirven para:",
+        "options": [
+            "Dividir sílabas",
+            "Organizar el discurso",
+            "Cambiar la ortografía"
+        ],
+        "answer": "Organizar el discurso"
+    },
+    {
+        "id": "6b1b4944",
+        "category": "REDACCIÓN INDIRECTA",
+        "question": "Un ejemplo de marcador textual es:",
+        "options": [
+            "Casa",
+            "Sin embargo",
+            "Lápiz"
+        ],
+        "answer": "Sin embargo"
+    },
+    {
+        "id": "8ff49f3f",
+        "category": "REDACCIÓN INDIRECTA",
+        "question": "La grafofonética estudia:",
+        "options": [
+            "El significado de palabras",
+            "La relación entre fonemas y grafías",
+            "La sintaxis"
+        ],
+        "answer": "La relación entre fonemas y grafías"
+    },
+    {
+        "id": "1cb48281",
+        "category": "REDACCIÓN INDIRECTA",
+        "question": "El uso correcto de la coma permite:",
+        "options": [
+            "Unir oraciones sin sentido",
+            "Mejorar la claridad del texto",
+            "Eliminar acentos"
+        ],
+        "answer": "Mejorar la claridad del texto"
+    },
+    {
+        "id": "87053bed",
+        "category": "REDACCIÓN INDIRECTA",
+        "question": "El punto y coma se usa para:",
+        "options": [
+            "Separar elementos complejos",
+            "Terminar un párrafo",
+            "Unir palabras"
+        ],
+        "answer": "Separar elementos complejos"
+    },
+    {
+        "id": "ee0118ac",
+        "category": "REDACCIÓN INDIRECTA",
+        "question": "Las palabras agudas llevan acento cuando:",
+        "options": [
+            "Terminan en consonante",
+            "Terminan en n, s o vocal",
+            "Nunca llevan acento"
+        ],
+        "answer": "Terminan en n, s o vocal"
+    },
+    {
+        "id": "ea8bc4be",
+        "category": "REDACCIÓN INDIRECTA",
+        "question": "Las palabras graves se acentúan cuando:",
+        "options": [
+            "Terminan en n, s o vocal",
+            "No terminan en n, s o vocal",
+            "Siempre"
+        ],
+        "answer": "No terminan en n, s o vocal"
+    },
+    {
+        "id": "065369ed",
+        "category": "REDACCIÓN INDIRECTA",
+        "question": "Las palabras esdrújulas:",
+        "options": [
+            "Nunca llevan acento",
+            "Siempre llevan acento",
+            "Solo a veces"
+        ],
+        "answer": "Siempre llevan acento"
+    },
+    {
+        "id": "80f8c4ad",
+        "category": "REDACCIÓN INDIRECTA",
+        "question": "¿Cuál es una característica de la carta formal?",
+        "options": [
+            "Lenguaje coloquial",
+            "Lenguaje técnico y respetuoso",
+            "Uso de emoticonos"
+        ],
+        "answer": "Lenguaje técnico y respetuoso"
+    },
+    {
+        "id": "b9a30939",
+        "category": "REDACCIÓN INDIRECTA",
+        "question": "Un artículo científico se caracteriza por:",
+        "options": [
+            "Opiniones personales sin fuente",
+            "Lenguaje subjetivo",
+            "Uso de citas y referencias"
+        ],
+        "answer": "Uso de citas y referencias"
+    },
+    {
+        "id": "f3013617",
+        "category": "REDACCIÓN INDIRECTA",
+        "question": "La monografía es un texto que:",
+        "options": [
+            "Resume varios temas",
+            "Desarrolla un solo tema de forma extensa",
+            "Cuenta una historia ficticia"
+        ],
+        "answer": "Desarrolla un solo tema de forma extensa"
+    },
+    {
+        "id": "628b6d1b",
+        "category": "REDACCIÓN INDIRECTA",
+        "question": "El correo electrónico formal debe incluir:",
+        "options": [
+            "Saludos informales",
+            "Asunto claro y despedida",
+            "Abreviaturas excesivas"
+        ],
+        "answer": "Asunto claro y despedida"
+    },
+    {
+        "id": "493c05d2",
+        "category": "REDACCIÓN INDIRECTA",
+        "question": "La crónica deportiva se distingue por:",
+        "options": [
+            "Lenguaje científico",
+            "Narración de hechos deportivos",
+            "Uso exclusivo de tablas"
+        ],
+        "answer": "Narración de hechos deportivos"
+    },
+    {
+        "id": "a5cb9bb0",
+        "category": "REDACCIÓN INDIRECTA",
+        "question": "Un eslogan busca principalmente:",
+        "options": [
+            "Informar datos técnicos",
+            "Persuadir y ser memorable",
+            "Explicar procesos largos"
+        ],
+        "answer": "Persuadir y ser memorable"
+    },
+    {
+        "id": "f2702b7b",
+        "category": "REDACCIÓN INDIRECTA",
+        "question": "La concordancia nominal se da entre:",
+        "options": [
+            "Verbo y adverbio",
+            "Sustantivo y adjetivo",
+            "Pronombre y verbo"
+        ],
+        "answer": "Sustantivo y adjetivo"
+    },
+    {
+        "id": "ba1747de",
+        "category": "REDACCIÓN INDIRECTA",
+        "question": "La concordancia verbal se refiere a:",
+        "options": [
+            "Tiempo y lugar",
+            "Relación sujeto-verbo",
+            "Uso de signos"
+        ],
+        "answer": "Relación sujeto-verbo"
+    },
+    {
+        "id": "c885e641",
+        "category": "REDACCIÓN INDIRECTA",
+        "question": "La correferencia permite:",
+        "options": [
+            "Evitar repeticiones innecesarias",
+            "Cambiar de tema",
+            "Agregar ejemplos"
+        ],
+        "answer": "Evitar repeticiones innecesarias"
+    },
+    {
+        "id": "23169dbe",
+        "category": "REDACCIÓN INDIRECTA",
+        "question": "La elipsis consiste en:",
+        "options": [
+            "Repetir palabras clave",
+            "Omitir elementos sobreentendidos",
+            "Cambiar el significado"
+        ],
+        "answer": "Omitir elementos sobreentendidos"
+    },
+    {
+        "id": "f1a95a72",
+        "category": "INGLÉS A2",
+        "question": "Read the text: 'Tom goes to school every day.' What is the main idea?",
+        "options": [
+            "Tom studies at home",
+            "Tom goes to school daily",
+            "Tom hates school"
+        ],
+        "answer": "Tom goes to school daily"
+    },
+    {
+        "id": "e9ec00f4",
+        "category": "INGLÉS A2",
+        "question": "Where does Tom go every day?",
+        "options": [
+            "To work",
+            "To school",
+            "To the park"
+        ],
+        "answer": "To school"
+    },
+    {
+        "id": "d3ca44e8",
+        "category": "INGLÉS A2",
+        "question": "Choose the correct connector: I like coffee ___ I don't like tea.",
+        "options": [
+            "and",
+            "but",
+            "because"
+        ],
+        "answer": "but"
+    },
+    {
+        "id": "7feced12",
+        "category": "INGLÉS A2",
+        "question": "Which sentence is correct?",
+        "options": [
+            "She go to school",
+            "She goes to school",
+            "She going school"
+        ],
+        "answer": "She goes to school"
+    },
+    {
+        "id": "9b9ea230",
+        "category": "INGLÉS A2",
+        "question": "What does 'daily' mean?",
+        "options": [
+            "Every day",
+            "Every night",
+            "Sometimes"
+        ],
+        "answer": "Every day"
+    },
+    {
+        "id": "5dff089e",
+        "category": "INGLÉS A2",
+        "question": "Choose the correct word: He ___ football on Sundays.",
+        "options": [
+            "play",
+            "plays",
+            "playing"
+        ],
+        "answer": "plays"
+    },
+    {
+        "id": "54202adb",
+        "category": "INGLÉS A2",
+        "question": "Identify the main idea: 'The phone is very useful for communication.'",
+        "options": [
+            "Phones are expensive",
+            "Phones help people communicate",
+            "Phones are dangerous"
+        ],
+        "answer": "Phones help people communicate"
+    },
+    {
+        "id": "374b186e",
+        "category": "INGLÉS A2",
+        "question": "Choose the correct punctuation.",
+        "options": [
+            "Hello how are you",
+            "Hello, how are you?",
+            "Hello how are you?"
+        ],
+        "answer": "Hello, how are you?"
+    },
+    {
+        "id": "72de9b2d",
+        "category": "INGLÉS A2",
+        "question": "Which word is a connector?",
+        "options": [
+            "run",
+            "happy",
+            "and"
+        ],
+        "answer": "and"
+    },
+    {
+        "id": "9d60c97b",
+        "category": "INGLÉS A2",
+        "question": "What is the purpose of a report?",
+        "options": [
+            "To entertain",
+            "To give information",
+            "To tell a story"
+        ],
+        "answer": "To give information"
+    },
+    {
+        "id": "e7bd0449",
+        "category": "INGLÉS A2",
+        "question": "Read the text: 'Tom goes to school every day.' What is the main idea?",
+        "options": [
+            "Tom studies at home",
+            "Tom goes to school daily",
+            "Tom hates school"
+        ],
+        "answer": "Tom goes to school daily"
+    },
+    {
+        "id": "7ffdb35d",
+        "category": "INGLÉS A2",
+        "question": "Where does Tom go every day?",
+        "options": [
+            "To work",
+            "To school",
+            "To the park"
+        ],
+        "answer": "To school"
+    },
+    {
+        "id": "5393bec8",
+        "category": "INGLÉS A2",
+        "question": "Choose the correct connector: I like coffee ___ I don't like tea.",
+        "options": [
+            "and",
+            "but",
+            "because"
+        ],
+        "answer": "but"
+    },
+    {
+        "id": "b6789c25",
+        "category": "INGLÉS A2",
+        "question": "Which sentence is correct?",
+        "options": [
+            "She go to school",
+            "She goes to school",
+            "She going school"
+        ],
+        "answer": "She goes to school"
+    },
+    {
+        "id": "f44dc68e",
+        "category": "INGLÉS A2",
+        "question": "What does 'daily' mean?",
+        "options": [
+            "Every day",
+            "Every night",
+            "Sometimes"
+        ],
+        "answer": "Every day"
+    },
+    {
+        "id": "2afd3e6e",
+        "category": "INGLÉS A2",
+        "question": "Choose the correct word: He ___ football on Sundays.",
+        "options": [
+            "play",
+            "plays",
+            "playing"
+        ],
+        "answer": "plays"
+    },
+    {
+        "id": "306a4523",
+        "category": "INGLÉS A2",
+        "question": "Identify the main idea: 'The phone is very useful for communication.'",
+        "options": [
+            "Phones are expensive",
+            "Phones help people communicate",
+            "Phones are dangerous"
+        ],
+        "answer": "Phones help people communicate"
+    },
+    {
+        "id": "6d5a5994",
+        "category": "INGLÉS A2",
+        "question": "Choose the correct punctuation.",
+        "options": [
+            "Hello how are you",
+            "Hello, how are you?",
+            "Hello how are you?"
+        ],
+        "answer": "Hello, how are you?"
+    },
+    {
+        "id": "ad745114",
+        "category": "INGLÉS A2",
+        "question": "Which word is a connector?",
+        "options": [
+            "run",
+            "happy",
+            "and"
+        ],
+        "answer": "and"
+    },
+    {
+        "id": "a92b5a92",
+        "category": "INGLÉS A2",
+        "question": "What is the purpose of a report?",
+        "options": [
+            "To entertain",
+            "To give information",
+            "To tell a story"
+        ],
+        "answer": "To give information"
+    },
+    {
+        "id": "e84ec41e",
+        "category": "INGLÉS A2",
+        "question": "Read the text: 'Tom goes to school every day.' What is the main idea?",
+        "options": [
+            "Tom studies at home",
+            "Tom goes to school daily",
+            "Tom hates school"
+        ],
+        "answer": "Tom goes to school daily"
+    },
+    {
+        "id": "ecb3707c",
+        "category": "INGLÉS A2",
+        "question": "Where does Tom go every day?",
+        "options": [
+            "To work",
+            "To school",
+            "To the park"
+        ],
+        "answer": "To school"
+    },
+    {
+        "id": "cd42c6c9",
+        "category": "INGLÉS A2",
+        "question": "Choose the correct connector: I like coffee ___ I don't like tea.",
+        "options": [
+            "and",
+            "but",
+            "because"
+        ],
+        "answer": "but"
+    },
+    {
+        "id": "448ba78f",
+        "category": "INGLÉS A2",
+        "question": "Which sentence is correct?",
+        "options": [
+            "She go to school",
+            "She goes to school",
+            "She going school"
+        ],
+        "answer": "She goes to school"
+    },
+    {
+        "id": "01a5591a",
+        "category": "INGLÉS A2",
+        "question": "What does 'daily' mean?",
+        "options": [
+            "Every day",
+            "Every night",
+            "Sometimes"
+        ],
+        "answer": "Every day"
+    },
+    {
+        "id": "16bbf50b",
+        "category": "INGLÉS A2",
+        "question": "Choose the correct word: He ___ football on Sundays.",
+        "options": [
+            "play",
+            "plays",
+            "playing"
+        ],
+        "answer": "plays"
+    },
+    {
+        "id": "34d86a84",
+        "category": "INGLÉS A2",
+        "question": "Identify the main idea: 'The phone is very useful for communication.'",
+        "options": [
+            "Phones are expensive",
+            "Phones help people communicate",
+            "Phones are dangerous"
+        ],
+        "answer": "Phones help people communicate"
+    },
+    {
+        "id": "ba359e86",
+        "category": "INGLÉS A2",
+        "question": "Choose the correct punctuation.",
+        "options": [
+            "Hello how are you",
+            "Hello, how are you?",
+            "Hello how are you?"
+        ],
+        "answer": "Hello, how are you?"
+    },
+    {
+        "id": "d685f4df",
+        "category": "INGLÉS A2",
+        "question": "Which word is a connector?",
+        "options": [
+            "run",
+            "happy",
+            "and"
+        ],
+        "answer": "and"
+    },
+    {
+        "id": "5d4f316d",
+        "category": "INGLÉS A2",
+        "question": "What is the purpose of a report?",
+        "options": [
+            "To entertain",
+            "To give information",
+            "To tell a story"
+        ],
+        "answer": "To give information"
+    },
+    {
+        "id": "fb470fe2",
+        "category": "INGLÉS A2",
+        "question": "Read the text: 'Tom goes to school every day.' What is the main idea?",
+        "options": [
+            "Tom studies at home",
+            "Tom goes to school daily",
+            "Tom hates school"
+        ],
+        "answer": "Tom goes to school daily"
+    },
+    {
+        "id": "5a47d426",
+        "category": "INGLÉS A2",
+        "question": "Where does Tom go every day?",
+        "options": [
+            "To work",
+            "To school",
+            "To the park"
+        ],
+        "answer": "To school"
+    },
+    {
+        "id": "7480b73a",
+        "category": "INGLÉS A2",
+        "question": "Choose the correct connector: I like coffee ___ I don't like tea.",
+        "options": [
+            "and",
+            "but",
+            "because"
+        ],
+        "answer": "but"
+    },
+    {
+        "id": "5564dc15",
+        "category": "INGLÉS A2",
+        "question": "Which sentence is correct?",
+        "options": [
+            "She go to school",
+            "She goes to school",
+            "She going school"
+        ],
+        "answer": "She goes to school"
+    },
+    {
+        "id": "406de54b",
+        "category": "INGLÉS A2",
+        "question": "What does 'daily' mean?",
+        "options": [
+            "Every day",
+            "Every night",
+            "Sometimes"
+        ],
+        "answer": "Every day"
+    },
+    {
+        "id": "715da2b3",
+        "category": "INGLÉS A2",
+        "question": "Choose the correct word: He ___ football on Sundays.",
+        "options": [
+            "play",
+            "plays",
+            "playing"
+        ],
+        "answer": "plays"
+    },
+    {
+        "id": "8df17bcd",
+        "category": "INGLÉS A2",
+        "question": "Identify the main idea: 'The phone is very useful for communication.'",
+        "options": [
+            "Phones are expensive",
+            "Phones help people communicate",
+            "Phones are dangerous"
+        ],
+        "answer": "Phones help people communicate"
+    },
+    {
+        "id": "5a8a6a57",
+        "category": "INGLÉS A2",
+        "question": "Choose the correct punctuation.",
+        "options": [
+            "Hello how are you",
+            "Hello, how are you?",
+            "Hello how are you?"
+        ],
+        "answer": "Hello, how are you?"
+    },
+    {
+        "id": "3cae6813",
+        "category": "INGLÉS A2",
+        "question": "Which word is a connector?",
+        "options": [
+            "run",
+            "happy",
+            "and"
+        ],
+        "answer": "and"
+    },
+    {
+        "id": "2fd1d9ca",
+        "category": "INGLÉS A2",
+        "question": "What is the purpose of a report?",
+        "options": [
+            "To entertain",
+            "To give information",
+            "To tell a story"
+        ],
+        "answer": "To give information"
+    },
+    {
+        "id": "1dafef03",
+        "category": "INGLÉS A2",
+        "question": "Read the text: 'Tom goes to school every day.' What is the main idea?",
+        "options": [
+            "Tom studies at home",
+            "Tom goes to school daily",
+            "Tom hates school"
+        ],
+        "answer": "Tom goes to school daily"
+    },
+    {
+        "id": "e704869e",
+        "category": "INGLÉS A2",
+        "question": "Where does Tom go every day?",
+        "options": [
+            "To work",
+            "To school",
+            "To the park"
+        ],
+        "answer": "To school"
+    },
+    {
+        "id": "7e1672af",
+        "category": "INGLÉS A2",
+        "question": "Choose the correct connector: I like coffee ___ I don't like tea.",
+        "options": [
+            "and",
+            "but",
+            "because"
+        ],
+        "answer": "but"
+    },
+    {
+        "id": "74a7dc0a",
+        "category": "INGLÉS A2",
+        "question": "Which sentence is correct?",
+        "options": [
+            "She go to school",
+            "She goes to school",
+            "She going school"
+        ],
+        "answer": "She goes to school"
+    },
+    {
+        "id": "65e2d72c",
+        "category": "INGLÉS A2",
+        "question": "What does 'daily' mean?",
+        "options": [
+            "Every day",
+            "Every night",
+            "Sometimes"
+        ],
+        "answer": "Every day"
+    },
+    {
+        "id": "a2348376",
+        "category": "INGLÉS A2",
+        "question": "Choose the correct word: He ___ football on Sundays.",
+        "options": [
+            "play",
+            "plays",
+            "playing"
+        ],
+        "answer": "plays"
+    },
+    {
+        "id": "42794801",
+        "category": "INGLÉS A2",
+        "question": "Identify the main idea: 'The phone is very useful for communication.'",
+        "options": [
+            "Phones are expensive",
+            "Phones help people communicate",
+            "Phones are dangerous"
+        ],
+        "answer": "Phones help people communicate"
+    },
+    {
+        "id": "d796c4e4",
+        "category": "INGLÉS A2",
+        "question": "Choose the correct punctuation.",
+        "options": [
+            "Hello how are you",
+            "Hello, how are you?",
+            "Hello how are you?"
+        ],
+        "answer": "Hello, how are you?"
+    },
+    {
+        "id": "50dc891a",
+        "category": "INGLÉS A2",
+        "question": "Which word is a connector?",
+        "options": [
+            "run",
+            "happy",
+            "and"
+        ],
+        "answer": "and"
+    },
+    {
+        "id": "ad7c2c17",
+        "category": "INGLÉS A2",
+        "question": "What is the purpose of a report?",
+        "options": [
+            "To entertain",
+            "To give information",
+            "To tell a story"
+        ],
+        "answer": "To give information"
+    }
+]

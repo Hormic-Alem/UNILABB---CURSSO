@@ -1,0 +1,40 @@
+{% extends "base_public.html" %}
+{% block content %}
+
+<div class="container text-center">
+
+    <h2 class="fw-bold mb-4">Acceso a Cursos</h2>
+
+    <div class="row justify-content-center">
+
+        <!-- Login -->
+        <div class="col-md-5">
+            <div class="card p-4" style="background:#15113f; border-radius:20px;">
+                <h4 class="mb-3">Iniciar Sesión</h4>
+
+                <form method="POST" action="/login">
+                    <input type="text" name="username" class="form-control mb-2" placeholder="Usuario" required>
+                    <input type="password" name="password" class="form-control mb-3" placeholder="Contraseña" required>
+
+                    <button class="btn-glow w-100">Entrar</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Compra -->
+        <div class="col-md-5">
+            <div class="card p-4" style="background:#15113f; border-radius:20px;">
+                <h4 class="mb-3">Comprar Acceso</h4>
+                <p>Acceso ilimitado a todos los cursos</p>
+
+                <h2 style="color:#5ad1ff;">$19 MXN</h2>
+
+                <a href="/checkout" class="btn-glow w-100 mt-2">Comprar ahora</a>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}
