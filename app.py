@@ -669,24 +669,6 @@ def admin_mark_paid(ticket_id):
 with app.app_context():
     db.create_all()
 
-    default_admin_username = 'Apolo96'
-    default_admin_password = 'MiataMx5'
-
-    existing_admin = User.query.filter_by(username=default_admin_username).first()
-    if existing_admin:
-        print(f"ℹ️ Admin ya existe: {default_admin_username}")
-    else:
-        db.session.add(User(
-            username=default_admin_username,
-            email='apolo96@admin.local',
-            password=generate_password_hash(default_admin_password),
-            active=True,
-            role='admin',
-            progress={'completed_questions': [], 'by_category': {}},
-            avatar_url=None,
-        ))
-        db.session.commit()
-        print(f"✅ Admin creado automáticamente: {default_admin_username}")
 
 
 if __name__ == '__main__':
