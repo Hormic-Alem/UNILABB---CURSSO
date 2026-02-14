@@ -7,6 +7,7 @@ import secrets
 from dotenv import load_dotenv
 from flask import Flask, abort, flash, redirect, render_template, request, session, url_for
 from flask_sqlalchemy import SQLAlchemy
+
 from werkzeug.security import check_password_hash, generate_password_hash
 from werkzeug.utils import secure_filename
 
@@ -19,8 +20,16 @@ app.secret_key = os.getenv("SECRET_KEY", secrets.token_hex(32))
 database_url = os.environ.get("DATABASE_URL")
 if not database_url:
     raise RuntimeError("DATABASE_URL no está configurada.")
+
+database_url = database_url.strip().strip('"').strip("'")
 if database_url.startswith("postgres://"):
     database_url = database_url.replace("postgres://", "postgresql://", 1)
+
+try:
+    make_url(database_url)
+except ArgumentError as exc:
+    raise RuntimeError(f"DATABASE_URL inválida para SQLAlchemy: {database_url!r}") from exc
+ 
 
 app.config["SQLALCHEMY_DATABASE_URI"] = database_url
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False

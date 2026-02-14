@@ -1,4 +1,5 @@
 import os
+
 from dotenv import load_dotenv
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
@@ -22,7 +23,6 @@ db = SQLAlchemy(app)
 
 
 class User(db.Model):
-    __tablename__ = "user"  # ⚠️ importante si ya existe tabla creada
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True, nullable=False)
     password = db.Column(db.Text, nullable=False)
@@ -30,6 +30,7 @@ class User(db.Model):
 
 
 with app.app_context():
+    db.create_all()
     admin = User.query.filter_by(username="admin").first()
     nueva_contrasena = "Admin1234"
 
