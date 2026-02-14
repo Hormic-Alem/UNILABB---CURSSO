@@ -15,15 +15,7 @@ load_dotenv()
 app = Flask(__name__)
 app.secret_key = os.getenv('SECRET_KEY', secrets.token_hex(32))
 
-database_url = os.environ.get('DATABASE_URL')
-if not database_url:
-    raise RuntimeError('DATABASE_URL no está configurada.')
-if database_url.startswith('postgres://'):
-    database_url = database_url.replace('postgres://', 'postgresql://', 1)
 
-app.config['SQLALCHEMY_DATABASE_URI'] = database_url
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.config.update(
     SESSION_COOKIE_HTTPONLY=True,
     SESSION_COOKIE_SAMESITE='Lax',
     SESSION_COOKIE_SECURE=os.getenv('SESSION_COOKIE_SECURE', 'false').lower() == 'true',
@@ -668,24 +660,6 @@ def admin_mark_paid(ticket_id):
 with app.app_context():
     db.create_all()
 
-    default_admin_username = 'Apolo96'
-    default_admin_password = 'MiataMx5'
-
-    existing_admin = User.query.filter_by(username=default_admin_username).first()
-    if existing_admin:
-        print(f"ℹ️ Admin ya existe, no se duplicó: {default_admin_username}")
-    else:
-        db.session.add(User(
-            username=default_admin_username,
-            email='apolo96@admin.local',
-            password=generate_password_hash(default_admin_password),
-            active=True,
-            role='admin',
-            progress={'completed_questions': [], 'by_category': {}},
-            avatar_url=None,
-        ))
-        db.session.commit()
-        print(f"✅ Admin creado automáticamente: {default_admin_username}")
 
 
 if __name__ == '__main__':
