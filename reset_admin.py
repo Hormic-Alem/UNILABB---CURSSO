@@ -8,13 +8,8 @@ from werkzeug.security import generate_password_hash
 load_dotenv()
 
 app = Flask(__name__)
-raw_database_url = os.getenv('DATABASE_URL', '').strip()
-if raw_database_url.startswith('postgres://'):
-    raw_database_url = raw_database_url.replace('postgres://', 'postgresql://', 1)
-if not raw_database_url:
-    raw_database_url = 'sqlite:///app.db'
 
-app.config['SQLALCHEMY_DATABASE_URI'] = raw_database_url
+main
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)

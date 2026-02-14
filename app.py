@@ -15,16 +15,7 @@ load_dotenv()
 app = Flask(__name__)
 app.secret_key = os.getenv('SECRET_KEY', secrets.token_hex(32))
 
-raw_database_url = os.getenv('DATABASE_URL', '').strip()
-if raw_database_url.startswith('postgres://'):
-    raw_database_url = raw_database_url.replace('postgres://', 'postgresql://', 1)
 
-if not raw_database_url:
-    raw_database_url = 'sqlite:///app.db'
-
-app.config.update(
-    SQLALCHEMY_DATABASE_URI=raw_database_url,
-    SQLALCHEMY_TRACK_MODIFICATIONS=False,
     SESSION_COOKIE_HTTPONLY=True,
     SESSION_COOKIE_SAMESITE='Lax',
     SESSION_COOKIE_SECURE=os.getenv('SESSION_COOKIE_SECURE', 'false').lower() == 'true',
@@ -668,6 +659,7 @@ def admin_mark_paid(ticket_id):
 
 with app.app_context():
     db.create_all()
+
 
 
 if __name__ == '__main__':
