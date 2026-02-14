@@ -15,15 +15,7 @@ load_dotenv()
 app = Flask(__name__)
 app.secret_key = os.getenv('SECRET_KEY', secrets.token_hex(32))
 
-database_url = os.environ.get('DATABASE_URL')
-if not database_url:
-    raise RuntimeError('DATABASE_URL no está configurada.')
-if database_url.startswith('postgres://'):
-    database_url = database_url.replace('postgres://', 'postgresql://', 1)
 
-app.config['SQLALCHEMY_DATABASE_URI'] = database_url
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.config.update(
     SESSION_COOKIE_HTTPONLY=True,
     SESSION_COOKIE_SAMESITE='Lax',
     SESSION_COOKIE_SECURE=os.getenv('SESSION_COOKIE_SECURE', 'false').lower() == 'true',
@@ -668,33 +660,5 @@ def admin_mark_paid(ticket_id):
 with app.app_context():
     db.create_all()
 
-    try:
-        admin_username = os.environ.get('ADMIN_USERNAME')
-        admin_password = os.environ.get('ADMIN_PASSWORD')
-        admin_email = os.environ.get('ADMIN_EMAIL')
 
-        if admin_username and admin_password and admin_email:
-            existing_admin = User.query.filter_by(role='admin').first()
-            if existing_admin:
-                print('ℹ️ Ya existe un usuario admin. No se creó uno nuevo.')
-            else:
-                db.session.add(User(
-                    username=admin_username,
-                    email=admin_email,
-                    password=generate_password_hash(admin_password),
-                    active=True,
-                    role='admin',
-                    progress={'completed_questions': [], 'by_category': {}},
-                    avatar_url=None,
-                ))
-                db.session.commit()
-                print(f"✅ Admin creado automáticamente desde variables de entorno: {admin_username}")
-        else:
-            print('ℹ️ ADMIN_USERNAME, ADMIN_PASSWORD o ADMIN_EMAIL no configurados. Se omite creación automática de admin.')
-    except Exception as e:
-        db.session.rollback()
-        print(f'⚠️ Error al verificar/crear admin automático: {e}')
-
-
-if __name__ == "__main__":
     app.run(debug=os.getenv('FLASK_DEBUG', 'false').lower() == 'true')
