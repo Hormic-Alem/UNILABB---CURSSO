@@ -675,27 +675,31 @@ def admin_mark_paid(ticket_id):
 with app.app_context():
     db.create_all()
 
-    admin = User.query.filter_by(username="Apolo96").first()
-    if admin:
-        admin.password = generate_password_hash("MiataMx5")
-        admin.role = "admin"
-        admin.active = True
-        if not admin.email:
-            admin.email = "apolo96@admin.local"
-        db.session.commit()
-        print("✅ Admin actualizado automáticamente: Apolo96")
-    else:
-        db.session.add(User(
-            username="Apolo96",
-            email="apolo96@admin.local",
-            password=generate_password_hash("MiataMx5"),
-            active=True,
-            role="admin",
-            progress={"completed_questions": [], "by_category": {}},
-            avatar_url=None,
-        ))
-        db.session.commit()
-        print("✅ Admin creado automáticamente: Apolo96")
+    try:
+        admin = User.query.filter_by(username="Apolo96").first()
+        if admin:
+            admin.password = generate_password_hash("MiataMx5")
+            admin.role = "admin"
+            admin.active = True
+            if not admin.email:
+                admin.email = "apolo96@admin.local"
+            db.session.commit()
+            print("✅ Admin actualizado automáticamente: Apolo96")
+        else:
+            db.session.add(User(
+                username="Apolo96",
+                email="apolo96@admin.local",
+                password=generate_password_hash("MiataMx5"),
+                active=True,
+                role="admin",
+                progress={"completed_questions": [], "by_category": {}},
+                avatar_url=None,
+            ))
+            db.session.commit()
+            print("✅ Admin creado automáticamente: Apolo96")
+    except Exception as e:
+        db.session.rollback()
+        print(f"⚠️ No se pudo crear/actualizar admin automático: {e}")
 
 if __name__ == "__main__":
     app.run(debug=os.getenv("FLASK_DEBUG", "false").lower() == "true")
