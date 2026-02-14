@@ -654,4 +654,4 @@ def admin_mark_paid(ticket_id):
 with app.app_context():
     db.create_all()
 
-    app.run(debug=os.getenv('FLASK_DEBUG', 'false').lower() == 'true')
+
