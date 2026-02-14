@@ -13,7 +13,21 @@ from werkzeug.utils import secure_filename
 load_dotenv()
 
 app = Flask(__name__)
-app.secret_key = os.getenv('SECRET_KEY', secrets.token_hex(32))
+
+app.secret_key = os.getenv("SECRET_KEY", secrets.token_hex(32))
+
+database_url = os.environ.get("DATABASE_URL")
+if not database_url:
+    raise RuntimeError("DATABASE_URL no está configurada.")
+if database_url.startswith("postgres://"):
+    database_url = database_url.replace("postgres://", "postgresql://", 1)
+
+app.config["SQLALCHEMY_DATABASE_URI"] = database_url
+app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+app.config["SESSION_COOKIE_HTTPONLY"] = True
+app.config["SESSION_COOKIE_SAMESITE"] = "Lax"
+app.config["SESSION_COOKIE_SECURE"] = os.getenv("SESSION_COOKIE_SECURE", "false").lower() == "true"
+
 
 db = SQLAlchemy(app)
 
@@ -654,4 +668,6 @@ def admin_mark_paid(ticket_id):
 with app.app_context():
     db.create_all()
 
+if __name__ == "__main__":
+    app.run(debug=os.getenv("FLASK_DEBUG", "false").lower() == "true")
 
