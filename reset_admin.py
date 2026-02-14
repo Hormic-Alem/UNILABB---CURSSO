@@ -8,7 +8,7 @@ from werkzeug.security import generate_password_hash
 load_dotenv()
 
 app = Flask(__name__)
- main
+
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
