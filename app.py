@@ -18,9 +18,8 @@ app = Flask(__name__)
 app.secret_key = os.getenv("SECRET_KEY", secrets.token_hex(32))
 
 database_url = os.environ.get("DATABASE_URL")
-print(f"[startup] DATABASE_URL presente: {bool(database_url)}")
 if not database_url:
-    raise RuntimeError("DATABASE_URL no está configurada. Verifica Variables en Railway (servicio y environment correctos).")
+    raise RuntimeError("DATABASE_URL no está configurada.")
 
 database_url = database_url.strip().strip('"').strip("'")
 if database_url.startswith("postgres://"):
@@ -29,7 +28,7 @@ if database_url.startswith("postgres://"):
 try:
     make_url(database_url)
 except ArgumentError as exc:
-    raise RuntimeError("DATABASE_URL inválida para SQLAlchemy. Revisa formato sin exponer credenciales.") from exc
+    raise RuntimeError(f"DATABASE_URL inválida para SQLAlchemy: {database_url!r}") from exc
 
 app.config["SQLALCHEMY_DATABASE_URI"] = database_url
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
