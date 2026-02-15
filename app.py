@@ -17,7 +17,10 @@ load_dotenv()
 app = Flask(__name__)
 
 # Configurar SECRET_KEY correctamente desde Railway
-app.config["SECRET_KEY"] = os.getenv("SECRET_KEY")
+app.config["SECRET_KEY"] = os.environ.get("SECRET_KEY")
+
+if not app.config["SECRET_KEY"]:
+    raise RuntimeError("SECRET_KEY no está configurada en Railway.")
 
 database_url = os.environ.get("DATABASE_URL")
 if not database_url:
@@ -41,6 +44,7 @@ app.config["SESSION_COOKIE_SAMESITE"] = "Lax"
 app.config["SESSION_COOKIE_SECURE"] = True
 
 db = SQLAlchemy(app)
+
 
 QUESTIONS_PER_PAGE = 3
 
