@@ -1,28 +1,41 @@
-import json
+import os
+
+from dotenv import load_dotenv
+from flask import Flask
+from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash
 
-USERS_FILE = 'data/users.json'
+load_dotenv()
 
-# Cargar los usuarios existentes
-with open(USERS_FILE, 'r', encoding='utf-8') as f:
-    users = json.load(f)
+app = Flask(__name__)
+database_url = os.environ.get('DATABASE_URL')
+if not database_url:
+    raise RuntimeError('DATABASE_URL no está configurada.')
+if database_url.startswith('postgres://'):
+    database_url = database_url.replace('postgres://', 'postgresql://', 1)
 
-# Nueva contraseña que quieras asignar
-nueva_contraseña = 'Admin1234'  # Cambia esto por la que quieras
+app.config['SQLALCHEMY_DATABASE_URI'] = database_url
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-# Buscar el usuario admin y resetear la contraseña
-admin_encontrado = False
-for user in users:
-    if user['username'] == 'admin':
-        user['password'] = generate_password_hash(nueva_contraseña)
-        user['active'] = True  # Asegúrate de que esté activo
-        admin_encontrado = True
-        break
+db = SQLAlchemy(app)
 
-if not admin_encontrado:
-    print("No se encontró un usuario 'admin' en users.json")
-else:
-    # Guardar de nuevo el archivo
-    with open(USERS_FILE, 'w', encoding='utf-8') as f:
-        json.dump(users, f, indent=4, ensure_ascii=False)
-    print(f"✅ Contraseña del admin reseteada a '{nueva_contraseña}'")
+
+class User(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(80), unique=True, nullable=False)
+    password = db.Column(db.Text, nullable=False)
+    active = db.Column(db.Boolean, nullable=False, default=False)
+
+
+with app.app_context():
+    db.create_all()
+    admin = User.query.filter_by(username='admin').first()
+    nueva_contrasena = 'Admin1234'
+
+    if not admin:
+        print("No se encontró un usuario 'admin' en la base de datos")
+    else:
+        admin.password = generate_password_hash(nueva_contrasena)
+        admin.active = True
+        db.session.commit()
+        print(f"✅ Contraseña del admin reseteada a '{nueva_contrasena}'")
