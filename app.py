@@ -15,7 +15,9 @@ from werkzeug.utils import secure_filename
 load_dotenv()
 
 app = Flask(__name__)
-app.secret_key = os.getenv("SECRET_KEY", secrets.token_hex(32))
+
+# Configurar SECRET_KEY correctamente desde Railway
+app.config["SECRET_KEY"] = os.getenv("SECRET_KEY")
 
 database_url = os.environ.get("DATABASE_URL")
 if not database_url:
@@ -32,13 +34,16 @@ except ArgumentError as exc:
 
 app.config["SQLALCHEMY_DATABASE_URI"] = database_url
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+
+# Configuración de sesión estable para Railway (HTTPS)
 app.config["SESSION_COOKIE_HTTPONLY"] = True
 app.config["SESSION_COOKIE_SAMESITE"] = "Lax"
-app.config["SESSION_COOKIE_SECURE"] = os.getenv("SESSION_COOKIE_SECURE", "false").lower() == "true"
+app.config["SESSION_COOKIE_SECURE"] = True
 
 db = SQLAlchemy(app)
 
 QUESTIONS_PER_PAGE = 3
+
 
 
 class Question(db.Model):
