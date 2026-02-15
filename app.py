@@ -18,31 +18,17 @@ app = Flask(__name__)
 app.secret_key = os.getenv("SECRET_KEY", secrets.token_hex(32))
 
 database_url = os.environ.get("DATABASE_URL")
-database_public_url = os.environ.get("DATABASE_PUBLIC_URL")
-print(f"[startup] DATABASE_URL presente: {bool(database_url)}")
-print(f"[startup] DATABASE_PUBLIC_URL presente: {bool(database_public_url)}")
-
-if not database_url and database_public_url:
-    database_url = database_public_url
-
 if not database_url:
-    raise RuntimeError(
-        "No hay URL de base de datos configurada. Define DATABASE_URL o DATABASE_PUBLIC_URL en Railway."
-    )
+    raise RuntimeError("DATABASE_URL no está configurada.")
 
 database_url = database_url.strip().strip('"').strip("'")
-
-if "railway.internal" in database_url and database_public_url:
-    print("[startup] Detectada URL interna de Railway; usando DATABASE_PUBLIC_URL para conectividad externa.")
-    database_url = database_public_url.strip().strip('"').strip("'")
-
 if database_url.startswith("postgres://"):
     database_url = database_url.replace("postgres://", "postgresql://", 1)
 
 try:
     make_url(database_url)
 except ArgumentError as exc:
-    raise RuntimeError("DATABASE_URL inválida para SQLAlchemy. Revisa formato sin exponer credenciales.") from exc
+    raise RuntimeError(f"DATABASE_URL inválida para SQLAlchemy: {database_url!r}") from exc
 
 app.config["SQLALCHEMY_DATABASE_URI"] = database_url
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
