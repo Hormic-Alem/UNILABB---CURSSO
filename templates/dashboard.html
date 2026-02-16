@@ -133,6 +133,8 @@
         <ul>
         {% for sim in simulators %}
           <li>{{ sim.name }}</li>
+        {% else %}
+          <li>No hay simuladores creados todavía.</li>
         {% endfor %}
         </ul>
     </div>

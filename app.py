@@ -266,7 +266,22 @@ def load_categories():
 
 
 def list_simulators():
-    return [{'name': category} for category in load_categories()]
+    names_by_key = {}
+
+    for sim in Simulator.query.order_by(Simulator.name).all():
+        normalized = normalize_simulator_name(sim.name)
+        if normalized:
+            names_by_key[normalized.casefold()] = normalized
+
+    for category in load_categories():
+        normalized = normalize_simulator_name(category)
+        if normalized and normalized.casefold() not in names_by_key:
+            names_by_key[normalized.casefold()] = normalized
+
+    return [
+        {'name': name}
+        for name in sorted(names_by_key.values(), key=lambda value: value.casefold())
+    ]
 
 
 def load_stats():
@@ -401,14 +416,15 @@ def add_question():
         return redirect(url_for('login'))
 
     if request.method == 'POST':
-        category = request.form['category']
-        question = request.form['question']
-        option1 = request.form['option1']
-        option2 = request.form['option2']
-        option3 = request.form['option3']
-        answer = request.form['answer']
+        category = request.form.get('category', '').strip()
+        question = request.form.get('question', '').strip()
+        option1 = request.form.get('option1', '').strip()
+        option2 = request.form.get('option2', '').strip()
+        option3 = request.form.get('option3', '').strip()
+        answer = request.form.get('answer', '').strip()
 
         create_question(category, question, option1, option2, option3, answer)
+        flash('Pregunta añadida correctamente.', 'success')
         return redirect(url_for('dashboard'))
 
     simulators = list_simulators()
