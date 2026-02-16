@@ -98,6 +98,14 @@
 
     <h2 class="mb-4">📋 Panel de Control - Administrador</h2>
 
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, msg in messages %}
+                <div class="alert alert-{{ category }}">{{ msg }}</div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
     <!-- BOTONES SUPERIORES -->
     <a href="{{ url_for('add_question') }}" class="btn neon-btn mb-3">
         ➕ Añadir nueva pregunta
@@ -114,6 +122,30 @@
 
     <div class="clearfix"></div>
 
+
+    <div class="panel-card">
+        <h4 class="mb-3">🧪 Simuladores</h4>
+
+        <form action="{{ url_for('create_simulator') }}" method="POST" class="row g-2 align-items-center mb-3">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <div class="col-md-8">
+                <input type="text" name="name" class="form-control" placeholder="Nombre del simulador (ej. Pensamiento matemático)" required>
+            </div>
+            <div class="col-md-4 d-grid">
+                <button type="submit" class="btn neon-btn">➕ Crear simulador</button>
+            </div>
+        </form>
+
+        {% if simulators %}
+            <ul class="mb-0">
+                {% for simulator in simulators %}
+                    <li>{{ simulator.name }}</li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p class="mb-0">Aún no hay simuladores creados.</p>
+        {% endif %}
+    </div>
     <div class="panel-card">
 
         <h4 class="mt-2 mb-3">📦 Importar preguntas (CSV o Excel)</h4>
@@ -125,7 +157,7 @@
 
             <label class="form-label fw-semibold">Seleccionar archivo</label>
 
-            <input type="file" name="file" accept=".csv, .xlsx, .xls"
+            <input type="file" name="file" accept=".csv, .xlsx"
                    class="form-control mb-3" required>
 
             <button class="btn neon-btn">📥 Importar archivo</button>
