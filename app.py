@@ -266,25 +266,7 @@ def load_categories():
 
 
 def list_simulators():
-    existing_simulators = Simulator.query.order_by(Simulator.name).all()
-    existing_by_key = {sim.name.casefold(): sim for sim in existing_simulators}
-
-    pending_commit = False
-    for category in load_categories():
-        normalized_category = normalize_simulator_name(category)
-        if normalized_category and normalized_category.casefold() not in existing_by_key:
-            simulator = Simulator(name=normalized_category)
-            db.session.add(simulator)
-            existing_by_key[normalized_category.casefold()] = simulator
-            pending_commit = True
-
-    if pending_commit:
-        db.session.commit()
-
-    return [
-        {'name': sim.name}
-        for sim in Simulator.query.order_by(Simulator.name).all()
-    ]
+    return [{'name': category} for category in load_categories()]
 
 
 def load_stats():
