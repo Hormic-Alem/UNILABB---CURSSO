@@ -148,59 +148,6 @@ def verify_password(stored_password, incoming_password):
     return legacy_match, legacy_match
 
 
-def parse_xlsx(file_storage):
-    data = file_storage.read()
-    with zipfile.ZipFile(io.BytesIO(data)) as zf:
-        shared_strings = []
-        if 'xl/sharedStrings.xml' in zf.namelist():
-            root = ET.fromstring(zf.read('xl/sharedStrings.xml'))
-            ns = {'x': 'http://schemas.openxmlformats.org/spreadsheetml/2006/main'}
-            for si in root.findall('x:si', ns):
-                text_parts = [t.text or '' for t in si.findall('.//x:t', ns)]
-                shared_strings.append(''.join(text_parts))
-
-        sheet_xml = 'xl/worksheets/sheet1.xml'
-        if sheet_xml not in zf.namelist():
-            raise ValueError('El archivo XLSX no contiene sheet1.xml')
-
-        root = ET.fromstring(zf.read(sheet_xml))
-        ns = {'x': 'http://schemas.openxmlformats.org/spreadsheetml/2006/main'}
-
-        rows = []
-        max_col = 0
-        for row in root.findall('.//x:sheetData/x:row', ns):
-            row_map = {}
-            for cell in row.findall('x:c', ns):
-                ref = cell.attrib.get('r', '')
-                col_letters = ''.join(ch for ch in ref if ch.isalpha())
-                col_idx = 0
-                for ch in col_letters:
-                    col_idx = col_idx * 26 + (ord(ch.upper()) - 64)
-                if col_idx <= 0:
-                    continue
-
-                value = ''
-                cell_type = cell.attrib.get('t')
-                if cell_type == 'inlineStr':
-                    inline_text = ''.join((t.text or '') for t in cell.findall('.//x:is/x:t', ns))
-                    value = inline_text
-                else:
-                    v_elem = cell.find('x:v', ns)
-                    if v_elem is not None and v_elem.text is not None:
-                        raw = v_elem.text
-                        if cell_type == 's':
-                            idx = int(raw)
-                            value = shared_strings[idx] if 0 <= idx < len(shared_strings) else ''
-                        else:
-                            value = raw
-                row_map[col_idx] = str(value)
-                max_col = max(max_col, col_idx)
-
-            rows.append([row_map.get(i, '') for i in range(1, max_col + 1)])
-
-        return rows
-
-
 def question_to_dict(question):
     return {
         'id': question.id,
