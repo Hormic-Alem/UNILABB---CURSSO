@@ -9,15 +9,16 @@
 <div class="container mt-5">
     <h2>➕ Añadir Nueva Pregunta</h2>
     <form method="post">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
         <div class="mb-3">
             <label for="category" class="form-label">Categoría</label>
             <select class="form-select" name="category" required>
-                <option value="">Selecciona una categoría</option>
-                <option value="Amparo">Amparo</option>
-                <option value="Penal">Penal</option>
-                <option value="Civil">Civil</option>
-                <option value="Laboral">Laboral</option>
+                <option value="">Selecciona un simulador</option>
+                {% for category in categories %}
+                    <option value="{{ category }}">{{ category }}</option>
+                {% endfor %}
             </select>
+            <div class="form-text">Si no existe el simulador, créalo primero desde el dashboard.</div>
         </div>
         <div class="mb-3">
             <label for="question" class="form-label">Pregunta</label>
