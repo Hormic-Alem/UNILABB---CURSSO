@@ -106,6 +106,14 @@
         {% endif %}
     {% endwith %}
 
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }}" role="alert">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
     <!-- BOTONES SUPERIORES -->
     <a href="{{ url_for('add_question') }}" class="btn neon-btn mb-3">
         ➕ Añadir nueva pregunta
@@ -188,9 +196,9 @@
                             <td>{{ q.question }}</td>
                             <td>
                                 <ul>
-                                    {% for opt in q.options %}
-                                        <li>{{ opt }}</li>
-                                    {% endfor %}
+                                    <li>{{ q.option1 }}</li>
+                                    <li>{{ q.option2 }}</li>
+                                    <li>{{ q.option3 }}</li>
                                 </ul>
                             </td>
                             <td>{{ q.answer }}</td>
