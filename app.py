@@ -318,6 +318,25 @@ def parse_xlsx(file_storage):
     return parsed_rows
 
 
+def list_simulators():
+    names_by_key = {}
+
+    for sim in Simulator.query.order_by(Simulator.name).all():
+        normalized = normalize_simulator_name(sim.name)
+        if normalized:
+            names_by_key[normalized.casefold()] = normalized
+
+    for category in load_categories():
+        normalized = normalize_simulator_name(category)
+        if normalized and normalized.casefold() not in names_by_key:
+            names_by_key[normalized.casefold()] = normalized
+
+    return [
+        {'name': name}
+        for name in sorted(names_by_key.values(), key=lambda value: value.casefold())
+    ]
+
+
 def load_stats():
     return {s.question_id: {'correct': s.correct, 'wrong': s.wrong} for s in QuestionStat.query.all()}
 
