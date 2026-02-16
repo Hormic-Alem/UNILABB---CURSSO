@@ -51,7 +51,7 @@ QUESTIONS_PER_PAGE = 3
 
 
 class Question(db.Model):
-    id = db.Column(db.String(32), primary_key=True)
+    id = db.Column(db.String(8), primary_key=True)
     category = db.Column(db.String(255), nullable=False, index=True)
     question = db.Column(db.Text, nullable=False)
     option1 = db.Column(db.Text, nullable=False)
@@ -183,6 +183,25 @@ def ticket_to_dict(ticket):
 
 def load_questions():
     return [question_to_dict(q) for q in Question.query.order_by(Question.category, Question.id).all()]
+
+
+def list_questions():
+    return [question_to_dict(q) for q in Question.query.order_by(Question.category, Question.id).all()]
+
+
+def create_question(category, question, option1, option2, option3, answer):
+    new_question = Question(
+        id=os.urandom(4).hex(),
+        category=category,
+        question=question,
+        option1=option1,
+        option2=option2,
+        option3=option3,
+        answer=answer,
+    )
+    db.session.add(new_question)
+    db.session.commit()
+    return question_to_dict(new_question)
 
 
 def save_questions(questions):
@@ -333,7 +352,7 @@ def home():
 def dashboard():
     if 'username' not in session or not is_admin_session():
         return redirect(url_for('login'))
-    questions = load_questions()
+    questions = list_questions()
     return render_template('dashboard.html', questions=questions)
 
 
@@ -343,16 +362,14 @@ def add_question():
         return redirect(url_for('login'))
 
     if request.method == 'POST':
-        new_question = {
-            'id': os.urandom(4).hex(),
-            'category': request.form['category'],
-            'question': request.form['question'],
-            'options': [request.form['option1'], request.form['option2'], request.form['option3']],
-            'answer': request.form['answer'],
-        }
-        questions = load_questions()
-        questions.append(new_question)
-        save_questions(questions)
+        create_question(
+            request.form['category'],
+            request.form['question'],
+            request.form['option1'],
+            request.form['option2'],
+            request.form['option3'],
+            request.form['answer'],
+        )
         return redirect(url_for('dashboard'))
 
     return render_template('add_question.html')
