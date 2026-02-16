@@ -117,6 +117,15 @@ def validate_csrf_or_abort():
         abort(400, description='CSRF token inválido.')
 
 
+def validate_csrf_or_redirect(endpoint='dashboard'):
+    session_token = session.get('_csrf_token')
+    form_token = request.form.get('csrf_token')
+    if not session_token or not form_token or not secrets.compare_digest(session_token, form_token):
+        flash('⚠️ Sesión expirada. Recarga la página e inténtalo nuevamente.', 'warning')
+        return redirect(url_for(endpoint))
+    return None
+
+
 def normalize_user_progress(user_dict):
     if 'progress' not in user_dict or not isinstance(user_dict['progress'], dict):
         user_dict['progress'] = {}
