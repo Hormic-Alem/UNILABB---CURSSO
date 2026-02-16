@@ -3,6 +3,8 @@ import csv
 import io
 import os
 import secrets
+import zipfile
+from xml.etree import ElementTree as ET
 
 from dotenv import load_dotenv
 from flask import Flask, abort, flash, redirect, render_template, request, session, url_for
@@ -48,6 +50,11 @@ db = SQLAlchemy(app)
 
 QUESTIONS_PER_PAGE = 3
 
+
+
+class Simulator(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(255), unique=True, nullable=False, index=True)
 
 
 class Question(db.Model):
@@ -110,6 +117,15 @@ def validate_csrf_or_abort():
         abort(400, description='CSRF token inválido.')
 
 
+def validate_csrf_or_redirect(endpoint='dashboard'):
+    session_token = session.get('_csrf_token')
+    form_token = request.form.get('csrf_token')
+    if not session_token or not form_token or not secrets.compare_digest(session_token, form_token):
+        flash('⚠️ Sesión expirada. Recarga la página e inténtalo nuevamente.', 'warning')
+        return redirect(url_for(endpoint))
+    return None
+
+
 def normalize_user_progress(user_dict):
     if 'progress' not in user_dict or not isinstance(user_dict['progress'], dict):
         user_dict['progress'] = {}
@@ -117,6 +133,118 @@ def normalize_user_progress(user_dict):
         user_dict['progress']['completed_questions'] = []
     if 'by_category' not in user_dict['progress'] or not isinstance(user_dict['progress']['by_category'], dict):
         user_dict['progress']['by_category'] = {}
+
+
+def normalize_username(value):
+    return (value or '').strip()
+
+
+def normalize_email(value):
+    return (value or '').strip().lower()
+
+
+def verify_password(stored_password, incoming_password):
+    if not stored_password:
+        return False, False
+
+    try:
+        if check_password_hash(stored_password, incoming_password):
+            return True, False
+    except ValueError:
+        pass
+
+    legacy_match = secrets.compare_digest(str(stored_password), str(incoming_password))
+    return legacy_match, legacy_match
+
+
+def parse_xlsx(file_storage):
+    data = file_storage.read()
+    with zipfile.ZipFile(io.BytesIO(data)) as zf:
+        ns = {
+            'x': 'http://schemas.openxmlformats.org/spreadsheetml/2006/main',
+            'r': 'http://schemas.openxmlformats.org/officeDocument/2006/relationships',
+            'rel': 'http://schemas.openxmlformats.org/package/2006/relationships',
+        }
+
+        shared_strings = []
+        if 'xl/sharedStrings.xml' in zf.namelist():
+            root = ET.fromstring(zf.read('xl/sharedStrings.xml'))
+            for si in root.findall('x:si', ns):
+                text_parts = [t.text or '' for t in si.findall('.//x:t', ns)]
+                shared_strings.append(''.join(text_parts))
+
+        workbook_path = 'xl/workbook.xml'
+        if workbook_path not in zf.namelist():
+            raise ValueError('El archivo XLSX no contiene workbook.xml')
+
+        workbook_root = ET.fromstring(zf.read(workbook_path))
+        first_sheet = workbook_root.find('x:sheets/x:sheet', ns)
+        if first_sheet is None:
+            raise ValueError('El archivo XLSX no contiene hojas con datos')
+
+        rel_id = first_sheet.attrib.get('{http://schemas.openxmlformats.org/officeDocument/2006/relationships}id')
+        if not rel_id:
+            raise ValueError('No se encontró la relación de la hoja principal')
+
+        rels_path = 'xl/_rels/workbook.xml.rels'
+        if rels_path not in zf.namelist():
+            raise ValueError('El archivo XLSX no contiene workbook.xml.rels')
+
+        rels_root = ET.fromstring(zf.read(rels_path))
+        target = None
+        for rel in rels_root.findall('rel:Relationship', ns):
+            if rel.attrib.get('Id') == rel_id:
+                target = rel.attrib.get('Target')
+                break
+
+        if not target:
+            raise ValueError('No se pudo resolver la hoja principal del XLSX')
+
+        target = target.lstrip('/')
+        sheet_xml = f'xl/{target}' if not target.startswith('xl/') else target
+        if sheet_xml not in zf.namelist():
+            raise ValueError(f'No se encontró la hoja principal: {sheet_xml}')
+
+        root = ET.fromstring(zf.read(sheet_xml))
+
+        rows = []
+        max_col = 0
+        for row in root.findall('.//x:sheetData/x:row', ns):
+            row_map = {}
+            for cell in row.findall('x:c', ns):
+                ref = cell.attrib.get('r', '')
+                col_letters = ''.join(ch for ch in ref if ch.isalpha())
+                col_idx = 0
+                for ch in col_letters:
+                    col_idx = col_idx * 26 + (ord(ch.upper()) - 64)
+                if col_idx <= 0:
+                    continue
+
+                value = ''
+                cell_type = cell.attrib.get('t')
+                if cell_type == 'inlineStr':
+                    value = ''.join((t.text or '') for t in cell.findall('.//x:is/x:t', ns))
+                else:
+                    v_elem = cell.find('x:v', ns)
+                    if v_elem is not None and v_elem.text is not None:
+                        raw = v_elem.text
+                        if cell_type == 's':
+                            idx = int(raw)
+                            value = shared_strings[idx] if 0 <= idx < len(shared_strings) else ''
+                        else:
+                            value = raw
+
+                row_map[col_idx] = str(value)
+                max_col = max(max_col, col_idx)
+
+            rows.append([row_map.get(i, '') for i in range(1, max_col + 1)])
+
+        return rows
+
+
+def parse_excel_xlsx(file_storage):
+    # Compatibilidad con despliegues que referencian el nombre nuevo.
+    return parse_xlsx(file_storage)
 
 
 def question_to_dict(question):
@@ -159,25 +287,9 @@ def ticket_to_dict(ticket):
     return payload
 
 
-def load_questions():
+def query_questions():
+    """Carga preguntas exclusivamente desde SQLAlchemy (sin JSON legacy)."""
     return [question_to_dict(q) for q in Question.query.order_by(Question.category, Question.id).all()]
-
-
-def save_questions(questions):
-    Question.query.delete()
-    db.session.flush()
-    for q in questions:
-        options = q.get('options', ['', '', ''])
-        db.session.add(Question(
-            id=q['id'],
-            category=q['category'],
-            question=q['question'],
-            option1=options[0],
-            option2=options[1],
-            option3=options[2],
-            answer=q['answer'],
-        ))
-    db.session.commit()
 
 
 def load_users():
@@ -209,8 +321,31 @@ def save_users(users):
     db.session.commit()
 
 
-def load_categories():
-    return [row[0] for row in db.session.query(Question.category).distinct().order_by(Question.category).all() if row[0]]
+def query_simulator_names():
+    """Carga simuladores exclusivamente desde SQLAlchemy (sin JSON legacy)."""
+    return [s.name for s in Simulator.query.order_by(Simulator.name).all()]
+
+
+def ensure_simulator_exists(category_name):
+    name = (category_name or '').strip()
+    if not name:
+        return
+
+    exists = Simulator.query.filter(db.func.lower(Simulator.name) == name.lower()).first()
+    if exists:
+        return
+
+    db.session.add(Simulator(name=name))
+
+
+def ensure_simulators_for_questions():
+    categories = [row[0] for row in db.session.query(Question.category).distinct().all() if row[0]]
+    for category in categories:
+        existing = Simulator.query.filter(db.func.lower(Simulator.name) == category.lower()).first()
+        if not existing:
+            db.session.add(Simulator(name=category))
+
+    db.session.commit()
 
 
 def load_stats():
@@ -249,7 +384,7 @@ def mark_question_completed(user, question_id, category=None):
 
 def calculate_progress_data(user, category=None):
     normalize_user_progress(user)
-    questions = load_questions()
+    questions = query_questions()
     if category:
         filtered = [q for q in questions if q['category'] == category]
         total = len(filtered)
@@ -275,8 +410,8 @@ def home():
     user = next(u for u in users if u['username'] == session['username'])
     normalize_user_progress(user)
 
-    questions = load_questions()
-    categories = sorted(set(q['category'] for q in questions))
+    questions = query_questions()
+    categories = query_simulator_names()
 
     progress_by_category = {}
     chart_labels = []
@@ -311,8 +446,9 @@ def home():
 def dashboard():
     if 'username' not in session or not is_admin_session():
         return redirect(url_for('login'))
-    questions = load_questions()
-    return render_template('dashboard.html', questions=questions)
+    questions = query_questions()
+    simulators = Simulator.query.all()
+    return render_template('dashboard.html', questions=questions, simulators=simulators)
 
 
 @app.route('/add', methods=['GET', 'POST'])
@@ -321,19 +457,31 @@ def add_question():
         return redirect(url_for('login'))
 
     if request.method == 'POST':
-        new_question = {
-            'id': os.urandom(4).hex(),
-            'category': request.form['category'],
-            'question': request.form['question'],
-            'options': [request.form['option1'], request.form['option2'], request.form['option3']],
-            'answer': request.form['answer'],
-        }
-        questions = load_questions()
-        questions.append(new_question)
-        save_questions(questions)
+        validate_csrf_or_abort()
+
+        category = normalize_username(request.form['category'])
+        question_text = normalize_username(request.form['question'])
+        option1 = normalize_username(request.form['option1'])
+        option2 = normalize_username(request.form['option2'])
+        option3 = normalize_username(request.form['option3'])
+        answer = normalize_username(request.form['answer'])
+
+        ensure_simulator_exists(category)
+
+        db.session.add(Question(
+            id=os.urandom(4).hex(),
+            category=category,
+            question=question_text,
+            option1=option1,
+            option2=option2,
+            option3=option3,
+            answer=answer,
+        ))
+        db.session.commit()
         return redirect(url_for('dashboard'))
 
-    return render_template('add_question.html')
+    categories = query_simulator_names()
+    return render_template('add_question.html', categories=categories)
 
 
 @app.route('/delete/<question_id>', methods=['POST'])
@@ -343,15 +491,15 @@ def delete_question(question_id):
 
     validate_csrf_or_abort()
 
-    questions = load_questions()
-    questions = [q for q in questions if q['id'] != question_id]
-    save_questions(questions)
+    question = db.session.get(Question, question_id)
+    if question:
+        db.session.delete(question)
 
     stat = db.session.get(QuestionStat, question_id)
     if stat:
         db.session.delete(stat)
-        db.session.commit()
 
+    db.session.commit()
     return redirect(url_for('dashboard'))
 
 
@@ -367,42 +515,60 @@ def import_questions():
 
     filename = secure_filename(file.filename)
     ext = filename.split('.')[-1].lower()
-
-    if ext != 'csv':
-        flash('❌ Tipo de archivo no soportado (usa CSV).', 'danger')
-        return redirect(url_for('dashboard'))
-
-    try:
-        content = file.stream.read().decode('utf-8-sig')
-        reader = csv.DictReader(io.StringIO(content))
-        rows = list(reader)
-    except Exception as e:
-        flash(f'❌ Error al leer archivo CSV: {e}', 'danger')
+    if ext not in {'csv', 'xlsx'}:
+        flash('❌ Tipo de archivo no soportado (usa CSV o XLSX).', 'danger')
         return redirect(url_for('dashboard'))
 
     required_cols = ['category', 'question', 'option1', 'option2', 'option3', 'answer']
-    if not rows or any(col not in reader.fieldnames for col in required_cols):
-        missing = [col for col in required_cols if col not in (reader.fieldnames or [])]
+
+    try:
+        if ext == 'csv':
+            content = file.stream.read().decode('utf-8-sig')
+            reader = csv.DictReader(io.StringIO(content))
+            rows = [{str(k).strip().lower(): v for k, v in row.items()} for row in reader]
+            fieldnames = [str(name).strip().lower() for name in (reader.fieldnames or [])]
+        else:
+            matrix = parse_xlsx(file)
+            header = [str(c).strip() for c in (matrix[0] if matrix else [])]
+            fieldnames = [h.lower() for h in header]
+            rows = []
+            for row_values in matrix[1:]:
+                row_dict = {}
+                for idx, key in enumerate(header):
+                    key_norm = str(key).strip().lower()
+                    if not key_norm:
+                        continue
+                    row_dict[key_norm] = '' if idx >= len(row_values) or row_values[idx] is None else str(row_values[idx])
+                if any(str(v).strip() for v in row_dict.values()):
+                    rows.append(row_dict)
+
+    except Exception as e:
+        flash(f'❌ Error al leer archivo: {e}', 'danger')
+        return redirect(url_for('dashboard'))
+
+    if not rows or any(col not in fieldnames for col in required_cols):
+        missing = [col for col in required_cols if col not in fieldnames]
         flash(f"❌ Faltan columnas obligatorias: {', '.join(missing)}", 'danger')
         return redirect(url_for('dashboard'))
 
-    questions = load_questions()
-    new_questions = []
-
+    inserted = 0
     for row in rows:
-        new_q = {
-            'id': os.urandom(4).hex(),
-            'category': str(row['category']).strip(),
-            'question': str(row['question']).strip(),
-            'options': [str(row['option1']).strip(), str(row['option2']).strip(), str(row['option3']).strip()],
-            'answer': str(row['answer']).strip(),
-        }
-        new_questions.append(new_q)
+        category = str(row['category']).strip()
+        ensure_simulator_exists(category)
+        db.session.add(Question(
+            id=os.urandom(4).hex(),
+            category=category,
+            question=str(row['question']).strip(),
+            option1=str(row['option1']).strip(),
+            option2=str(row['option2']).strip(),
+            option3=str(row['option3']).strip(),
+            answer=str(row['answer']).strip(),
+        ))
+        inserted += 1
 
-    questions.extend(new_questions)
-    save_questions(questions)
+    db.session.commit()
 
-    flash(f'✅ {len(new_questions)} preguntas importadas correctamente.', 'success')
+    flash('Preguntas importadas correctamente', 'success')
     return redirect(url_for('dashboard'))
 
 
@@ -411,17 +577,35 @@ def login():
     message = ''
 
     if request.method == 'POST':
-        username = request.form['username']
+        identifier = normalize_username(request.form['username'])
         password = request.form['password']
 
         users = load_users()
-        user = next((u for u in users if u['username'] == username), None)
+        email_identifier = normalize_email(identifier)
 
-        if not user or not check_password_hash(user['password'], password):
+        user = next(
+            (
+                u for u in users
+                if normalize_username(u.get('username')).casefold() == identifier.casefold()
+                or normalize_email(u.get('email')) == email_identifier
+            ),
+            None,
+        )
+
+        is_valid_password = False
+        is_legacy_password = False
+        if user:
+            is_valid_password, is_legacy_password = verify_password(user.get('password'), password)
+
+        if not user or not is_valid_password:
             message = 'Credenciales incorrectas.'
         elif not user.get('active'):
             message = 'Tu cuenta aún no ha sido activada por el administrador.'
         else:
+            if is_legacy_password:
+                user['password'] = generate_password_hash(password)
+                save_users(users)
+
             session.clear()
             session['username'] = user['username']
             session['email'] = user['email']
@@ -450,7 +634,7 @@ def quiz_by_category(category):
     if 'username' not in session:
         return redirect(url_for('login'))
 
-    all_questions = load_questions()
+    all_questions = query_questions()
     questions = [q for q in all_questions if q['category'] == category]
     total_questions = len(questions)
 
@@ -493,8 +677,8 @@ def quiz_by_category(category):
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
-        username = request.form['username'].strip()
-        email = request.form['email'].strip().lower()
+        username = normalize_username(request.form['username'])
+        email = normalize_email(request.form['email'])
         password = request.form['password']
 
         users = load_users()
@@ -538,6 +722,31 @@ def register():
     return render_template('register.html')
 
 
+@app.route('/simulators/create', methods=['POST'])
+def create_simulator():
+    if 'username' not in session or not is_admin_session():
+        return redirect(url_for('login'))
+
+    csrf_error = validate_csrf_or_redirect('dashboard')
+    if csrf_error:
+        return csrf_error
+
+    name = normalize_username(request.form.get('name'))
+    if not name:
+        flash('❌ El nombre del simulador es obligatorio.', 'danger')
+        return redirect(url_for('dashboard'))
+
+    existing = Simulator.query.filter(db.func.lower(Simulator.name) == name.lower()).first()
+    if existing:
+        flash('⚠️ Ese simulador ya existe.', 'warning')
+        return redirect(url_for('dashboard'))
+
+    db.session.add(Simulator(name=name))
+    db.session.commit()
+    flash('✅ Simulador creado correctamente.', 'success')
+    return redirect(url_for('dashboard'))
+
+
 @app.route('/admin_users')
 def admin_users():
     if 'username' not in session or not is_admin_session():
@@ -573,7 +782,7 @@ def reset_category(category):
     user = next(u for u in users if u['username'] == session['username'])
     normalize_user_progress(user)
 
-    questions = load_questions()
+    questions = query_questions()
     ids_categoria = [q['id'] for q in questions if q['category'] == category]
 
     user['progress']['by_category'][category] = []
@@ -585,9 +794,7 @@ def reset_category(category):
 
 @app.route('/landing')
 def landing():
-    categories = load_categories()
-    if not categories:
-        categories = ['Inglés a2', 'Pensamiento científico', 'Pensamiento matemático', 'Redacción indirecta']
+    categories = query_simulator_names()
     return render_template('landing.html', categories=categories)
 
 
@@ -683,6 +890,7 @@ def admin_mark_paid(ticket_id):
 
 with app.app_context():
     db.create_all()
+    ensure_simulators_for_questions()
 
     try:
         admin = User.query.filter_by(username="Apolo96").first()
