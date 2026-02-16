@@ -266,25 +266,7 @@ def load_categories():
 
 
 def list_simulators():
-    existing_simulators = Simulator.query.order_by(Simulator.name).all()
-    existing_by_key = {sim.name.casefold(): sim for sim in existing_simulators}
-
-    pending_commit = False
-    for category in load_categories():
-        normalized_category = normalize_simulator_name(category)
-        if normalized_category and normalized_category.casefold() not in existing_by_key:
-            simulator = Simulator(name=normalized_category)
-            db.session.add(simulator)
-            existing_by_key[normalized_category.casefold()] = simulator
-            pending_commit = True
-
-    if pending_commit:
-        db.session.commit()
-
-    return [
-        {'name': sim.name}
-        for sim in Simulator.query.order_by(Simulator.name).all()
-    ]
+    return [{'name': category} for category in load_categories()]
 
 
 def load_stats():
@@ -419,15 +401,14 @@ def add_question():
         return redirect(url_for('login'))
 
     if request.method == 'POST':
-        category = request.form.get('category', '').strip()
-        question = request.form.get('question', '').strip()
-        option1 = request.form.get('option1', '').strip()
-        option2 = request.form.get('option2', '').strip()
-        option3 = request.form.get('option3', '').strip()
-        answer = request.form.get('answer', '').strip()
+        category = request.form['category']
+        question = request.form['question']
+        option1 = request.form['option1']
+        option2 = request.form['option2']
+        option3 = request.form['option3']
+        answer = request.form['answer']
 
         create_question(category, question, option1, option2, option3, answer)
-        flash('Pregunta añadida correctamente.', 'success')
         return redirect(url_for('dashboard'))
 
     simulators = list_simulators()
