@@ -318,6 +318,54 @@ def parse_xlsx(file_storage):
     return parsed_rows
 
 
+def parse_csv(file_storage):
+    required_cols = ['category', 'question', 'option1', 'option2', 'option3', 'answer']
+
+    file_storage.stream.seek(0)
+    sample = file_storage.stream.read(1024).decode('utf-8-sig', errors='replace')
+    file_storage.stream.seek(0)
+
+    delimiters = [';']
+    try:
+        sniffed = csv.Sniffer().sniff(sample, delimiters=';,')
+        if sniffed.delimiter in (';', ',') and sniffed.delimiter not in delimiters:
+            delimiters.append(sniffed.delimiter)
+    except csv.Error:
+        pass
+
+    if ',' not in delimiters:
+        delimiters.append(',')
+
+    fallback_rows = []
+    fallback_fields = []
+
+    for delimiter in delimiters:
+        file_storage.stream.seek(0)
+        content = file_storage.stream.read().decode('utf-8-sig', errors='replace')
+        reader = csv.DictReader(io.StringIO(content), delimiter=delimiter)
+        fieldnames = [str(name).strip().lower() for name in (reader.fieldnames or [])]
+
+        rows = []
+        for row in reader:
+            rows.append({
+                'category': str(row.get('category', '')).strip(),
+                'question': str(row.get('question', '')).strip(),
+                'option1': str(row.get('option1', '')).strip(),
+                'option2': str(row.get('option2', '')).strip(),
+                'option3': str(row.get('option3', '')).strip(),
+                'answer': str(row.get('answer', '')).strip(),
+            })
+
+        if not fallback_fields:
+            fallback_fields = fieldnames
+            fallback_rows = rows
+
+        if all(col in fieldnames for col in required_cols):
+            return rows, fieldnames
+
+    return fallback_rows, fallback_fields
+
+
 def list_simulators():
     names_by_key = {}
 
@@ -524,20 +572,7 @@ def import_questions():
 
     try:
         if ext == 'csv':
-            content = file.stream.read().decode('utf-8-sig')
-            reader = csv.DictReader(io.StringIO(content))
-            rows = list(reader)
-            fieldnames = [str(name).strip().lower() for name in (reader.fieldnames or [])]
-            normalized_rows = []
-            for row in rows:
-                normalized_rows.append({
-                    'category': str(row.get('category', '')).strip(),
-                    'question': str(row.get('question', '')).strip(),
-                    'option1': str(row.get('option1', '')).strip(),
-                    'option2': str(row.get('option2', '')).strip(),
-                    'option3': str(row.get('option3', '')).strip(),
-                    'answer': str(row.get('answer', '')).strip(),
-                })
+            normalized_rows, fieldnames = parse_csv(file)
         else:
             normalized_rows = parse_xlsx(file)
             fieldnames = ['category', 'question', 'option1', 'option2', 'option3', 'answer']
