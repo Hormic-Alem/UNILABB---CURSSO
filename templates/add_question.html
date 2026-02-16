@@ -12,11 +12,10 @@
         <div class="mb-3">
             <label for="category" class="form-label">Categoría</label>
             <select class="form-select" name="category" required>
-                <option value="">Selecciona una categoría</option>
-                <option value="Amparo">Amparo</option>
-                <option value="Penal">Penal</option>
-                <option value="Civil">Civil</option>
-                <option value="Laboral">Laboral</option>
+                <option value="">Selecciona un simulador</option>
+                {% for sim in simulators %}
+                    <option value="{{ sim.name }}">{{ sim.name }}</option>
+                {% endfor %}
             </select>
         </div>
         <div class="mb-3">

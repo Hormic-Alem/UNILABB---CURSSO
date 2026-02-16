@@ -7,6 +7,7 @@ import secrets
 from dotenv import load_dotenv
 from flask import Flask, abort, flash, redirect, render_template, request, session, url_for
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import func
 from sqlalchemy.engine import make_url
 from sqlalchemy.exc import ArgumentError
 from werkzeug.security import check_password_hash, generate_password_hash
@@ -58,6 +59,11 @@ class Question(db.Model):
     option2 = db.Column(db.Text, nullable=False)
     option3 = db.Column(db.Text, nullable=False)
     answer = db.Column(db.Text, nullable=False)
+
+
+class Simulator(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(255), unique=True, nullable=False, index=True)
 
 
 class User(db.Model):
@@ -125,6 +131,11 @@ def normalize_username(value):
 
 def normalize_email(value):
     return (value or '').strip().lower()
+
+
+def normalize_simulator_name(value):
+    cleaned = ' '.join((value or '').split()).strip()
+    return cleaned.title()
 
 
 def verify_password(stored_password, incoming_password):
@@ -254,6 +265,28 @@ def load_categories():
     return [row[0] for row in db.session.query(Question.category).distinct().order_by(Question.category).all() if row[0]]
 
 
+def list_simulators():
+    existing_simulators = Simulator.query.order_by(Simulator.name).all()
+    existing_by_key = {sim.name.casefold(): sim for sim in existing_simulators}
+
+    pending_commit = False
+    for category in load_categories():
+        normalized_category = normalize_simulator_name(category)
+        if normalized_category and normalized_category.casefold() not in existing_by_key:
+            simulator = Simulator(name=normalized_category)
+            db.session.add(simulator)
+            existing_by_key[normalized_category.casefold()] = simulator
+            pending_commit = True
+
+    if pending_commit:
+        db.session.commit()
+
+    return [
+        {'name': sim.name}
+        for sim in Simulator.query.order_by(Simulator.name).all()
+    ]
+
+
 def load_stats():
     return {s.question_id: {'correct': s.correct, 'wrong': s.wrong} for s in QuestionStat.query.all()}
 
@@ -352,8 +385,32 @@ def home():
 def dashboard():
     if 'username' not in session or not is_admin_session():
         return redirect(url_for('login'))
-    questions = list_questions()
-    return render_template('dashboard.html', questions=questions)
+    return render_template(
+        'dashboard.html',
+        simulators=list_simulators(),
+        questions=list_questions(),
+    )
+
+
+@app.route('/simulators/create', methods=['POST'])
+def create_simulator():
+    if 'username' not in session or not is_admin_session():
+        return redirect(url_for('login'))
+
+    simulator_name = normalize_simulator_name(request.form.get('name'))
+    if not simulator_name:
+        flash('❌ Debes ingresar un nombre válido para el simulador.', 'danger')
+        return redirect(url_for('dashboard'))
+
+    exists = db.session.query(Simulator.id).filter(func.lower(Simulator.name) == simulator_name.lower()).first()
+    if exists:
+        flash('ℹ️ El simulador ya existe.', 'info')
+        return redirect(url_for('dashboard'))
+
+    db.session.add(Simulator(name=simulator_name))
+    db.session.commit()
+    flash('✅ Simulador creado', 'success')
+    return redirect(url_for('dashboard'))
 
 
 @app.route('/add', methods=['GET', 'POST'])
@@ -362,17 +419,19 @@ def add_question():
         return redirect(url_for('login'))
 
     if request.method == 'POST':
-        create_question(
-            request.form['category'],
-            request.form['question'],
-            request.form['option1'],
-            request.form['option2'],
-            request.form['option3'],
-            request.form['answer'],
-        )
+        category = request.form.get('category', '').strip()
+        question = request.form.get('question', '').strip()
+        option1 = request.form.get('option1', '').strip()
+        option2 = request.form.get('option2', '').strip()
+        option3 = request.form.get('option3', '').strip()
+        answer = request.form.get('answer', '').strip()
+
+        create_question(category, question, option1, option2, option3, answer)
+        flash('Pregunta añadida correctamente.', 'success')
         return redirect(url_for('dashboard'))
 
-    return render_template('add_question.html')
+    simulators = list_simulators()
+    return render_template('add_question.html', simulators=simulators)
 
 
 @app.route('/delete/<question_id>', methods=['POST'])
