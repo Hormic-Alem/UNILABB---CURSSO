@@ -254,6 +254,10 @@ def load_categories():
     return [row[0] for row in db.session.query(Question.category).distinct().order_by(Question.category).all() if row[0]]
 
 
+def list_simulators():
+    return [{'name': category} for category in load_categories()]
+
+
 def load_stats():
     return {s.question_id: {'correct': s.correct, 'wrong': s.wrong} for s in QuestionStat.query.all()}
 
@@ -362,17 +366,18 @@ def add_question():
         return redirect(url_for('login'))
 
     if request.method == 'POST':
-        create_question(
-            request.form['category'],
-            request.form['question'],
-            request.form['option1'],
-            request.form['option2'],
-            request.form['option3'],
-            request.form['answer'],
-        )
+        category = request.form['category']
+        question = request.form['question']
+        option1 = request.form['option1']
+        option2 = request.form['option2']
+        option3 = request.form['option3']
+        answer = request.form['answer']
+
+        create_question(category, question, option1, option2, option3, answer)
         return redirect(url_for('dashboard'))
 
-    return render_template('add_question.html')
+    simulators = list_simulators()
+    return render_template('add_question.html', simulators=simulators)
 
 
 @app.route('/delete/<question_id>', methods=['POST'])
