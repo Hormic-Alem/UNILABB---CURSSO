@@ -148,96 +148,6 @@ def verify_password(stored_password, incoming_password):
     return legacy_match, legacy_match
 
 
-def parse_excel_xlsx(file_storage):
-    data = file_storage.read()
-    with zipfile.ZipFile(io.BytesIO(data)) as zf:
-        ns = {
-            'x': 'http://schemas.openxmlformats.org/spreadsheetml/2006/main',
-            'r': 'http://schemas.openxmlformats.org/officeDocument/2006/relationships',
-            'rel': 'http://schemas.openxmlformats.org/package/2006/relationships',
-        }
-
-        shared_strings = []
-        if 'xl/sharedStrings.xml' in zf.namelist():
-            root = ET.fromstring(zf.read('xl/sharedStrings.xml'))
-            for si in root.findall('x:si', ns):
-                text_parts = [t.text or '' for t in si.findall('.//x:t', ns)]
-                shared_strings.append(''.join(text_parts))
-
-        workbook_path = 'xl/workbook.xml'
-        if workbook_path not in zf.namelist():
-            raise ValueError('El archivo XLSX no contiene workbook.xml')
-
-        workbook_root = ET.fromstring(zf.read(workbook_path))
-        first_sheet = workbook_root.find('x:sheets/x:sheet', ns)
-        if first_sheet is None:
-            raise ValueError('El archivo XLSX no contiene hojas con datos')
-
-        rel_id = first_sheet.attrib.get('{http://schemas.openxmlformats.org/officeDocument/2006/relationships}id')
-        if not rel_id:
-            raise ValueError('No se encontró la relación de la hoja principal')
-
-        rels_path = 'xl/_rels/workbook.xml.rels'
-        if rels_path not in zf.namelist():
-            raise ValueError('El archivo XLSX no contiene workbook.xml.rels')
-
-        rels_root = ET.fromstring(zf.read(rels_path))
-        target = None
-        for rel in rels_root.findall('rel:Relationship', ns):
-            if rel.attrib.get('Id') == rel_id:
-                target = rel.attrib.get('Target')
-                break
-
-        if not target:
-            raise ValueError('No se pudo resolver la hoja principal del XLSX')
-
-        target = target.lstrip('/')
-        sheet_xml = f'xl/{target}' if not target.startswith('xl/') else target
-        if sheet_xml not in zf.namelist():
-            raise ValueError(f'No se encontró la hoja principal: {sheet_xml}')
-
-        root = ET.fromstring(zf.read(sheet_xml))
-
-        rows = []
-        max_col = 0
-        for row in root.findall('.//x:sheetData/x:row', ns):
-            row_map = {}
-            for cell in row.findall('x:c', ns):
-                ref = cell.attrib.get('r', '')
-                col_letters = ''.join(ch for ch in ref if ch.isalpha())
-                col_idx = 0
-                for ch in col_letters:
-                    col_idx = col_idx * 26 + (ord(ch.upper()) - 64)
-                if col_idx <= 0:
-                    continue
-
-                value = ''
-                cell_type = cell.attrib.get('t')
-                if cell_type == 'inlineStr':
-                    value = ''.join((t.text or '') for t in cell.findall('.//x:is/x:t', ns))
-                else:
-                    v_elem = cell.find('x:v', ns)
-                    if v_elem is not None and v_elem.text is not None:
-                        raw = v_elem.text
-                        if cell_type == 's':
-                            idx = int(raw)
-                            value = shared_strings[idx] if 0 <= idx < len(shared_strings) else ''
-                        else:
-                            value = raw
-
-                row_map[col_idx] = str(value)
-                max_col = max(max_col, col_idx)
-
-            rows.append([row_map.get(i, '') for i in range(1, max_col + 1)])
-
-        return rows
-
-
-def parse_xlsx(file_storage):
-    # Compatibilidad con despliegues que referencian el nombre anterior.
-    return parse_excel_xlsx(file_storage)
-
-
 def question_to_dict(question):
     return {
         'id': question.id,
@@ -532,20 +442,19 @@ def import_questions():
         if ext == 'csv':
             content = file.stream.read().decode('utf-8-sig')
             reader = csv.DictReader(io.StringIO(content))
-            rows = [{str(k).strip().lower(): v for k, v in row.items()} for row in reader]
-            fieldnames = [str(name).strip().lower() for name in (reader.fieldnames or [])]
+            rows = list(reader)
+            fieldnames = reader.fieldnames or []
         else:
-            matrix = parse_excel_xlsx(file)
+            matrix = parse_xlsx(file)
             header = [str(c).strip() for c in (matrix[0] if matrix else [])]
-            fieldnames = [h.lower() for h in header]
+            fieldnames = header
             rows = []
             for row_values in matrix[1:]:
                 row_dict = {}
                 for idx, key in enumerate(header):
-                    key_norm = str(key).strip().lower()
-                    if not key_norm:
+                    if not key:
                         continue
-                    row_dict[key_norm] = '' if idx >= len(row_values) or row_values[idx] is None else str(row_values[idx])
+                    row_dict[key] = '' if idx >= len(row_values) or row_values[idx] is None else str(row_values[idx])
                 if any(str(v).strip() for v in row_dict.values()):
                     rows.append(row_dict)
 
