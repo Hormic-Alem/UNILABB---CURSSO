@@ -425,6 +425,8 @@ def import_questions():
     if 'username' not in session or not is_admin_session():
         return redirect(url_for('login'))
 
+    validate_csrf_or_abort()
+
     file = request.files.get('file')
     if not file:
         flash('❌ No se seleccionó archivo.', 'danger')
