@@ -154,7 +154,6 @@
               method="POST"
               enctype="multipart/form-data"
               class="border p-3 rounded neon-table">
-            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 
             <label class="form-label fw-semibold">Seleccionar archivo</label>
 
@@ -166,7 +165,7 @@
             <p class="text-muted mt-3">
                 Formato requerido:<br>
                 <strong>category, question, option1, option2, option3, answer</strong><br>
-                ✔ Si una categoría no existe, se crea automáticamente.
+                ✔ Se crearán categorías nuevas automáticamente.
             </p>
 
         </form>
