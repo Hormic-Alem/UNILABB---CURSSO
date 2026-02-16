@@ -98,6 +98,14 @@
 
     <h2 class="mb-4">📋 Panel de Control - Administrador</h2>
 
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }}" role="alert">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
     <!-- BOTONES SUPERIORES -->
     <a href="{{ url_for('add_question') }}" class="btn neon-btn mb-3">
         ➕ Añadir nueva pregunta
@@ -113,6 +121,23 @@
     </a>
 
     <div class="clearfix"></div>
+
+    <div class="panel-card">
+        <form method="POST" action="{{ url_for('create_simulator') }}" class="mb-4">
+            <label class="form-label fw-semibold">Nombre del simulador</label>
+            <input type="text" name="name" class="form-control mb-2" placeholder="Ej. Inglés A2" required>
+            <button class="btn neon-btn">+ Crear simulador</button>
+        </form>
+
+        <h5>Simuladores existentes</h5>
+        <ul>
+        {% for sim in simulators %}
+          <li>{{ sim.name }}</li>
+        {% else %}
+          <li>No hay simuladores creados todavía.</li>
+        {% endfor %}
+        </ul>
+    </div>
 
     <div class="panel-card">
 
@@ -163,9 +188,9 @@
                             <td>{{ q.question }}</td>
                             <td>
                                 <ul>
-                                    {% for opt in q.options %}
-                                        <li>{{ opt }}</li>
-                                    {% endfor %}
+                                    <li>{{ q.option1 }}</li>
+                                    <li>{{ q.option2 }}</li>
+                                    <li>{{ q.option3 }}</li>
                                 </ul>
                             </td>
                             <td>{{ q.answer }}</td>
