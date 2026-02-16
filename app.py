@@ -119,6 +119,28 @@ def normalize_user_progress(user_dict):
         user_dict['progress']['by_category'] = {}
 
 
+def normalize_username(value):
+    return (value or '').strip()
+
+
+def normalize_email(value):
+    return (value or '').strip().lower()
+
+
+def verify_password(stored_password, incoming_password):
+    if not stored_password:
+        return False, False
+
+    try:
+        if check_password_hash(stored_password, incoming_password):
+            return True, False
+    except ValueError:
+        pass
+
+    legacy_match = secrets.compare_digest(str(stored_password), str(incoming_password))
+    return legacy_match, legacy_match
+
+
 def question_to_dict(question):
     return {
         'id': question.id,
@@ -411,17 +433,35 @@ def login():
     message = ''
 
     if request.method == 'POST':
-        username = request.form['username']
+        identifier = normalize_username(request.form['username'])
         password = request.form['password']
 
         users = load_users()
-        user = next((u for u in users if u['username'] == username), None)
+        email_identifier = normalize_email(identifier)
 
-        if not user or not check_password_hash(user['password'], password):
+        user = next(
+            (
+                u for u in users
+                if normalize_username(u.get('username')).casefold() == identifier.casefold()
+                or normalize_email(u.get('email')) == email_identifier
+            ),
+            None,
+        )
+
+        is_valid_password = False
+        is_legacy_password = False
+        if user:
+            is_valid_password, is_legacy_password = verify_password(user.get('password'), password)
+
+        if not user or not is_valid_password:
             message = 'Credenciales incorrectas.'
         elif not user.get('active'):
             message = 'Tu cuenta aún no ha sido activada por el administrador.'
         else:
+            if is_legacy_password:
+                user['password'] = generate_password_hash(password)
+                save_users(users)
+
             session.clear()
             session['username'] = user['username']
             session['email'] = user['email']
@@ -493,8 +533,8 @@ def quiz_by_category(category):
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
-        username = request.form['username'].strip()
-        email = request.form['email'].strip().lower()
+        username = normalize_username(request.form['username'])
+        email = normalize_email(request.form['email'])
         password = request.form['password']
 
         users = load_users()
