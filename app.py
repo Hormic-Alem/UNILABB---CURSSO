@@ -197,25 +197,9 @@ def ticket_to_dict(ticket):
     return payload
 
 
-def load_questions():
+def query_questions():
+    """Carga preguntas exclusivamente desde SQLAlchemy (sin JSON legacy)."""
     return [question_to_dict(q) for q in Question.query.order_by(Question.category, Question.id).all()]
-
-
-def save_questions(questions):
-    Question.query.delete()
-    db.session.flush()
-    for q in questions:
-        options = q.get('options', ['', '', ''])
-        db.session.add(Question(
-            id=q['id'],
-            category=q['category'],
-            question=q['question'],
-            option1=options[0],
-            option2=options[1],
-            option3=options[2],
-            answer=q['answer'],
-        ))
-    db.session.commit()
 
 
 def load_users():
@@ -310,7 +294,7 @@ def mark_question_completed(user, question_id, category=None):
 
 def calculate_progress_data(user, category=None):
     normalize_user_progress(user)
-    questions = load_questions()
+    questions = query_questions()
     if category:
         filtered = [q for q in questions if q['category'] == category]
         total = len(filtered)
@@ -417,15 +401,15 @@ def delete_question(question_id):
 
     validate_csrf_or_abort()
 
-    questions = load_questions()
-    questions = [q for q in questions if q['id'] != question_id]
-    save_questions(questions)
+    question = db.session.get(Question, question_id)
+    if question:
+        db.session.delete(question)
 
     stat = db.session.get(QuestionStat, question_id)
     if stat:
         db.session.delete(stat)
-        db.session.commit()
 
+    db.session.commit()
     return redirect(url_for('dashboard'))
 
 
@@ -561,7 +545,7 @@ def quiz_by_category(category):
     if 'username' not in session:
         return redirect(url_for('login'))
 
-    all_questions = load_questions()
+    all_questions = query_questions()
     questions = [q for q in all_questions if q['category'] == category]
     total_questions = len(questions)
 
@@ -707,7 +691,7 @@ def reset_category(category):
     user = next(u for u in users if u['username'] == session['username'])
     normalize_user_progress(user)
 
-    questions = load_questions()
+    questions = query_questions()
     ids_categoria = [q['id'] for q in questions if q['category'] == category]
 
     user['progress']['by_category'][category] = []
