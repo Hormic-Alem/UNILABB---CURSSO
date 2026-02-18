@@ -269,7 +269,9 @@ def parse_xlsx(file_storage):
         if 'xl/sharedStrings.xml' in zf.namelist():
             shared_root = ET.fromstring(zf.read('xl/sharedStrings.xml'))
             for si in shared_root.findall('x:si', ns):
-                text = ''.join(node.text or '' for node in si.findall('.//x:t', ns))
+                raw_text = ''.join(node.text or '' for node in si.findall('.//x:t', ns))
+                # Normalizar UTF-8 para evitar caracteres rotos
+                text = raw_text.encode("utf-8", "ignore").decode("utf-8")
                 shared_strings.append(text)
 
         sheet_root = ET.fromstring(zf.read('xl/worksheets/sheet1.xml'))
@@ -321,11 +323,12 @@ def parse_xlsx(file_storage):
 def parse_csv(file_storage):
     required_cols = ['category', 'question', 'option1', 'option2', 'option3', 'answer']
 
+    # Leer muestra SOLO para detectar delimitador (sin reemplazar caracteres)
     file_storage.stream.seek(0)
-    sample = file_storage.stream.read(1024).decode('utf-8-sig', errors='replace')
+    sample = file_storage.stream.read(1024).decode('utf-8-sig', errors='ignore')
     file_storage.stream.seek(0)
 
-    delimiters = [';']
+    delimiters = [';', ',']
     try:
         sniffed = csv.Sniffer().sniff(sample, delimiters=';,')
         if sniffed.delimiter in (';', ',') and sniffed.delimiter not in delimiters:
@@ -333,37 +336,27 @@ def parse_csv(file_storage):
     except csv.Error:
         pass
 
-    if ',' not in delimiters:
-        delimiters.append(',')
-
-    fallback_rows = []
-    fallback_fields = []
-
     for delimiter in delimiters:
         file_storage.stream.seek(0)
-        content = file_storage.stream.read().decode('utf-8-sig', errors='replace')
+
+        # DECODIFICACIÓN CORRECTA
+        content = file_storage.stream.read().decode('utf-8-sig', errors='ignore')
+
         reader = csv.DictReader(io.StringIO(content), delimiter=delimiter)
-        fieldnames = [str(name).strip().lower() for name in (reader.fieldnames or [])]
+        fieldnames = [(name or '').strip().lower() for name in (reader.fieldnames or [])]
 
         rows = []
         for row in reader:
             rows.append({
-                'category': str(row.get('category', '')).strip(),
-                'question': str(row.get('question', '')).strip(),
-                'option1': str(row.get('option1', '')).strip(),
-                'option2': str(row.get('option2', '')).strip(),
-                'option3': str(row.get('option3', '')).strip(),
-                'answer': str(row.get('answer', '')).strip(),
+                col: str(row.get(col, '')).strip()
+                for col in required_cols
             })
-
-        if not fallback_fields:
-            fallback_fields = fieldnames
-            fallback_rows = rows
 
         if all(col in fieldnames for col in required_cols):
             return rows, fieldnames
 
-    return fallback_rows, fallback_fields
+    # fallback
+    return rows, fieldnames
 
 
 def list_simulators():
@@ -510,6 +503,25 @@ def create_simulator():
     db.session.add(Simulator(name=simulator_name))
     db.session.commit()
     flash('✅ Simulador creado', 'success')
+    return redirect(url_for('dashboard'))
+
+
+@app.route('/simulators/delete/<int:sim_id>', methods=['POST'])
+def delete_simulator(sim_id):
+    if 'username' not in session or not is_admin_session():
+        return redirect(url_for('login'))
+
+    validate_csrf_or_abort()
+
+    simulator = db.session.get(Simulator, sim_id)
+    if simulator:
+        linked_questions = Question.query.filter_by(category=simulator.name).count()
+        if linked_questions > 0:
+            flash('No se puede eliminar porque tiene preguntas asociadas')
+        else:
+            db.session.delete(simulator)
+            db.session.commit()
+
     return redirect(url_for('dashboard'))
 
 
