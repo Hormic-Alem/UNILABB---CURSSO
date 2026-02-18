@@ -88,6 +88,17 @@
 
     <h3 class="text-white fw-bold mb-4">📊 Estadísticas globales</h3>
 
+    <ul class="nav nav-tabs mb-3 border-0 gap-2">
+        {% for cat, items in stats_by_category.items() %}
+            <li class="nav-item">
+                <a class="btn btn-sm {% if cat == selected_stats_category %}neon-btn{% else %}neon-outline-btn{% endif %}"
+                   href="{{ url_for('home', stats_category=cat) }}#estadisticas">
+                    {{ cat }}
+                </a>
+            </li>
+        {% endfor %}
+    </ul>
+
     <div class="table-responsive">
         <table class="table table-dark table-striped align-middle neon-table">
             <thead class="table-header">
@@ -100,12 +111,16 @@
             </thead>
 
             <tbody>
-                {% for item in global_stats %}
+                {% for item in visible_stats %}
                 <tr>
                     <td class="fw-semibold">{{ item.question }}</td>
                     <td class="text-center text-success fw-bold">{{ item.correct }}</td>
                     <td class="text-center text-danger fw-bold">{{ item.wrong }}</td>
                     <td class="text-center text-warning fw-bold">{{ item.error_percent }}%</td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="4" class="text-center text-light">No hay estadísticas para este simulador.</td>
                 </tr>
                 {% endfor %}
             </tbody>
@@ -134,6 +149,8 @@ new Chart(ctx, {
         }]
     },
     options: {
+        responsive: true,
+        maintainAspectRatio: false,
         cutout: "65%",
         plugins: {
             legend: {
@@ -152,5 +169,27 @@ new Chart(ctx, {
     }
 });
 </script>
+
+<style>
+.chart-wrapper {
+    width: 100%;
+    max-width: 480px;        /* tamaño máximo real de la gráfica */
+    height: 380px;           /* alto controlado */
+    margin: 0 auto;
+    padding: 10px;
+}
+
+#progressChart {
+    width: 100% !important;
+    height: 100% !important;
+}
+
+@media (max-width: 768px) {
+    .chart-wrapper {
+        max-width: 320px;    /* reduce en móvil */
+        height: 260px;
+    }
+}
+</style>
 
 {% endblock %}

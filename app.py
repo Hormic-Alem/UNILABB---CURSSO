@@ -139,6 +139,31 @@ def normalize_simulator_name(value):
     cleaned = ' '.join((value or '').split()).strip()
     return cleaned.title()
 
+def simulator_image_filename(simulator_name):
+    normalized = normalize_simulator_name(simulator_name)
+    safe = normalized.replace('/', ' ').replace('\\', ' ').strip().lower()
+    return f"{safe}.jpg" if safe else ''
+
+
+def save_simulator_image(simulator_name, file_storage):
+    if not file_storage or not file_storage.filename:
+        return False, 'No se envió imagen.'
+
+    filename = secure_filename(file_storage.filename)
+    extension = filename.rsplit('.', 1)[-1].lower() if '.' in filename else ''
+    if extension not in {'jpg', 'jpeg'}:
+        return False, 'La imagen debe estar en formato JPG o JPEG.'
+
+    target_name = simulator_image_filename(simulator_name)
+    if not target_name:
+        return False, 'Nombre de simulador inválido para guardar imagen.'
+
+    target_dir = os.path.join(app.root_path, 'static', 'img', 'cursos')
+    os.makedirs(target_dir, exist_ok=True)
+    target_path = os.path.join(target_dir, target_name)
+    file_storage.save(target_path)
+    return True, target_name
+
 
 def verify_password(stored_password, incoming_password):
     if not stored_password:
@@ -269,7 +294,9 @@ def parse_xlsx(file_storage):
         if 'xl/sharedStrings.xml' in zf.namelist():
             shared_root = ET.fromstring(zf.read('xl/sharedStrings.xml'))
             for si in shared_root.findall('x:si', ns):
-                text = ''.join(node.text or '' for node in si.findall('.//x:t', ns))
+                raw_text = ''.join(node.text or '' for node in si.findall('.//x:t', ns))
+                # Normalizar UTF-8 para evitar caracteres rotos
+                text = raw_text.encode("utf-8", "ignore").decode("utf-8")
                 shared_strings.append(text)
 
         sheet_root = ET.fromstring(zf.read('xl/worksheets/sheet1.xml'))
@@ -321,11 +348,12 @@ def parse_xlsx(file_storage):
 def parse_csv(file_storage):
     required_cols = ['category', 'question', 'option1', 'option2', 'option3', 'answer']
 
+    # Leer muestra SOLO para detectar delimitador (sin reemplazar caracteres)
     file_storage.stream.seek(0)
-    sample = file_storage.stream.read(1024).decode('utf-8-sig', errors='replace')
+    sample = file_storage.stream.read(1024).decode('utf-8-sig', errors='ignore')
     file_storage.stream.seek(0)
 
-    delimiters = [';']
+    delimiters = [';', ',']
     try:
         sniffed = csv.Sniffer().sniff(sample, delimiters=';,')
         if sniffed.delimiter in (';', ',') and sniffed.delimiter not in delimiters:
@@ -333,37 +361,27 @@ def parse_csv(file_storage):
     except csv.Error:
         pass
 
-    if ',' not in delimiters:
-        delimiters.append(',')
-
-    fallback_rows = []
-    fallback_fields = []
-
     for delimiter in delimiters:
         file_storage.stream.seek(0)
-        content = file_storage.stream.read().decode('utf-8-sig', errors='replace')
+
+        # DECODIFICACIÓN CORRECTA
+        content = file_storage.stream.read().decode('utf-8-sig', errors='ignore')
+
         reader = csv.DictReader(io.StringIO(content), delimiter=delimiter)
-        fieldnames = [str(name).strip().lower() for name in (reader.fieldnames or [])]
+        fieldnames = [(name or '').strip().lower() for name in (reader.fieldnames or [])]
 
         rows = []
         for row in reader:
             rows.append({
-                'category': str(row.get('category', '')).strip(),
-                'question': str(row.get('question', '')).strip(),
-                'option1': str(row.get('option1', '')).strip(),
-                'option2': str(row.get('option2', '')).strip(),
-                'option3': str(row.get('option3', '')).strip(),
-                'answer': str(row.get('answer', '')).strip(),
+                col: str(row.get(col, '')).strip()
+                for col in required_cols
             })
-
-        if not fallback_fields:
-            fallback_fields = fieldnames
-            fallback_rows = rows
 
         if all(col in fieldnames for col in required_cols):
             return rows, fieldnames
 
-    return fallback_rows, fallback_fields
+    # fallback
+    return rows, fieldnames
 
 
 def list_simulators():
@@ -467,16 +485,39 @@ def home():
     avatar_url = user.get('avatar_url', None) or None
 
     stats = load_stats()
-    global_stats = []
+    stats_by_category = {cat: [] for cat in categories}
+
     for q in questions:
         qid = q['id']
         correct = stats.get(qid, {}).get('correct', 0)
         wrong = stats.get(qid, {}).get('wrong', 0)
         total = correct + wrong
         error_percent = int((wrong / total) * 100) if total > 0 else 0
-        global_stats.append({'question': q['question'], 'correct': correct, 'wrong': wrong, 'error_percent': error_percent})
+        stats_by_category.setdefault(q['category'], []).append({
+            'question': q['question'],
+            'correct': correct,
+            'wrong': wrong,
+            'error_percent': error_percent,
+        })
 
-    return render_template('home.html', categories=categories, progress_by_category=progress_by_category, total_percent=total_percent, avatar_url=avatar_url, chart_labels=chart_labels, chart_values=chart_values, global_stats=global_stats)
+    selected_stats_category = request.args.get('stats_category', '')
+    if selected_stats_category not in stats_by_category:
+        selected_stats_category = categories[0] if categories else ''
+
+    visible_stats = stats_by_category.get(selected_stats_category, [])
+
+    return render_template(
+        'home.html',
+        categories=categories,
+        progress_by_category=progress_by_category,
+        total_percent=total_percent,
+        avatar_url=avatar_url,
+        chart_labels=chart_labels,
+        chart_values=chart_values,
+        stats_by_category=stats_by_category,
+        selected_stats_category=selected_stats_category,
+        visible_stats=visible_stats,
+    )
 
 
 @app.route('/dashboard')
@@ -497,6 +538,8 @@ def create_simulator():
     if 'username' not in session or not is_admin_session():
         return redirect(url_for('login'))
 
+    validate_csrf_or_abort()
+
     simulator_name = normalize_simulator_name(request.form.get('name'))
     if not simulator_name:
         flash('❌ Debes ingresar un nombre válido para el simulador.', 'danger')
@@ -509,7 +552,58 @@ def create_simulator():
 
     db.session.add(Simulator(name=simulator_name))
     db.session.commit()
+
+    image_file = request.files.get('simulator_image')
+    if image_file and image_file.filename:
+        ok, message = save_simulator_image(simulator_name, image_file)
+        if ok:
+            flash('✅ Simulador creado con imagen.', 'success')
+        else:
+            flash(f'✅ Simulador creado. Imagen no guardada: {message}', 'warning')
+        return redirect(url_for('dashboard'))
+
     flash('✅ Simulador creado', 'success')
+    return redirect(url_for('dashboard'))
+
+
+@app.route('/simulators/image/<int:sim_id>', methods=['POST'])
+def upload_simulator_image(sim_id):
+    if 'username' not in session or not is_admin_session():
+        return redirect(url_for('login'))
+
+    validate_csrf_or_abort()
+
+    simulator = db.session.get(Simulator, sim_id)
+    if not simulator:
+        flash('Simulador no encontrado.', 'warning')
+        return redirect(url_for('dashboard'))
+
+    image_file = request.files.get('simulator_image')
+    ok, message = save_simulator_image(simulator.name, image_file)
+    if ok:
+        flash('Imagen del simulador actualizada.', 'success')
+    else:
+        flash(message, 'warning')
+
+    return redirect(url_for('dashboard'))
+
+
+@app.route('/simulators/delete/<int:sim_id>', methods=['POST'])
+def delete_simulator(sim_id):
+    if 'username' not in session or not is_admin_session():
+        return redirect(url_for('login'))
+
+    validate_csrf_or_abort()
+
+    simulator = db.session.get(Simulator, sim_id)
+    if simulator:
+        linked_questions = Question.query.filter_by(category=simulator.name).count()
+        if linked_questions > 0:
+            flash('No se puede eliminar porque tiene preguntas asociadas')
+        else:
+            db.session.delete(simulator)
+            db.session.commit()
+
     return redirect(url_for('dashboard'))
 
 
