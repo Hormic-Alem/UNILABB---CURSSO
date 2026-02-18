@@ -485,16 +485,39 @@ def home():
     avatar_url = user.get('avatar_url', None) or None
 
     stats = load_stats()
-    global_stats = []
+    stats_by_category = {cat: [] for cat in categories}
+
     for q in questions:
         qid = q['id']
         correct = stats.get(qid, {}).get('correct', 0)
         wrong = stats.get(qid, {}).get('wrong', 0)
         total = correct + wrong
         error_percent = int((wrong / total) * 100) if total > 0 else 0
-        global_stats.append({'question': q['question'], 'correct': correct, 'wrong': wrong, 'error_percent': error_percent})
+        stats_by_category.setdefault(q['category'], []).append({
+            'question': q['question'],
+            'correct': correct,
+            'wrong': wrong,
+            'error_percent': error_percent,
+        })
 
-    return render_template('home.html', categories=categories, progress_by_category=progress_by_category, total_percent=total_percent, avatar_url=avatar_url, chart_labels=chart_labels, chart_values=chart_values, global_stats=global_stats)
+    selected_stats_category = request.args.get('stats_category', '')
+    if selected_stats_category not in stats_by_category:
+        selected_stats_category = categories[0] if categories else ''
+
+    visible_stats = stats_by_category.get(selected_stats_category, [])
+
+    return render_template(
+        'home.html',
+        categories=categories,
+        progress_by_category=progress_by_category,
+        total_percent=total_percent,
+        avatar_url=avatar_url,
+        chart_labels=chart_labels,
+        chart_values=chart_values,
+        stats_by_category=stats_by_category,
+        selected_stats_category=selected_stats_category,
+        visible_stats=visible_stats,
+    )
 
 
 @app.route('/dashboard')
