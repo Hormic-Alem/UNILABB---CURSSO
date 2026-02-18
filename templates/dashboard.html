@@ -138,9 +138,16 @@
         </form>
 
         <h5>Simuladores existentes</h5>
-        <ul>
+        <ul class="list-unstyled">
         {% for sim in simulators %}
-          <li>{{ sim.name }}</li>
+          <li class="d-flex align-items-center justify-content-between gap-2 mb-2">
+            <span>{{ sim.name }}</span>
+            <form method="POST" action="{{ url_for('delete_simulator', sim_id=sim.id) }}" 
+                  onsubmit="return confirm('¿Eliminar simulador?');">
+              <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+              <button type="submit" class="btn btn-sm btn-outline-danger">Eliminar</button>
+            </form>
+          </li>
         {% else %}
           <li>No hay simuladores creados todavía.</li>
         {% endfor %}

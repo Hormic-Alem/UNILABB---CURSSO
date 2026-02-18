@@ -506,6 +506,25 @@ def create_simulator():
     return redirect(url_for('dashboard'))
 
 
+@app.route('/simulators/delete/<int:sim_id>', methods=['POST'])
+def delete_simulator(sim_id):
+    if 'username' not in session or not is_admin_session():
+        return redirect(url_for('login'))
+
+    validate_csrf_or_abort()
+
+    simulator = db.session.get(Simulator, sim_id)
+    if simulator:
+        linked_questions = Question.query.filter_by(category=simulator.name).count()
+        if linked_questions > 0:
+            flash('No se puede eliminar porque tiene preguntas asociadas')
+        else:
+            db.session.delete(simulator)
+            db.session.commit()
+
+    return redirect(url_for('dashboard'))
+
+
 @app.route('/add', methods=['GET', 'POST'])
 def add_question():
     if 'username' not in session or not is_admin_session():
