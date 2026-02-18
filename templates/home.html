@@ -134,6 +134,8 @@ new Chart(ctx, {
         }]
     },
     options: {
+        responsive: true,
+        maintainAspectRatio: false,
         cutout: "65%",
         plugins: {
             legend: {
@@ -152,5 +154,27 @@ new Chart(ctx, {
     }
 });
 </script>
+
+<style>
+.chart-wrapper {
+    width: 100%;
+    max-width: 480px;        /* tamaño máximo real de la gráfica */
+    height: 380px;           /* alto controlado */
+    margin: 0 auto;
+    padding: 10px;
+}
+
+#progressChart {
+    width: 100% !important;
+    height: 100% !important;
+}
+
+@media (max-width: 768px) {
+    .chart-wrapper {
+        max-width: 320px;    /* reduce en móvil */
+        height: 260px;
+    }
+}
+</style>
 
 {% endblock %}
