@@ -139,6 +139,31 @@ def normalize_simulator_name(value):
     cleaned = ' '.join((value or '').split()).strip()
     return cleaned.title()
 
+def simulator_image_filename(simulator_name):
+    normalized = normalize_simulator_name(simulator_name)
+    safe = normalized.replace('/', ' ').replace('\\', ' ').strip().lower()
+    return f"{safe}.jpg" if safe else ''
+
+
+def save_simulator_image(simulator_name, file_storage):
+    if not file_storage or not file_storage.filename:
+        return False, 'No se envió imagen.'
+
+    filename = secure_filename(file_storage.filename)
+    extension = filename.rsplit('.', 1)[-1].lower() if '.' in filename else ''
+    if extension not in {'jpg', 'jpeg'}:
+        return False, 'La imagen debe estar en formato JPG o JPEG.'
+
+    target_name = simulator_image_filename(simulator_name)
+    if not target_name:
+        return False, 'Nombre de simulador inválido para guardar imagen.'
+
+    target_dir = os.path.join(app.root_path, 'static', 'img', 'cursos')
+    os.makedirs(target_dir, exist_ok=True)
+    target_path = os.path.join(target_dir, target_name)
+    file_storage.save(target_path)
+    return True, target_name
+
 
 def verify_password(stored_password, incoming_password):
     if not stored_password:
@@ -490,6 +515,8 @@ def create_simulator():
     if 'username' not in session or not is_admin_session():
         return redirect(url_for('login'))
 
+    validate_csrf_or_abort()
+
     simulator_name = normalize_simulator_name(request.form.get('name'))
     if not simulator_name:
         flash('❌ Debes ingresar un nombre válido para el simulador.', 'danger')
@@ -502,7 +529,39 @@ def create_simulator():
 
     db.session.add(Simulator(name=simulator_name))
     db.session.commit()
+
+    image_file = request.files.get('simulator_image')
+    if image_file and image_file.filename:
+        ok, message = save_simulator_image(simulator_name, image_file)
+        if ok:
+            flash('✅ Simulador creado con imagen.', 'success')
+        else:
+            flash(f'✅ Simulador creado. Imagen no guardada: {message}', 'warning')
+        return redirect(url_for('dashboard'))
+
     flash('✅ Simulador creado', 'success')
+    return redirect(url_for('dashboard'))
+
+
+@app.route('/simulators/image/<int:sim_id>', methods=['POST'])
+def upload_simulator_image(sim_id):
+    if 'username' not in session or not is_admin_session():
+        return redirect(url_for('login'))
+
+    validate_csrf_or_abort()
+
+    simulator = db.session.get(Simulator, sim_id)
+    if not simulator:
+        flash('Simulador no encontrado.', 'warning')
+        return redirect(url_for('dashboard'))
+
+    image_file = request.files.get('simulator_image')
+    ok, message = save_simulator_image(simulator.name, image_file)
+    if ok:
+        flash('Imagen del simulador actualizada.', 'success')
+    else:
+        flash(message, 'warning')
+
     return redirect(url_for('dashboard'))
 
 
