@@ -1,0 +1,689 @@
+.app-gallery-section {
+            padding: 60px 0;
+        }
+
+        .app-gallery-card {
+            background: linear-gradient(145deg, rgba(16, 23, 49, 0.95), rgba(7, 12, 28, 0.98));
+            border: 1px solid rgba(0, 255, 234, 0.22);
+            border-radius: 28px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+        }
+
+        .gallery-subtitle {
+            color: rgba(233, 240, 255, 0.8);
+        }
+
+        /* FRAME TIPO TABLET */
+        .phone-frame {
+            position: relative;
+            width: min(100%, 850px);   /* MUCHO más ancho */
+            margin: 0 auto;
+            padding: 18px;
+            border-radius: 30px;
+            background: linear-gradient(160deg, #1c244a, #090d20);
+            border: 1px solid rgba(0, 255, 234, 0.35);
+            box-shadow:
+                0 20px 50px rgba(0, 255, 234, 0.15),
+                inset 0 1px 0 rgba(255, 255, 255, 0.05);
+        }
+
+        /* IMAGEN COMPLETA SIN RECORTE */
+        .app-screen {
+            width: 100%;
+            height: auto;
+            border-radius: 20px;
+            object-fit: contain;   /* 👈 CLAVE: NO RECORTA */
+        }
+
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        .landing-body {
+            padding-top: 86px;
+        }
+
+        .landing-navbar {
+            background: rgba(7, 12, 28, 0.85);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(0, 255, 234, 0.2);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.35);
+            z-index: 1055;
+        }
+
+        .brand-logo {
+            width: 34px;
+            height: 34px;
+            object-fit: cover;
+            border-radius: 10px;
+            border: 1px solid rgba(0, 255, 234, 0.45);
+            box-shadow: 0 0 12px rgba(0, 255, 234, 0.35);
+            margin-right: 10px;
+        }
+
+        .landing-navbar .navbar-brand,
+        .landing-navbar .nav-link {
+            color: #e9f0ff;
+        }
+
+        .landing-navbar .nav-link:hover,
+        .landing-navbar .nav-link:focus {
+            color: #00ffe0;
+        }
+
+        .landing-navbar .navbar-toggler {
+            border-color: rgba(0, 255, 234, 0.35);
+            cursor: pointer;
+            pointer-events: auto;
+        }
+
+        .landing-navbar .navbar-toggler-icon {
+            filter: brightness(0) invert(1);
+        }
+
+        .contact-section {
+            padding: 40px 0 80px;
+        }
+
+        .contact-card {
+            background: linear-gradient(145deg, rgba(16, 23, 49, 0.9), rgba(7, 12, 28, 0.95));
+            border: 1px solid rgba(0, 255, 234, 0.22);
+            border-radius: 24px;
+            box-shadow: 0 16px 40px rgba(0, 0, 0, 0.45);
+        }
+
+        .mobile-nav-extra {
+            display: none;
+        }
+
+        @media (max-width: 992px) {
+
+          /* Solo navbar del landing */
+          body.landing-body .landing-navbar {
+            background-color: #0b1026 !important;
+          }
+
+          body.landing-body .landing-navbar .navbar-collapse {
+            background-color: #0b1026;
+            padding: 15px 0;
+          }
+
+          body.landing-body .landing-navbar .nav-link {
+            color: #ffffff !important;
+            font-size: 1rem;
+            padding: 12px 0;
+          }
+
+          body.landing-body .landing-navbar .nav-link:hover {
+            color: #7c8cff !important;
+          }
+
+          body.landing-body .landing-navbar .navbar-toggler {
+            border: none;
+          }
+
+          body.landing-body #hero .landing-hero {
+            flex-direction: column !important;
+            text-align: center;
+            gap: 30px;
+          }
+
+          body.landing-body #hero img {
+            max-width: 85%;
+            height: auto;
+            margin: 0 auto;
+          }
+
+          body.landing-body #hero h1 {
+            font-size: 1.8rem;
+            line-height: 1.3;
+          }
+
+          body.landing-body #hero p {
+            font-size: 1rem;
+          }
+
+        }
+
+/* ===== SOLO MOVIL Y TABLET ===== */
+@media (max-width: 991px) {
+
+    /* NAVBAR */
+    .landing-navbar {
+        padding: 0.8rem 1rem !important;
+    }
+
+    .landing-navbar .navbar-brand {
+        font-size: 1.1rem !important;
+    }
+
+    .landing-navbar .nav-link {
+        font-size: 1rem !important;
+        padding: 0.8rem 0 !important;
+    }
+
+    .navbar-collapse {
+        background: #0b132b !important;
+        padding: 1rem !important;
+        border-radius: 8px;
+    }
+
+    /* HERO SECTION */
+    #hero {
+        padding-top: 40px !important;
+        padding-bottom: 40px !important;
+        min-height: auto !important;
+    }
+
+    .landing-hero {
+        flex-direction: column !important;
+        text-align: center !important;
+        gap: 2rem !important;
+    }
+
+    .landing-hero h1 {
+        font-size: 1.8rem !important;
+        line-height: 1.3 !important;
+    }
+
+    .landing-hero p {
+        font-size: 1rem !important;
+    }
+
+    .landing-hero img {
+        max-width: 90% !important;
+        height: auto !important;
+        margin: 0 auto !important;
+    }
+}
+
+/* ===== SOLO MOVIL PEQUEÑO ===== */
+@media (max-width: 576px) {
+
+    .landing-hero h1 {
+        font-size: 1.6rem !important;
+    }
+
+    .landing-hero p {
+        font-size: 0.95rem !important;
+    }
+
+    #hero {
+        padding-top: 30px !important;
+    }
+
+}
+
+/* ===== AJUSTE FINAL MOVIL/TABLET UX ===== */
+@media (max-width: 991px) {
+    body.landing-body {
+        padding-top: 72px !important;
+        overflow-x: hidden;
+    }
+
+    #hero.landing-hero-wrapper {
+        padding-top: 0 !important;
+        padding-bottom: 24px !important;
+    }
+
+    #hero .landing-hero {
+        min-height: auto !important;
+        padding-top: 12px !important;
+        padding-bottom: 12px !important;
+        align-items: center !important;
+        justify-content: center !important;
+    }
+
+    #hero .hero-text {
+        max-width: 100% !important;
+        margin-top: 0 !important;
+    }
+
+    #hero .hero-text h1,
+    #hero .hero-text .fw-bold {
+        font-size: 2rem !important;
+        line-height: 1.25 !important;
+        letter-spacing: 0.2px;
+    }
+
+    #hero .hero-subtitle,
+    #hero p {
+        font-size: 1.05rem !important;
+        line-height: 1.55 !important;
+    }
+
+    body.landing-body .section-title {
+        font-size: 1.9rem !important;
+        line-height: 1.25 !important;
+    }
+
+    body.landing-body p,
+    body.landing-body li {
+        font-size: 1rem !important;
+        line-height: 1.55 !important;
+    }
+
+    body.landing-body .landing-navbar .nav-link {
+        font-size: 1.05rem !important;
+        font-weight: 600;
+    }
+
+    body.landing-body .landing-navbar .navbar-brand {
+        font-size: 1.15rem !important;
+    }
+}
+
+@media (max-width: 576px) {
+    body.landing-body {
+        padding-top: 68px !important;
+    }
+
+    #hero .landing-hero {
+        padding-top: 6px !important;
+    }
+
+    #hero .hero-text h1,
+    #hero .hero-text .fw-bold {
+        font-size: 1.75rem !important;
+        line-height: 1.28 !important;
+    }
+
+    #hero .hero-subtitle,
+    #hero p {
+        font-size: 1rem !important;
+    }
+
+    body.landing-body .section-title {
+        font-size: 1.65rem !important;
+    }
+}
+
+/* ===== MOBILE/TABLET READABILITY BOOST ===== */
+@media (max-width: 991px) {
+  body.landing-body {
+    padding-top: 70px !important;
+    overflow-x: hidden;
+  }
+
+  /* NAVBAR MOBILE tipo menú centrado */
+  body.landing-body .landing-navbar {
+    padding: 0.95rem 1rem !important;
+  }
+
+  body.landing-body .brand-logo {
+    width: 40px;
+    height: 40px;
+  }
+
+  body.landing-body .landing-navbar .navbar-brand {
+    font-size: 1.2rem !important;
+    font-weight: 700;
+  }
+
+  body.landing-body .landing-navbar .navbar-toggler {
+    padding: 0.5rem 0.65rem;
+  }
+
+  body.landing-body .landing-navbar .navbar-collapse {
+    background: #0b132b !important;
+    border: 1px solid rgba(124, 140, 255, 0.35);
+    border-radius: 14px;
+    margin-top: 12px;
+    padding: 1.2rem 1rem !important;
+    text-align: center;
+  }
+
+  body.landing-body .landing-navbar .nav-link {
+    font-size: 1.12rem !important;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    padding: 0.9rem 0 !important;
+  }
+
+  body.landing-body .landing-navbar .neon-btn {
+    font-size: 1rem !important;
+    padding: 0.7rem 1.2rem !important;
+  }
+
+  /* HERO: quitar vacío superior y subir legibilidad */
+  #hero.landing-hero-wrapper {
+    padding-top: 8px !important;
+    padding-bottom: 30px !important;
+  }
+
+  #hero .landing-hero {
+    min-height: auto !important;
+    padding-top: 8px !important;
+    padding-bottom: 8px !important;
+    gap: 1.6rem !important;
+  }
+
+  #hero .hero-text h1,
+  #hero .hero-text .fw-bold {
+    font-size: 2rem !important;
+    line-height: 1.24 !important;
+  }
+
+  #hero .hero-subtitle,
+  #hero p {
+    font-size: 1.08rem !important;
+    line-height: 1.58 !important;
+  }
+
+  /* Texto general de landing más legible */
+  body.landing-body .gallery-subtitle,
+  body.landing-body .pricing-subtitle,
+  body.landing-body .plan-benefits li,
+  body.landing-body .pricing-card-pro p,
+  body.landing-body .pricing-card-pro .small,
+  body.landing-body .contact-section .gallery-subtitle {
+    font-size: 1.05rem !important;
+    line-height: 1.6 !important;
+  }
+
+  body.landing-body .plan-name {
+    font-size: 1.55rem !important;
+  }
+
+  body.landing-body .plan-price .price {
+    font-size: 2.3rem !important;
+  }
+
+  body.landing-body .plan-price .period {
+    font-size: 1.02rem !important;
+  }
+
+  body.landing-body .badge-popular {
+    font-size: 0.95rem !important;
+  }
+}
+
+@media (max-width: 576px) {
+  body.landing-body {
+    padding-top: 66px !important;
+  }
+
+  #hero .hero-text h1,
+  #hero .hero-text .fw-bold {
+    font-size: 1.78rem !important;
+  }
+
+  #hero .hero-subtitle,
+  #hero p {
+    font-size: 1rem !important;
+  }
+
+  body.landing-body .landing-navbar .nav-link {
+    font-size: 1.05rem !important;
+  }
+
+  body.landing-body .gallery-subtitle,
+  body.landing-body .pricing-subtitle,
+  body.landing-body .plan-benefits li,
+  body.landing-body .pricing-card-pro p,
+  body.landing-body .pricing-card-pro .small,
+  body.landing-body .contact-section .gallery-subtitle {
+    font-size: 1rem !important;
+  }
+}
+
+/* ===== MOBILE FULLSCREEN NAV + READABILITY FINAL ===== */
+@media (max-width: 991px) {
+  body.landing-body {
+    padding-top: 64px !important;
+    overflow-x: hidden;
+  }
+
+  /* Navbar visible + legible */
+  body.landing-body .landing-navbar {
+    min-height: 64px;
+    padding: 0.7rem 0.9rem !important;
+  }
+
+  body.landing-body .brand-logo {
+    width: 42px !important;
+    height: 42px !important;
+  }
+
+  body.landing-body .landing-navbar .navbar-brand {
+    font-size: 1.22rem !important;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+  }
+
+  body.landing-body .landing-navbar .navbar-toggler {
+    padding: 0.55rem 0.7rem !important;
+  }
+
+  /* Full-screen mobile menu like reference */
+  body.landing-body .landing-navbar .navbar-collapse.show,
+  body.landing-body .landing-navbar .navbar-collapse.collapsing {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 1060;
+    background: #0b132b !important;
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    padding: 2.2rem 1.4rem !important;
+    margin: 0 !important;
+    border-radius: 0 !important;
+  }
+
+  body.landing-body .landing-navbar .navbar-collapse.show .navbar-nav,
+  body.landing-body .landing-navbar .navbar-collapse.collapsing .navbar-nav {
+    width: 100%;
+    max-width: 360px;
+    text-align: center;
+    gap: 0.75rem !important;
+  }
+
+  body.landing-body .landing-navbar .nav-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6rem;
+    font-size: 1.28rem !important;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    padding: 0.95rem 0 !important;
+    color: #ffffff !important;
+  }
+
+  body.landing-body .landing-navbar .nav-item:nth-child(1) .nav-link::before { content: "📘"; }
+  body.landing-body .landing-navbar .nav-item:nth-child(2) .nav-link::before { content: "📊"; }
+  body.landing-body .landing-navbar .nav-item:nth-child(3) .nav-link::before { content: "💳"; }
+  body.landing-body .landing-navbar .nav-item:nth-child(4) .nav-link::before { content: "📩"; }
+
+  body.landing-body .landing-navbar .neon-btn {
+    font-size: 1.08rem !important;
+    font-weight: 700;
+    padding: 0.85rem 1.4rem !important;
+  }
+
+  /* Hero compact + text first */
+  #hero.landing-hero-wrapper {
+    padding-top: 6px !important;
+    padding-bottom: 26px !important;
+  }
+
+  #hero .landing-hero {
+    min-height: auto !important;
+    padding-top: 6px !important;
+    padding-bottom: 6px !important;
+    gap: 1.4rem !important;
+  }
+
+  #hero .hero-text { order: 1; }
+  #hero .hero-img { order: 2; }
+
+  #hero .hero-text h1,
+  #hero .hero-text .fw-bold {
+    font-size: 2.02rem !important;
+    line-height: 1.23 !important;
+  }
+
+  #hero .hero-subtitle,
+  #hero p {
+    font-size: 1.1rem !important;
+    line-height: 1.6 !important;
+  }
+
+  /* Landing general text bigger */
+  body.landing-body .section-title { font-size: 2rem !important; }
+  body.landing-body .course-title { font-size: 1.45rem !important; }
+  body.landing-body .course-sub,
+  body.landing-body .gallery-subtitle,
+  body.landing-body .pricing-subtitle,
+  body.landing-body .plan-benefits li,
+  body.landing-body .pricing-card-pro p,
+  body.landing-body .pricing-card-pro .small,
+  body.landing-body .contact-section .gallery-subtitle {
+    font-size: 1.08rem !important;
+    line-height: 1.62 !important;
+  }
+}
+
+@media (max-width: 576px) {
+  body.landing-body { padding-top: 60px !important; }
+
+  body.landing-body .landing-navbar .nav-link {
+    font-size: 1.2rem !important;
+  }
+
+  #hero .hero-text h1,
+  #hero .hero-text .fw-bold {
+    font-size: 1.82rem !important;
+    line-height: 1.26 !important;
+  }
+
+  #hero .hero-subtitle,
+  #hero p,
+  body.landing-body .gallery-subtitle,
+  body.landing-body .pricing-subtitle,
+  body.landing-body .plan-benefits li,
+  body.landing-body .pricing-card-pro p,
+  body.landing-body .pricing-card-pro .small,
+  body.landing-body .contact-section .gallery-subtitle {
+    font-size: 1.02rem !important;
+  }
+}
+
+/* ===== MOBILE NAV UX OVERRIDE ===== */
+@media (max-width: 991px) {
+  body.landing-body .landing-navbar .navbar-collapse.show,
+  body.landing-body .landing-navbar .navbar-collapse.collapsing {
+    padding: 1.5rem 1.1rem !important;
+    justify-content: flex-start;
+    overflow-y: auto;
+  }
+
+  body.landing-body .landing-navbar .navbar-collapse.show .navbar-nav,
+  body.landing-body .landing-navbar .navbar-collapse.collapsing .navbar-nav {
+    max-width: 420px;
+    margin: 0 auto;
+    width: 100%;
+    gap: 0.85rem !important;
+  }
+
+  body.landing-body .landing-navbar .nav-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6rem;
+    font-size: 1.45rem !important;
+    line-height: 1.2;
+    text-align: center;
+    font-weight: 700;
+  }
+
+  body.landing-body .landing-navbar .neon-btn {
+    font-size: 1.2rem !important;
+    padding: 0.95rem 1.5rem !important;
+  }
+
+  body.landing-body .landing-navbar .navbar-collapse.show .mobile-nav-extra,
+  body.landing-body .landing-navbar .navbar-collapse.collapsing .mobile-nav-extra {
+    display: flex;
+  }
+
+  body.landing-body .mobile-nav-extra {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    margin-top: 1.25rem;
+    gap: 1rem;
+    text-align: center;
+  }
+
+
+  body.landing-body .mobile-menu-close {
+    border: 1px solid rgba(124, 140, 255, 0.55);
+    background: transparent;
+    color: #ffffff;
+    border-radius: 999px;
+    width: 44px;
+    height: 44px;
+    font-size: 1.35rem;
+    line-height: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 0.75rem;
+  }
+
+  body.landing-body .mobile-brand-wrap {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+  }
+
+  body.landing-body .mobile-brand-logo {
+    width: 44px;
+    height: 44px;
+    border-radius: 10px;
+  }
+
+  body.landing-body .mobile-brand-text {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #fff;
+    letter-spacing: 0.03em;
+  }
+
+  body.landing-body .mobile-account-links {
+    display: flex;
+    flex-direction: column;
+    gap: 0.7rem;
+  }
+
+  body.landing-body .mobile-account-links a {
+    color: #f2f6ff;
+    text-decoration: none;
+    font-size: 1.12rem;
+  }
+
+  body.landing-body .mobile-social-links {
+    display: flex;
+    gap: 0.9rem;
+  }
+
+  body.landing-body .mobile-social-links a {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    border: 1px solid rgba(124, 140, 255, 0.55);
+    color: #fff;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    font-size: 1.2rem;
+  }
+}
