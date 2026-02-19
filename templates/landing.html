@@ -177,6 +177,57 @@
                     <a class="btn neon-btn px-3 py-2" href="{{ url_for('login') }}">Login</a>
                 </li>
             </ul>
+
+            <div class="mobile-nav-extra">
+                <div class="mobile-brand-wrap">
+                    <img src="{{ url_for('static', filename='img/cursos/logo.png') }}"
+                         onerror="this.onerror=null;this.src='{{ url_for('static', filename='img/cursos/logo.jpg') }}';"
+                         alt="Logo QuickLearner"
+                         class="mobile-brand-logo">
+                    <span class="mobile-brand-text">QuickLearner</span>
+                </div>
+
+                <div class="mobile-account-links">
+                    <a href="{{ url_for('login') }}">Iniciar sesión</a>
+                    <a href="{{ url_for('register') }}">Crear cuenta</a>
+                </div>
+
+                <div class="mobile-social-links" aria-label="Redes sociales">
+                    <a href="#" aria-label="Facebook">Ⓕ</a>
+                    <a href="#" aria-label="Pinterest">Ⓟ</a>
+                    <a href="#" aria-label="Instagram">Ⓘ</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</nav>
+
+
+<nav class="navbar navbar-expand-lg fixed-top landing-navbar">
+    <div class="container">
+        <a class="navbar-brand d-flex align-items-center fw-semibold" href="#hero">
+            <img src="{{ url_for('static', filename='img/cursos/logo.png') }}"
+                 onerror="this.onerror=null;this.src='{{ url_for('static', filename='img/cursos/logo.jpg') }}';"
+                 alt="Logo QuickLearner"
+                 class="brand-logo">
+            QuickLearner
+        </a>
+
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#landingNavbar"
+                aria-controls="landingNavbar" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="landingNavbar">
+            <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-2">
+                <li class="nav-item"><a class="nav-link" href="#courses">Cursos</a></li>
+                <li class="nav-item"><a class="nav-link" href="#gallery">Progreso</a></li>
+                <li class="nav-item"><a class="nav-link" href="#pricing">Precios</a></li>
+                <li class="nav-item"><a class="nav-link" href="#contact">Contacto</a></li>
+                <li class="nav-item ms-lg-2">
+                    <a class="btn neon-btn px-3 py-2" href="{{ url_for('login') }}">Login</a>
+                </li>
+            </ul>
         </div>
     </div>
 </nav>
@@ -1116,6 +1167,107 @@
   body.landing-body .pricing-card-pro .small,
   body.landing-body .contact-section .gallery-subtitle {
     font-size: 1.02rem !important;
+  }
+}
+</style>
+
+<style>
+/* ===== MOBILE NAV UX OVERRIDE ===== */
+@media (max-width: 991px) {
+  body.landing-body .landing-navbar .navbar-collapse.show,
+  body.landing-body .landing-navbar .navbar-collapse.collapsing {
+    padding: 1.5rem 1.1rem !important;
+    justify-content: flex-start;
+    overflow-y: auto;
+  }
+
+  body.landing-body .landing-navbar .navbar-collapse.show .navbar-nav,
+  body.landing-body .landing-navbar .navbar-collapse.collapsing .navbar-nav {
+    max-width: 420px;
+    margin: 0 auto;
+    width: 100%;
+    gap: 0.85rem !important;
+  }
+
+  body.landing-body .landing-navbar .nav-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6rem;
+    font-size: 1.45rem !important;
+    line-height: 1.2;
+    text-align: center;
+    font-weight: 700;
+  }
+
+  body.landing-body .landing-navbar .neon-btn {
+    font-size: 1.2rem !important;
+    padding: 0.95rem 1.5rem !important;
+  }
+
+  body.landing-body .landing-navbar .navbar-collapse.show .mobile-nav-extra,
+  body.landing-body .landing-navbar .navbar-collapse.collapsing .mobile-nav-extra {
+    display: flex;
+  }
+
+  body.landing-body .mobile-nav-extra {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    margin-top: 1.25rem;
+    gap: 1rem;
+    text-align: center;
+  }
+
+  body.landing-body .mobile-brand-wrap {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+  }
+
+  body.landing-body .mobile-brand-logo {
+    width: 44px;
+    height: 44px;
+    border-radius: 10px;
+  }
+
+  body.landing-body .mobile-brand-text {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #fff;
+    letter-spacing: 0.03em;
+  }
+
+  body.landing-body .mobile-account-links {
+    display: flex;
+    flex-direction: column;
+    gap: 0.7rem;
+  }
+
+  body.landing-body .mobile-account-links a {
+    color: #f2f6ff;
+    text-decoration: none;
+    font-size: 1.12rem;
+  }
+
+  body.landing-body .mobile-social-links {
+    display: flex;
+    gap: 0.9rem;
+  }
+
+  body.landing-body .mobile-social-links a {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    border: 1px solid rgba(124, 140, 255, 0.55);
+    color: #fff;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    font-size: 1.2rem;
   }
 }
 </style>
