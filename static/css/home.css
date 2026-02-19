@@ -552,3 +552,202 @@
     transform: translateY(-2px);
     box-shadow: 0 0 35px rgba(130, 70, 255, 0.6);
 }
+
+/* ============================
+   LANDING MOBILE OPTIMIZATION
+============================ */
+@media (max-width: 768px) {
+    body.landing-body {
+        padding-top: 68px;
+        overflow-x: hidden;
+    }
+
+    .landing-body .container,
+    .landing-body .pricing-container {
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
+
+    .landing-body .landing-navbar {
+        min-height: 64px;
+        padding: 0.65rem 0;
+    }
+
+    .landing-body .landing-navbar .navbar-toggler {
+        padding: 0.45rem 0.6rem;
+        border-color: rgba(0, 255, 234, 0.45);
+    }
+
+    .landing-body .brand-logo {
+        width: 32px;
+        height: 32px;
+    }
+
+    .landing-body .landing-navbar .navbar-brand {
+        font-size: 1rem;
+    }
+
+    .landing-body .landing-navbar .navbar-collapse {
+        background: #0b132b;
+        margin-top: 0.85rem;
+        border-radius: 12px;
+        padding: 0.9rem;
+        border: 1px solid rgba(124, 140, 255, 0.32);
+    }
+
+    .landing-body .landing-navbar .nav-link {
+        font-size: 1rem;
+        line-height: 1.35;
+        padding: 0.55rem 0;
+        text-align: center;
+    }
+
+    .landing-body .landing-navbar .neon-btn {
+        font-size: 1rem;
+        padding: 0.75rem 1rem;
+        min-height: 44px;
+    }
+
+    .landing-hero-wrapper {
+        padding: 0 1rem;
+    }
+
+    .landing-body .landing-hero {
+        min-height: auto;
+        flex-direction: column;
+        text-align: center;
+        gap: 1.1rem;
+        padding: 0.5rem 0 0;
+    }
+
+    .landing-body .hero-text h1 {
+        font-size: 1.9rem;
+        line-height: 1.22;
+        margin-bottom: 0.75rem;
+    }
+
+    .landing-body .hero-subtitle {
+        font-size: 1.03rem;
+        line-height: 1.5;
+        margin-top: 0;
+    }
+
+    .landing-body .hero-btn {
+        margin-top: 1rem !important;
+        width: min(100%, 260px);
+        padding: 0.85rem 1rem !important;
+        min-height: 46px;
+        font-size: 1rem;
+    }
+
+    .landing-body .hero-img img {
+        max-width: 100%;
+    }
+
+    .landing-body .courses-section,
+    .landing-body .stats-section,
+    .landing-body .app-gallery-section,
+    .landing-body .pricing-section,
+    .landing-body .contact-section {
+        margin-top: 2rem;
+        padding-top: 0;
+        padding-bottom: 2.25rem;
+    }
+
+    .landing-body .section-title,
+    .landing-body .pricing-title {
+        font-size: 2rem;
+        line-height: 1.2;
+        margin-bottom: 0.8rem;
+    }
+
+    .landing-body .gallery-subtitle,
+    .landing-body .pricing-subtitle,
+    .landing-body .course-sub,
+    .landing-body .plan-benefits li {
+        font-size: 1rem;
+        line-height: 1.55;
+    }
+
+    .landing-body .course-info {
+        padding: 1rem !important;
+    }
+
+    .landing-body .course-title {
+        font-size: 1.35rem;
+    }
+
+    .landing-body .stats-card,
+    .landing-body .app-gallery-card,
+    .landing-body .pricing-card-pro,
+    .landing-body .contact-card {
+        border-radius: 18px;
+        padding: 1.25rem !important;
+    }
+
+    .landing-body .stats-list li {
+        font-size: 1.05rem;
+        margin-bottom: 0.7rem;
+        padding: 0.75rem;
+    }
+
+    .landing-body .phone-frame {
+        padding: 0.65rem;
+        border-radius: 18px;
+    }
+
+    .landing-body .pricing-section {
+        padding-bottom: 2rem;
+    }
+
+    .landing-body .pricing-subtitle {
+        margin-bottom: 1.35rem;
+    }
+
+    .landing-body .pricing-card-pro {
+        max-width: 100%;
+    }
+
+    .landing-body .plan-name {
+        font-size: 1.6rem;
+        margin-bottom: 0.6rem;
+    }
+
+    .landing-body .plan-price {
+        margin-bottom: 1.15rem;
+    }
+
+    .landing-body .plan-price .price {
+        font-size: 2.45rem;
+    }
+
+    .landing-body .plan-benefits {
+        margin-bottom: 1.2rem;
+    }
+
+    .landing-body .plan-benefits li {
+        padding: 0.45rem 0;
+    }
+
+    .landing-body .btn-pricing,
+    .landing-body .btn.btn-outline-light,
+    .landing-body .neon-btn {
+        min-height: 46px;
+        font-size: 1rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .landing-body .hero-text h1 {
+        font-size: 1.68rem;
+    }
+
+    .landing-body .section-title,
+    .landing-body .pricing-title {
+        font-size: 1.85rem;
+    }
+
+    .landing-body .plan-price .price {
+        font-size: 2.2rem;
+    }
+}
