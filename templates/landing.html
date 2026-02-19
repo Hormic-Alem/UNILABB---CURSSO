@@ -99,6 +99,10 @@
             box-shadow: 0 16px 40px rgba(0, 0, 0, 0.45);
         }
 
+        .mobile-nav-extra {
+            display: none;
+        }
+
         @media (max-width: 992px) {
 
           /* Solo navbar del landing */
@@ -179,6 +183,8 @@
             </ul>
 
             <div class="mobile-nav-extra">
+                <button class="mobile-menu-close" type="button" data-bs-toggle="collapse" data-bs-target="#landingNavbar" aria-label="Cerrar menú">✕</button>
+
                 <div class="mobile-brand-wrap">
                     <img src="{{ url_for('static', filename='img/cursos/logo.png') }}"
                          onerror="this.onerror=null;this.src='{{ url_for('static', filename='img/cursos/logo.jpg') }}';"
@@ -198,276 +204,6 @@
                     <a href="#" aria-label="Instagram">Ⓘ</a>
                 </div>
             </div>
-        </div>
-    </div>
-</nav>
-
-
-<nav class="navbar navbar-expand-lg fixed-top landing-navbar">
-    <div class="container">
-        <a class="navbar-brand d-flex align-items-center fw-semibold" href="#hero">
-            <img src="{{ url_for('static', filename='img/cursos/logo.png') }}"
-                 onerror="this.onerror=null;this.src='{{ url_for('static', filename='img/cursos/logo.jpg') }}';"
-                 alt="Logo QuickLearner"
-                 class="brand-logo">
-            QuickLearner
-        </a>
-
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#landingNavbar"
-                aria-controls="landingNavbar" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-
-        <div class="collapse navbar-collapse" id="landingNavbar">
-            <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-2">
-                <li class="nav-item"><a class="nav-link" href="#courses">Cursos</a></li>
-                <li class="nav-item"><a class="nav-link" href="#gallery">Progreso</a></li>
-                <li class="nav-item"><a class="nav-link" href="#pricing">Precios</a></li>
-                <li class="nav-item"><a class="nav-link" href="#contact">Contacto</a></li>
-                <li class="nav-item ms-lg-2">
-                    <a class="btn neon-btn px-3 py-2" href="{{ url_for('login') }}">Login</a>
-                </li>
-            </ul>
-        </div>
-    </div>
-</nav>
-
-
-<nav class="navbar navbar-expand-lg fixed-top landing-navbar">
-    <div class="container">
-        <a class="navbar-brand d-flex align-items-center fw-semibold" href="#hero">
-            <img src="{{ url_for('static', filename='img/cursos/logo.png') }}"
-                 onerror="this.onerror=null;this.src='{{ url_for('static', filename='img/cursos/logo.jpg') }}';"
-                 alt="Logo QuickLearner"
-                 class="brand-logo">
-            QuickLearner
-        </a>
-
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#landingNavbar"
-                aria-controls="landingNavbar" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-
-        <div class="collapse navbar-collapse" id="landingNavbar">
-            <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-2">
-                <li class="nav-item"><a class="nav-link" href="#courses">Cursos</a></li>
-                <li class="nav-item"><a class="nav-link" href="#gallery">Progreso</a></li>
-                <li class="nav-item"><a class="nav-link" href="#pricing">Precios</a></li>
-                <li class="nav-item"><a class="nav-link" href="#contact">Contacto</a></li>
-                <li class="nav-item ms-lg-2">
-                    <a class="btn neon-btn px-3 py-2" href="{{ url_for('login') }}">Login</a>
-                </li>
-            </ul>
-        </div>
-    </div>
-</nav>
-
-
-<nav class="navbar navbar-expand-lg fixed-top landing-navbar">
-    <div class="container">
-        <a class="navbar-brand d-flex align-items-center fw-semibold" href="#hero">
-            <img src="{{ url_for('static', filename='img/cursos/logo.png') }}"
-                 onerror="this.onerror=null;this.src='{{ url_for('static', filename='img/cursos/logo.jpg') }}';"
-                 alt="Logo QuickLearner"
-                 class="brand-logo">
-            QuickLearner
-        </a>
-
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#landingNavbar"
-                aria-controls="landingNavbar" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-
-        <div class="collapse navbar-collapse" id="landingNavbar">
-            <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-2">
-                <li class="nav-item"><a class="nav-link" href="#courses">Cursos</a></li>
-                <li class="nav-item"><a class="nav-link" href="#gallery">Progreso</a></li>
-                <li class="nav-item"><a class="nav-link" href="#pricing">Precios</a></li>
-                <li class="nav-item"><a class="nav-link" href="#contact">Contacto</a></li>
-                <li class="nav-item ms-lg-2">
-                    <a class="btn neon-btn px-3 py-2" href="{{ url_for('login') }}">Login</a>
-                </li>
-            </ul>
-        </div>
-    </div>
-</nav>
-
-
-<nav class="navbar navbar-expand-lg fixed-top landing-navbar">
-    <div class="container">
-        <a class="navbar-brand d-flex align-items-center fw-semibold" href="#hero">
-            <img src="{{ url_for('static', filename='img/cursos/logo.png') }}"
-                 onerror="this.onerror=null;this.src='{{ url_for('static', filename='img/cursos/logo.jpg') }}';"
-                 alt="Logo QuickLearner"
-                 class="brand-logo">
-            QuickLearner
-        </a>
-
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#landingNavbar"
-                aria-controls="landingNavbar" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-
-        <div class="collapse navbar-collapse" id="landingNavbar">
-            <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-2">
-                <li class="nav-item"><a class="nav-link" href="#courses">Cursos</a></li>
-                <li class="nav-item"><a class="nav-link" href="#gallery">Progreso</a></li>
-                <li class="nav-item"><a class="nav-link" href="#pricing">Precios</a></li>
-                <li class="nav-item"><a class="nav-link" href="#contact">Contacto</a></li>
-                <li class="nav-item ms-lg-2">
-                    <a class="btn neon-btn px-3 py-2" href="{{ url_for('login') }}">Login</a>
-                </li>
-            </ul>
-        </div>
-    </div>
-</nav>
-
-
-<nav class="navbar navbar-expand-lg fixed-top landing-navbar">
-    <div class="container">
-        <a class="navbar-brand d-flex align-items-center fw-semibold" href="#hero">
-            <img src="{{ url_for('static', filename='img/cursos/logo.png') }}"
-                 onerror="this.onerror=null;this.src='{{ url_for('static', filename='img/cursos/logo.jpg') }}';"
-                 alt="Logo QuickLearner"
-                 class="brand-logo">
-            QuickLearner
-        </a>
-
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#landingNavbar"
-                aria-controls="landingNavbar" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-
-        <div class="collapse navbar-collapse" id="landingNavbar">
-            <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-2">
-                <li class="nav-item"><a class="nav-link" href="#courses">Cursos</a></li>
-                <li class="nav-item"><a class="nav-link" href="#gallery">Progreso</a></li>
-                <li class="nav-item"><a class="nav-link" href="#pricing">Precios</a></li>
-                <li class="nav-item"><a class="nav-link" href="#contact">Contacto</a></li>
-                <li class="nav-item ms-lg-2">
-                    <a class="btn neon-btn px-3 py-2" href="{{ url_for('login') }}">Login</a>
-                </li>
-            </ul>
-        </div>
-    </div>
-</nav>
-
-
-<nav class="navbar navbar-expand-lg fixed-top landing-navbar">
-    <div class="container">
-        <a class="navbar-brand d-flex align-items-center fw-semibold" href="#hero">
-            <img src="{{ url_for('static', filename='img/cursos/logo.png') }}"
-                 onerror="this.onerror=null;this.src='{{ url_for('static', filename='img/cursos/logo.jpg') }}';"
-                 alt="Logo QuickLearner"
-                 class="brand-logo">
-            QuickLearner
-        </a>
-
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#landingNavbar"
-                aria-controls="landingNavbar" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-
-        <div class="collapse navbar-collapse" id="landingNavbar">
-            <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-2">
-                <li class="nav-item"><a class="nav-link" href="#courses">Cursos</a></li>
-                <li class="nav-item"><a class="nav-link" href="#gallery">Progreso</a></li>
-                <li class="nav-item"><a class="nav-link" href="#pricing">Precios</a></li>
-                <li class="nav-item"><a class="nav-link" href="#contact">Contacto</a></li>
-                <li class="nav-item ms-lg-2">
-                    <a class="btn neon-btn px-3 py-2" href="{{ url_for('login') }}">Login</a>
-                </li>
-            </ul>
-        </div>
-    </div>
-</nav>
-
-
-<nav class="navbar navbar-expand-lg fixed-top landing-navbar">
-    <div class="container">
-        <a class="navbar-brand d-flex align-items-center fw-semibold" href="#hero">
-            <img src="{{ url_for('static', filename='img/cursos/logo.png') }}"
-                 onerror="this.onerror=null;this.src='{{ url_for('static', filename='img/cursos/logo.jpg') }}';"
-                 alt="Logo QuickLearner"
-                 class="brand-logo">
-            QuickLearner
-        </a>
-
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#landingNavbar"
-                aria-controls="landingNavbar" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-
-        <div class="collapse navbar-collapse" id="landingNavbar">
-            <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-2">
-                <li class="nav-item"><a class="nav-link" href="#courses">Cursos</a></li>
-                <li class="nav-item"><a class="nav-link" href="#gallery">Progreso</a></li>
-                <li class="nav-item"><a class="nav-link" href="#pricing">Precios</a></li>
-                <li class="nav-item"><a class="nav-link" href="#contact">Contacto</a></li>
-                <li class="nav-item ms-lg-2">
-                    <a class="btn neon-btn px-3 py-2" href="{{ url_for('login') }}">Login</a>
-                </li>
-            </ul>
-        </div>
-    </div>
-</nav>
-
-
-<nav class="navbar navbar-expand-lg fixed-top landing-navbar">
-    <div class="container">
-        <a class="navbar-brand d-flex align-items-center fw-semibold" href="#hero">
-            <img src="{{ url_for('static', filename='img/cursos/logo.png') }}"
-                 onerror="this.onerror=null;this.src='{{ url_for('static', filename='img/cursos/logo.jpg') }}';"
-                 alt="Logo QuickLearner"
-                 class="brand-logo">
-            QuickLearner
-        </a>
-
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#landingNavbar"
-                aria-controls="landingNavbar" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-
-        <div class="collapse navbar-collapse" id="landingNavbar">
-            <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-2">
-                <li class="nav-item"><a class="nav-link" href="#courses">Cursos</a></li>
-                <li class="nav-item"><a class="nav-link" href="#gallery">Progreso</a></li>
-                <li class="nav-item"><a class="nav-link" href="#pricing">Precios</a></li>
-                <li class="nav-item"><a class="nav-link" href="#contact">Contacto</a></li>
-                <li class="nav-item ms-lg-2">
-                    <a class="btn neon-btn px-3 py-2" href="{{ url_for('login') }}">Login</a>
-                </li>
-            </ul>
-        </div>
-    </div>
-</nav>
-
-
-<nav class="navbar navbar-expand-lg fixed-top landing-navbar">
-    <div class="container">
-        <a class="navbar-brand d-flex align-items-center fw-semibold" href="#hero">
-            <img src="{{ url_for('static', filename='img/cursos/logo.png') }}"
-                 onerror="this.onerror=null;this.src='{{ url_for('static', filename='img/cursos/logo.jpg') }}';"
-                 alt="Logo QuickLearner"
-                 class="brand-logo">
-            QuickLearner
-        </a>
-
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#landingNavbar"
-                aria-controls="landingNavbar" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-
-        <div class="collapse navbar-collapse" id="landingNavbar">
-            <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-2">
-                <li class="nav-item"><a class="nav-link" href="#courses">Cursos</a></li>
-                <li class="nav-item"><a class="nav-link" href="#gallery">Progreso</a></li>
-                <li class="nav-item"><a class="nav-link" href="#pricing">Precios</a></li>
-                <li class="nav-item"><a class="nav-link" href="#contact">Contacto</a></li>
-                <li class="nav-item ms-lg-2">
-                    <a class="btn neon-btn px-3 py-2" href="{{ url_for('login') }}">Login</a>
-                </li>
-            </ul>
         </div>
     </div>
 </nav>
@@ -1219,6 +955,22 @@
     margin-top: 1.25rem;
     gap: 1rem;
     text-align: center;
+  }
+
+
+  body.landing-body .mobile-menu-close {
+    border: 1px solid rgba(124, 140, 255, 0.55);
+    background: transparent;
+    color: #ffffff;
+    border-radius: 999px;
+    width: 44px;
+    height: 44px;
+    font-size: 1.35rem;
+    line-height: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 0.75rem;
   }
 
   body.landing-body .mobile-brand-wrap {
