@@ -392,6 +392,36 @@
 </nav>
 
 
+<nav class="navbar navbar-expand-lg fixed-top landing-navbar">
+    <div class="container">
+        <a class="navbar-brand d-flex align-items-center fw-semibold" href="#hero">
+            <img src="{{ url_for('static', filename='img/cursos/logo.png') }}"
+                 onerror="this.onerror=null;this.src='{{ url_for('static', filename='img/cursos/logo.jpg') }}';"
+                 alt="Logo QuickLearner"
+                 class="brand-logo">
+            QuickLearner
+        </a>
+
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#landingNavbar"
+                aria-controls="landingNavbar" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="landingNavbar">
+            <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-2">
+                <li class="nav-item"><a class="nav-link" href="#courses">Cursos</a></li>
+                <li class="nav-item"><a class="nav-link" href="#gallery">Progreso</a></li>
+                <li class="nav-item"><a class="nav-link" href="#pricing">Precios</a></li>
+                <li class="nav-item"><a class="nav-link" href="#contact">Contacto</a></li>
+                <li class="nav-item ms-lg-2">
+                    <a class="btn neon-btn px-3 py-2" href="{{ url_for('login') }}">Login</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+
 <!-- ================= HERO ================= -->
 <section id="hero" class="landing-hero-wrapper">
     <div class="landing-hero d-flex align-items-center justify-content-between">
@@ -938,6 +968,154 @@
   body.landing-body .pricing-card-pro .small,
   body.landing-body .contact-section .gallery-subtitle {
     font-size: 1rem !important;
+  }
+}
+</style>
+
+
+<style>
+/* ===== MOBILE FULLSCREEN NAV + READABILITY FINAL ===== */
+@media (max-width: 991px) {
+  body.landing-body {
+    padding-top: 64px !important;
+    overflow-x: hidden;
+  }
+
+  /* Navbar visible + legible */
+  body.landing-body .landing-navbar {
+    min-height: 64px;
+    padding: 0.7rem 0.9rem !important;
+  }
+
+  body.landing-body .brand-logo {
+    width: 42px !important;
+    height: 42px !important;
+  }
+
+  body.landing-body .landing-navbar .navbar-brand {
+    font-size: 1.22rem !important;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+  }
+
+  body.landing-body .landing-navbar .navbar-toggler {
+    padding: 0.55rem 0.7rem !important;
+  }
+
+  /* Full-screen mobile menu like reference */
+  body.landing-body .landing-navbar .navbar-collapse.show,
+  body.landing-body .landing-navbar .navbar-collapse.collapsing {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 1060;
+    background: #0b132b !important;
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    padding: 2.2rem 1.4rem !important;
+    margin: 0 !important;
+    border-radius: 0 !important;
+  }
+
+  body.landing-body .landing-navbar .navbar-collapse.show .navbar-nav,
+  body.landing-body .landing-navbar .navbar-collapse.collapsing .navbar-nav {
+    width: 100%;
+    max-width: 360px;
+    text-align: center;
+    gap: 0.75rem !important;
+  }
+
+  body.landing-body .landing-navbar .nav-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6rem;
+    font-size: 1.28rem !important;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    padding: 0.95rem 0 !important;
+    color: #ffffff !important;
+  }
+
+  body.landing-body .landing-navbar .nav-item:nth-child(1) .nav-link::before { content: "📘"; }
+  body.landing-body .landing-navbar .nav-item:nth-child(2) .nav-link::before { content: "📊"; }
+  body.landing-body .landing-navbar .nav-item:nth-child(3) .nav-link::before { content: "💳"; }
+  body.landing-body .landing-navbar .nav-item:nth-child(4) .nav-link::before { content: "📩"; }
+
+  body.landing-body .landing-navbar .neon-btn {
+    font-size: 1.08rem !important;
+    font-weight: 700;
+    padding: 0.85rem 1.4rem !important;
+  }
+
+  /* Hero compact + text first */
+  #hero.landing-hero-wrapper {
+    padding-top: 6px !important;
+    padding-bottom: 26px !important;
+  }
+
+  #hero .landing-hero {
+    min-height: auto !important;
+    padding-top: 6px !important;
+    padding-bottom: 6px !important;
+    gap: 1.4rem !important;
+  }
+
+  #hero .hero-text { order: 1; }
+  #hero .hero-img { order: 2; }
+
+  #hero .hero-text h1,
+  #hero .hero-text .fw-bold {
+    font-size: 2.02rem !important;
+    line-height: 1.23 !important;
+  }
+
+  #hero .hero-subtitle,
+  #hero p {
+    font-size: 1.1rem !important;
+    line-height: 1.6 !important;
+  }
+
+  /* Landing general text bigger */
+  body.landing-body .section-title { font-size: 2rem !important; }
+  body.landing-body .course-title { font-size: 1.45rem !important; }
+  body.landing-body .course-sub,
+  body.landing-body .gallery-subtitle,
+  body.landing-body .pricing-subtitle,
+  body.landing-body .plan-benefits li,
+  body.landing-body .pricing-card-pro p,
+  body.landing-body .pricing-card-pro .small,
+  body.landing-body .contact-section .gallery-subtitle {
+    font-size: 1.08rem !important;
+    line-height: 1.62 !important;
+  }
+}
+
+@media (max-width: 576px) {
+  body.landing-body { padding-top: 60px !important; }
+
+  body.landing-body .landing-navbar .nav-link {
+    font-size: 1.2rem !important;
+  }
+
+  #hero .hero-text h1,
+  #hero .hero-text .fw-bold {
+    font-size: 1.82rem !important;
+    line-height: 1.26 !important;
+  }
+
+  #hero .hero-subtitle,
+  #hero p,
+  body.landing-body .gallery-subtitle,
+  body.landing-body .pricing-subtitle,
+  body.landing-body .plan-benefits li,
+  body.landing-body .pricing-card-pro p,
+  body.landing-body .pricing-card-pro .small,
+  body.landing-body .contact-section .gallery-subtitle {
+    font-size: 1.02rem !important;
   }
 }
 </style>
