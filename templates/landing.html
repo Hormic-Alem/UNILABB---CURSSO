@@ -98,10 +98,89 @@
             border-radius: 24px;
             box-shadow: 0 16px 40px rgba(0, 0, 0, 0.45);
         }
+
+        @media (max-width: 992px) {
+
+          /* Solo navbar del landing */
+          body.landing-body .landing-navbar {
+            background-color: #0b1026 !important;
+          }
+
+          body.landing-body .landing-navbar .navbar-collapse {
+            background-color: #0b1026;
+            padding: 15px 0;
+          }
+
+          body.landing-body .landing-navbar .nav-link {
+            color: #ffffff !important;
+            font-size: 1rem;
+            padding: 12px 0;
+          }
+
+          body.landing-body .landing-navbar .nav-link:hover {
+            color: #7c8cff !important;
+          }
+
+          body.landing-body .landing-navbar .navbar-toggler {
+            border: none;
+          }
+
+          body.landing-body #hero .landing-hero {
+            flex-direction: column !important;
+            text-align: center;
+            gap: 30px;
+          }
+
+          body.landing-body #hero img {
+            max-width: 85%;
+            height: auto;
+            margin: 0 auto;
+          }
+
+          body.landing-body #hero h1 {
+            font-size: 1.8rem;
+            line-height: 1.3;
+          }
+
+          body.landing-body #hero p {
+            font-size: 1rem;
+          }
+
+        }
     </style>
 </head>
 
 <body class="landing-body">
+
+<nav class="navbar navbar-expand-lg fixed-top landing-navbar">
+    <div class="container">
+        <a class="navbar-brand d-flex align-items-center fw-semibold" href="#hero">
+            <img src="{{ url_for('static', filename='img/cursos/logo.png') }}"
+                 onerror="this.onerror=null;this.src='{{ url_for('static', filename='img/cursos/logo.jpg') }}';"
+                 alt="Logo QuickLearner"
+                 class="brand-logo">
+            QuickLearner
+        </a>
+
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#landingNavbar"
+                aria-controls="landingNavbar" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="landingNavbar">
+            <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-2">
+                <li class="nav-item"><a class="nav-link" href="#courses">Cursos</a></li>
+                <li class="nav-item"><a class="nav-link" href="#gallery">Progreso</a></li>
+                <li class="nav-item"><a class="nav-link" href="#pricing">Precios</a></li>
+                <li class="nav-item"><a class="nav-link" href="#contact">Contacto</a></li>
+                <li class="nav-item ms-lg-2">
+                    <a class="btn neon-btn px-3 py-2" href="{{ url_for('login') }}">Login</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
 
 <nav class="navbar navbar-expand-lg fixed-top landing-navbar">
     <div class="container">

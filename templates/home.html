@@ -200,6 +200,20 @@ new Chart(ctx, {
         height: 260px;
     }
 }
+
+@media (max-width: 992px) {
+
+  body .chart-wrapper {
+    max-width: 280px;
+    margin: 0 auto;
+  }
+
+  body #progressChart {
+    max-height: 260px !important;
+  }
+
+}
+
 </style>
 
 {% endblock %}
