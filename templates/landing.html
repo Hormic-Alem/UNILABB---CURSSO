@@ -362,6 +362,36 @@
 </nav>
 
 
+<nav class="navbar navbar-expand-lg fixed-top landing-navbar">
+    <div class="container">
+        <a class="navbar-brand d-flex align-items-center fw-semibold" href="#hero">
+            <img src="{{ url_for('static', filename='img/cursos/logo.png') }}"
+                 onerror="this.onerror=null;this.src='{{ url_for('static', filename='img/cursos/logo.jpg') }}';"
+                 alt="Logo QuickLearner"
+                 class="brand-logo">
+            QuickLearner
+        </a>
+
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#landingNavbar"
+                aria-controls="landingNavbar" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="landingNavbar">
+            <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-2">
+                <li class="nav-item"><a class="nav-link" href="#courses">Cursos</a></li>
+                <li class="nav-item"><a class="nav-link" href="#gallery">Progreso</a></li>
+                <li class="nav-item"><a class="nav-link" href="#pricing">Precios</a></li>
+                <li class="nav-item"><a class="nav-link" href="#contact">Contacto</a></li>
+                <li class="nav-item ms-lg-2">
+                    <a class="btn neon-btn px-3 py-2" href="{{ url_for('login') }}">Login</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+
 <!-- ================= HERO ================= -->
 <section id="hero" class="landing-hero-wrapper">
     <div class="landing-hero d-flex align-items-center justify-content-between">
@@ -777,6 +807,138 @@
     body.landing-body .section-title {
         font-size: 1.65rem !important;
     }
+}
+</style>
+
+
+<style>
+/* ===== MOBILE/TABLET READABILITY BOOST ===== */
+@media (max-width: 991px) {
+  body.landing-body {
+    padding-top: 70px !important;
+    overflow-x: hidden;
+  }
+
+  /* NAVBAR MOBILE tipo menú centrado */
+  body.landing-body .landing-navbar {
+    padding: 0.95rem 1rem !important;
+  }
+
+  body.landing-body .brand-logo {
+    width: 40px;
+    height: 40px;
+  }
+
+  body.landing-body .landing-navbar .navbar-brand {
+    font-size: 1.2rem !important;
+    font-weight: 700;
+  }
+
+  body.landing-body .landing-navbar .navbar-toggler {
+    padding: 0.5rem 0.65rem;
+  }
+
+  body.landing-body .landing-navbar .navbar-collapse {
+    background: #0b132b !important;
+    border: 1px solid rgba(124, 140, 255, 0.35);
+    border-radius: 14px;
+    margin-top: 12px;
+    padding: 1.2rem 1rem !important;
+    text-align: center;
+  }
+
+  body.landing-body .landing-navbar .nav-link {
+    font-size: 1.12rem !important;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    padding: 0.9rem 0 !important;
+  }
+
+  body.landing-body .landing-navbar .neon-btn {
+    font-size: 1rem !important;
+    padding: 0.7rem 1.2rem !important;
+  }
+
+  /* HERO: quitar vacío superior y subir legibilidad */
+  #hero.landing-hero-wrapper {
+    padding-top: 8px !important;
+    padding-bottom: 30px !important;
+  }
+
+  #hero .landing-hero {
+    min-height: auto !important;
+    padding-top: 8px !important;
+    padding-bottom: 8px !important;
+    gap: 1.6rem !important;
+  }
+
+  #hero .hero-text h1,
+  #hero .hero-text .fw-bold {
+    font-size: 2rem !important;
+    line-height: 1.24 !important;
+  }
+
+  #hero .hero-subtitle,
+  #hero p {
+    font-size: 1.08rem !important;
+    line-height: 1.58 !important;
+  }
+
+  /* Texto general de landing más legible */
+  body.landing-body .gallery-subtitle,
+  body.landing-body .pricing-subtitle,
+  body.landing-body .plan-benefits li,
+  body.landing-body .pricing-card-pro p,
+  body.landing-body .pricing-card-pro .small,
+  body.landing-body .contact-section .gallery-subtitle {
+    font-size: 1.05rem !important;
+    line-height: 1.6 !important;
+  }
+
+  body.landing-body .plan-name {
+    font-size: 1.55rem !important;
+  }
+
+  body.landing-body .plan-price .price {
+    font-size: 2.3rem !important;
+  }
+
+  body.landing-body .plan-price .period {
+    font-size: 1.02rem !important;
+  }
+
+  body.landing-body .badge-popular {
+    font-size: 0.95rem !important;
+  }
+}
+
+@media (max-width: 576px) {
+  body.landing-body {
+    padding-top: 66px !important;
+  }
+
+  #hero .hero-text h1,
+  #hero .hero-text .fw-bold {
+    font-size: 1.78rem !important;
+  }
+
+  #hero .hero-subtitle,
+  #hero p {
+    font-size: 1rem !important;
+  }
+
+  body.landing-body .landing-navbar .nav-link {
+    font-size: 1.05rem !important;
+  }
+
+  body.landing-body .gallery-subtitle,
+  body.landing-body .pricing-subtitle,
+  body.landing-body .plan-benefits li,
+  body.landing-body .pricing-card-pro p,
+  body.landing-body .pricing-card-pro .small,
+  body.landing-body .contact-section .gallery-subtitle {
+    font-size: 1rem !important;
+  }
 }
 </style>
 
