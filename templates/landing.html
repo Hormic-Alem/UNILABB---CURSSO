@@ -332,6 +332,36 @@
 </nav>
 
 
+<nav class="navbar navbar-expand-lg fixed-top landing-navbar">
+    <div class="container">
+        <a class="navbar-brand d-flex align-items-center fw-semibold" href="#hero">
+            <img src="{{ url_for('static', filename='img/cursos/logo.png') }}"
+                 onerror="this.onerror=null;this.src='{{ url_for('static', filename='img/cursos/logo.jpg') }}';"
+                 alt="Logo QuickLearner"
+                 class="brand-logo">
+            QuickLearner
+        </a>
+
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#landingNavbar"
+                aria-controls="landingNavbar" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="landingNavbar">
+            <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-2">
+                <li class="nav-item"><a class="nav-link" href="#courses">Cursos</a></li>
+                <li class="nav-item"><a class="nav-link" href="#gallery">Progreso</a></li>
+                <li class="nav-item"><a class="nav-link" href="#pricing">Precios</a></li>
+                <li class="nav-item"><a class="nav-link" href="#contact">Contacto</a></li>
+                <li class="nav-item ms-lg-2">
+                    <a class="btn neon-btn px-3 py-2" href="{{ url_for('login') }}">Login</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+
 <!-- ================= HERO ================= -->
 <section id="hero" class="landing-hero-wrapper">
     <div class="landing-hero d-flex align-items-center justify-content-between">
@@ -662,6 +692,92 @@
 
 }
 
+</style>
+
+<style>
+/* ===== AJUSTE FINAL MOVIL/TABLET UX ===== */
+@media (max-width: 991px) {
+    body.landing-body {
+        padding-top: 72px !important;
+        overflow-x: hidden;
+    }
+
+    #hero.landing-hero-wrapper {
+        padding-top: 0 !important;
+        padding-bottom: 24px !important;
+    }
+
+    #hero .landing-hero {
+        min-height: auto !important;
+        padding-top: 12px !important;
+        padding-bottom: 12px !important;
+        align-items: center !important;
+        justify-content: center !important;
+    }
+
+    #hero .hero-text {
+        max-width: 100% !important;
+        margin-top: 0 !important;
+    }
+
+    #hero .hero-text h1,
+    #hero .hero-text .fw-bold {
+        font-size: 2rem !important;
+        line-height: 1.25 !important;
+        letter-spacing: 0.2px;
+    }
+
+    #hero .hero-subtitle,
+    #hero p {
+        font-size: 1.05rem !important;
+        line-height: 1.55 !important;
+    }
+
+    body.landing-body .section-title {
+        font-size: 1.9rem !important;
+        line-height: 1.25 !important;
+    }
+
+    body.landing-body p,
+    body.landing-body li {
+        font-size: 1rem !important;
+        line-height: 1.55 !important;
+    }
+
+    body.landing-body .landing-navbar .nav-link {
+        font-size: 1.05rem !important;
+        font-weight: 600;
+    }
+
+    body.landing-body .landing-navbar .navbar-brand {
+        font-size: 1.15rem !important;
+    }
+}
+
+@media (max-width: 576px) {
+    body.landing-body {
+        padding-top: 68px !important;
+    }
+
+    #hero .landing-hero {
+        padding-top: 6px !important;
+    }
+
+    #hero .hero-text h1,
+    #hero .hero-text .fw-bold {
+        font-size: 1.75rem !important;
+        line-height: 1.28 !important;
+    }
+
+    #hero .hero-subtitle,
+    #hero p {
+        font-size: 1rem !important;
+    }
+
+    body.landing-body .section-title {
+        font-size: 1.65rem !important;
+    }
+}
 </style>
 
 </body>
