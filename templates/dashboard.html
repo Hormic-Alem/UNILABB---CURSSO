@@ -131,16 +131,34 @@
     <div class="clearfix"></div>
 
     <div class="panel-card">
-        <form method="POST" action="{{ url_for('create_simulator') }}" class="mb-4">
+        <form method="POST" action="{{ url_for('create_simulator') }}" enctype="multipart/form-data" class="mb-4">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
             <label class="form-label fw-semibold">Nombre del simulador</label>
             <input type="text" name="name" class="form-control mb-2" placeholder="Ej. Inglés A2" required>
+            <label class="form-label fw-semibold">Imagen del curso (JPG/JPEG)</label>
+            <input type="file" name="simulator_image" class="form-control mb-2" accept=".jpg,.jpeg">
+            <small class="text-muted d-block mb-2">Si subes imagen aquí, se reflejará automáticamente en Home/Landing para este simulador.</small>
             <button class="btn neon-btn">+ Crear simulador</button>
         </form>
 
         <h5>Simuladores existentes</h5>
-        <ul>
+        <ul class="list-unstyled">
         {% for sim in simulators %}
-          <li>{{ sim.name }}</li>
+          <li class="d-flex align-items-center justify-content-between gap-2 mb-2 flex-wrap">
+            <span>{{ sim.name }}</span>
+            <div class="d-flex align-items-center gap-2 flex-wrap">
+              <form method="POST" action="{{ url_for('upload_simulator_image', sim_id=sim.id) }}" enctype="multipart/form-data" class="d-flex align-items-center gap-2">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <input type="file" name="simulator_image" accept=".jpg,.jpeg" class="form-control form-control-sm" style="max-width: 220px;" required>
+                <button type="submit" class="btn btn-sm btn-outline-info">Subir imagen</button>
+              </form>
+              <form method="POST" action="{{ url_for('delete_simulator', sim_id=sim.id) }}" 
+                    onsubmit="return confirm('¿Eliminar simulador?');">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <button type="submit" class="btn btn-sm btn-outline-danger">Eliminar</button>
+              </form>
+            </div>
+          </li>
         {% else %}
           <li>No hay simuladores creados todavía.</li>
         {% endfor %}
