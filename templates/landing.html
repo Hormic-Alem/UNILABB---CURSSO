@@ -302,6 +302,36 @@
 </nav>
 
 
+<nav class="navbar navbar-expand-lg fixed-top landing-navbar">
+    <div class="container">
+        <a class="navbar-brand d-flex align-items-center fw-semibold" href="#hero">
+            <img src="{{ url_for('static', filename='img/cursos/logo.png') }}"
+                 onerror="this.onerror=null;this.src='{{ url_for('static', filename='img/cursos/logo.jpg') }}';"
+                 alt="Logo QuickLearner"
+                 class="brand-logo">
+            QuickLearner
+        </a>
+
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#landingNavbar"
+                aria-controls="landingNavbar" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="landingNavbar">
+            <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-2">
+                <li class="nav-item"><a class="nav-link" href="#courses">Cursos</a></li>
+                <li class="nav-item"><a class="nav-link" href="#gallery">Progreso</a></li>
+                <li class="nav-item"><a class="nav-link" href="#pricing">Precios</a></li>
+                <li class="nav-item"><a class="nav-link" href="#contact">Contacto</a></li>
+                <li class="nav-item ms-lg-2">
+                    <a class="btn neon-btn px-3 py-2" href="{{ url_for('login') }}">Login</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+
 <!-- ================= HERO ================= -->
 <section id="hero" class="landing-hero-wrapper">
     <div class="landing-hero d-flex align-items-center justify-content-between">
@@ -561,5 +591,78 @@
     </div>
 </section>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<style>
+
+/* ===== SOLO MOVIL Y TABLET ===== */
+@media (max-width: 991px) {
+
+    /* NAVBAR */
+    .landing-navbar {
+        padding: 0.8rem 1rem !important;
+    }
+
+    .landing-navbar .navbar-brand {
+        font-size: 1.1rem !important;
+    }
+
+    .landing-navbar .nav-link {
+        font-size: 1rem !important;
+        padding: 0.8rem 0 !important;
+    }
+
+    .navbar-collapse {
+        background: #0b132b !important;
+        padding: 1rem !important;
+        border-radius: 8px;
+    }
+
+    /* HERO SECTION */
+    #hero {
+        padding-top: 40px !important;
+        padding-bottom: 40px !important;
+        min-height: auto !important;
+    }
+
+    .landing-hero {
+        flex-direction: column !important;
+        text-align: center !important;
+        gap: 2rem !important;
+    }
+
+    .landing-hero h1 {
+        font-size: 1.8rem !important;
+        line-height: 1.3 !important;
+    }
+
+    .landing-hero p {
+        font-size: 1rem !important;
+    }
+
+    .landing-hero img {
+        max-width: 90% !important;
+        height: auto !important;
+        margin: 0 auto !important;
+    }
+}
+
+/* ===== SOLO MOVIL PEQUEÑO ===== */
+@media (max-width: 576px) {
+
+    .landing-hero h1 {
+        font-size: 1.6rem !important;
+    }
+
+    .landing-hero p {
+        font-size: 0.95rem !important;
+    }
+
+    #hero {
+        padding-top: 30px !important;
+    }
+
+}
+
+</style>
+
 </body>
 </html>
