@@ -406,14 +406,14 @@
 }
 
 .pricing-price span {
-    font-size: 3.2rem;
+    font-size: 6rem;
     font-weight: 800;
     color: white;
 }
 
 .pricing-price small {
     display: block;
-    font-size: 1rem;
+    font-size: 4rem;
     color: #cfcfff;
 }
 
@@ -421,15 +421,13 @@
    MOBILE
 ============================ */
 @media (max-width: 768px) {
-    .pricing-wrapper {
-        width: 100%;
-    }
 
-    .pricing-price span {
-        font-size: 2.6rem;
-    }
+  #pricing .pricing-card-pro .plan-benefits li {
+      font-size: 1.35rem !important;
+      line-height: 1.9 !important;
+  }
+
 }
-
 
 /* ===== PRICING SECTION ===== */
 
@@ -459,7 +457,7 @@
 }
 
 .pricing-subtitle {
-    font-size: 18px;
+    font-size: 22px;
     color: #ffffff;
     margin-bottom: 60px;
 }
@@ -551,4 +549,33 @@
 .btn-pricing:hover {
     transform: translateY(-2px);
     box-shadow: 0 0 35px rgba(130, 70, 255, 0.6);
+}
+
+
+
+
+/@media (max-width: 768px) {
+
+  .pricing-container {
+      padding: 0 20px;
+  }
+
+  .pricing-card-pro {
+      max-width: 100%;
+      padding: 35px 25px;
+  }
+
+  .plan-benefits li {
+      font-size: 1.35rem;
+      line-height: 1.9;
+  }
+
+  .pricing-title {
+      font-size: 2rem;
+  }
+
+  .pricing-subtitle {
+      font-size: 1.25rem;
+  }
+
 }
