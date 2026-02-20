@@ -9,7 +9,7 @@ import xml.etree.ElementTree as ET
 from dotenv import load_dotenv
 from flask import Flask, abort, flash, redirect, render_template, request, session, url_for
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import func
+from sqlalchemy import func, inspect, text
 from sqlalchemy.engine import make_url
 from sqlalchemy.exc import ArgumentError
 from werkzeug.security import check_password_hash, generate_password_hash
@@ -92,6 +92,7 @@ class Ticket(db.Model):
     amount = db.Column(db.Integer, nullable=False, default=499)
     payment_method = db.Column(db.String(100), nullable=False, default='mercado_pago_manual')
     status = db.Column(db.String(20), nullable=False, default='pending')
+    referral_code = db.Column(db.String(50), nullable=True)
     created_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     paid_at = db.Column(db.DateTime, nullable=True)
 
@@ -212,6 +213,7 @@ def ticket_to_dict(ticket):
         'amount': ticket.amount,
         'payment_method': ticket.payment_method,
         'status': ticket.status,
+        'referral_code': ticket.referral_code,
         'created_at': ticket.created_at.strftime('%Y-%m-%d %H:%M:%S'),
     }
     if ticket.paid_at:
@@ -838,6 +840,7 @@ def register():
             'amount': 499,
             'payment_method': 'mercado_pago_manual',
             'status': 'pending',
+            'referral_code': None,
             'created_at': datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
         })
         save_tickets(tickets)
@@ -905,6 +908,18 @@ def load_tickets():
     return [ticket_to_dict(t) for t in Ticket.query.order_by(Ticket.created_at.desc()).all()]
 
 
+def sanitize_referral_code(value):
+    raw = (value or '').strip()
+    if not raw:
+        return None
+
+    safe_text = raw.replace('<', '').replace('>', '').strip()
+    if not safe_text:
+        return None
+
+    return safe_text[:50]
+
+
 def save_tickets(tickets):
     Ticket.query.delete()
     db.session.flush()
@@ -918,6 +933,7 @@ def save_tickets(tickets):
             amount=int(t.get('amount', 499)),
             payment_method=t.get('payment_method', 'mercado_pago_manual'),
             status=t.get('status', 'pending'),
+            referral_code=t.get('referral_code'),
             created_at=datetime.strptime(created_at, '%Y-%m-%d %H:%M:%S') if isinstance(created_at, str) else (created_at or datetime.utcnow()),
             paid_at=datetime.strptime(paid_at, '%Y-%m-%d %H:%M:%S') if isinstance(paid_at, str) else paid_at,
         ))
@@ -927,6 +943,7 @@ def save_tickets(tickets):
 @app.route('/create_ticket', methods=['POST'])
 def create_ticket():
     email = request.form.get('email')
+    referral_code = sanitize_referral_code(request.form.get('referral_code'))
 
     if not email:
         flash('❌ Debes ingresar un correo válido.', 'danger')
@@ -940,6 +957,7 @@ def create_ticket():
         'amount': 499,
         'payment_method': 'mercado_pago_manual',
         'status': 'pending',
+        'referral_code': referral_code,
         'created_at': datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
     })
     save_tickets(tickets)
@@ -957,8 +975,11 @@ def admin_payments():
     if 'username' not in session or not is_admin_session():
         return redirect(url_for('login'))
 
+    referral_code_filter = sanitize_referral_code(request.args.get('referral_code'))
     tickets = load_tickets()
-    return render_template('admin_payments.html', tickets=tickets)
+    if referral_code_filter:
+        tickets = [t for t in tickets if (t.get('referral_code') or '').lower() == referral_code_filter.lower()]
+    return render_template('admin_payments.html', tickets=tickets, referral_code_filter=referral_code_filter or '')
 
 
 @app.route('/admin/mark-paid/<ticket_id>', methods=['POST'])
@@ -993,6 +1014,16 @@ def admin_mark_paid(ticket_id):
 
 with app.app_context():
     db.create_all()
+
+    try:
+        ticket_columns = {col['name'] for col in inspect(db.engine).get_columns('ticket')}
+        if 'referral_code' not in ticket_columns:
+            db.session.execute(text('ALTER TABLE ticket ADD COLUMN referral_code VARCHAR(50)'))
+            db.session.commit()
+            print('✅ Columna referral_code agregada en ticket')
+    except Exception as e:
+        db.session.rollback()
+        print(f'⚠️ No se pudo validar/agregar columna referral_code: {e}')
 
     try:
         admin = User.query.filter_by(username="Apolo96").first()
