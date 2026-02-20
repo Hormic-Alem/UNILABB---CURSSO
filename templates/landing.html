@@ -254,7 +254,18 @@
                     <!-- 🔥 FIX SEGURO -->
                     <input type="hidden" name="email" value="{{ session.get('email','') }}">
 
-                    <button type="submit" class="btn-pricing w-100">
+                    <label for="referral_code" class="form-label text-light small mt-2 mb-1">
+                        Código de referido (opcional)
+                    </label>
+                    <input type="text"
+                           id="referral_code"
+                           name="referral_code"
+                           class="form-control"
+                           maxlength="50"
+                           placeholder="Ej. PROFEJUAN"
+                           autocomplete="off">
+
+                    <button type="submit" class="btn-pricing w-100 mt-3">
                         Comprar acceso ahora
                     </button>
                 </form>
@@ -359,6 +370,38 @@
 
             </div>
 
+        </div>
+    </div>
+</section>
+
+
+<!-- ================= REFERIDOS ================= -->
+<section id="referrals" class="referral-section">
+    <div class="container">
+        <div class="referral-card">
+            <h2 class="referral-title">🚀 Programa de Referidos</h2>
+
+            <p class="referral-text">
+                ¿Te gustaría ganar dinero recomendando UNILAB?
+            </p>
+            <p class="referral-text">
+                Únete a nuestro programa de referidos y gana hasta el 30% de comisión por cada pago confirmado.
+                Te asignaremos un código personal que podrás compartir con tus contactos.
+                Cada vez que alguien use tu código al registrarse o pagar, la comisión quedará registrada.
+            </p>
+
+            <p class="referral-text referral-note">
+                Las comisiones se validan manualmente desde nuestro sistema administrativo.
+            </p>
+
+            <div class="referral-actions">
+                <a href="mailto:unilab.formacion@outlook.com" class="btn neon-btn">
+                    👉 Quiero mi código de referido
+                </a>
+                <a href="https://wa.me/527772408203" target="_blank" class="btn btn-outline-light">
+                    Escribir por WhatsApp
+                </a>
+            </div>
         </div>
     </div>
 </section>
