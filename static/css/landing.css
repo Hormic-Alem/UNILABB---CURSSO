@@ -500,7 +500,7 @@
   body.landing-body .landing-navbar .nav-item:nth-child(4) .nav-link::before { content: "📩"; }
 
   body.landing-body .landing-navbar .neon-btn {
-    font-size: 1.08rem !important;
+    font-size: 1.12rem !important;
     font-weight: 700;
     padding: 0.85rem 1.4rem !important;
   }
@@ -523,13 +523,13 @@
 
   #hero .hero-text h1,
   #hero .hero-text .fw-bold {
-    font-size: 2.02rem !important;
+    font-size: 2.6rem !important;
     line-height: 1.23 !important;
   }
 
   #hero .hero-subtitle,
   #hero p {
-    font-size: 1.1rem !important;
+    font-size: 2rem !important;
     line-height: 1.6 !important;
   }
 
@@ -595,14 +595,14 @@
     align-items: center;
     justify-content: center;
     gap: 0.6rem;
-    font-size: 1.45rem !important;
+    font-size: 4.5rem !important;
     line-height: 1.2;
     text-align: center;
     font-weight: 700;
   }
 
   body.landing-body .landing-navbar .neon-btn {
-    font-size: 1.2rem !important;
+    font-size: 3rem !important;
     padding: 0.95rem 1.5rem !important;
   }
 
@@ -651,7 +651,7 @@
   }
 
   body.landing-body .mobile-brand-text {
-    font-size: 1.25rem;
+    font-size: 3rem;
     font-weight: 700;
     color: #fff;
     letter-spacing: 0.03em;
@@ -666,7 +666,7 @@
   body.landing-body .mobile-account-links a {
     color: #f2f6ff;
     text-decoration: none;
-    font-size: 1.12rem;
+    font-size: 3rem;
   }
 
   body.landing-body .mobile-social-links {
@@ -684,6 +684,63 @@
     align-items: center;
     justify-content: center;
     text-decoration: none;
-    font-size: 1.2rem;
+    font-size: 3rem;
   }
 }
+
+
+/* ===== HERO MOBILE TYPOGRAPHY CLEAN VERSION ===== */
+@media (max-width: 991px) {
+
+    .hero-text {
+        text-align: center;
+        margin: 0 auto;
+        max-width: 95%;
+    }
+
+    .hero-text h1 {
+        font-size: 2.5rem;   /* Más grande */
+        line-height: 1.25;
+    }
+
+    .hero-text .text-gradient {
+        display: block;
+        margin-top: 6px;
+    }
+
+    .hero-subtitle {
+        font-size: 1.6rem;   /* AHORA SÍ GRANDE */
+        line-height: 1.7;
+        font-weight: 500;
+        text-align: center;
+        margin-top: 1.5rem;
+        padding: 0 12px;
+    }
+
+    .hero-btn {
+        font-size: 1.15rem;
+        padding: 1rem 2.2rem;
+    }
+}
+
+@media (max-width: 576px) {
+
+    .hero-text h1 {
+        font-size: 2.2rem;
+    }
+
+    .hero-subtitle {
+        font-size: 1.45rem;
+    }
+}
+
+
+/* constacto*/
+.gallery-subtitle {
+  font-size: 2rem;
+}
+
+.contact-info{
+  font-size: 1.5rem;
+}
+
