@@ -254,7 +254,18 @@
                     <!-- 🔥 FIX SEGURO -->
                     <input type="hidden" name="email" value="{{ session.get('email','') }}">
 
-                    <button type="submit" class="btn-pricing w-100">
+                    <label for="referral_code" class="form-label text-light small mt-2 mb-1">
+                        Código de referido (opcional)
+                    </label>
+                    <input type="text"
+                           id="referral_code"
+                           name="referral_code"
+                           class="form-control"
+                           maxlength="50"
+                           placeholder="Ej. PROFEJUAN"
+                           autocomplete="off">
+
+                    <button type="submit" class="btn-pricing w-100 mt-3">
                         Comprar acceso ahora
                     </button>
                 </form>
