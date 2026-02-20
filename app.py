@@ -808,6 +808,7 @@ def register():
         username = normalize_username(request.form['username'])
         email = normalize_email(request.form['email'])
         password = request.form['password']
+        referral_code = sanitize_referral_code(request.form.get('referral_code'))
 
         users = load_users()
 
@@ -840,7 +841,7 @@ def register():
             'amount': 499,
             'payment_method': 'mercado_pago_manual',
             'status': 'pending',
-            'referral_code': None,
+            'referral_code': referral_code,
             'created_at': datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
         })
         save_tickets(tickets)
