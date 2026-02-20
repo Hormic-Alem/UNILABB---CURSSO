@@ -744,3 +744,52 @@
   font-size: 1.5rem;
 }
 
+
+
+.referral-section {
+  padding: clamp(44px, 6vw, 86px) 0 clamp(70px, 8vw, 100px);
+}
+
+.referral-card {
+  max-width: 920px;
+  margin: 0 auto;
+  text-align: center;
+  padding: clamp(28px, 4vw, 52px);
+  border-radius: 26px;
+  background: linear-gradient(145deg, rgba(15, 24, 50, 0.96), rgba(7, 12, 28, 0.98));
+  border: 1px solid rgba(0, 255, 234, 0.24);
+  box-shadow: 0 18px 56px rgba(0, 0, 0, 0.46), 0 0 28px rgba(0, 255, 234, 0.08);
+}
+
+.referral-title {
+  font-size: clamp(1.9rem, 3.3vw, 2.7rem);
+  color: #e9f0ff;
+  font-weight: 800;
+  margin-bottom: 1rem;
+}
+
+.referral-text {
+  font-size: clamp(1.06rem, 1.8vw, 1.28rem);
+  line-height: 1.72;
+  color: rgba(233, 240, 255, 0.9);
+  margin-bottom: 0.9rem;
+}
+
+.referral-note {
+  color: rgba(0, 255, 234, 0.86);
+  font-size: clamp(0.96rem, 1.6vw, 1.05rem);
+  margin-top: 1.4rem;
+}
+
+.referral-actions {
+  margin-top: 1.8rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.9rem;
+  flex-wrap: wrap;
+}
+
+.referral-actions .btn {
+  min-width: 230px;
+}
