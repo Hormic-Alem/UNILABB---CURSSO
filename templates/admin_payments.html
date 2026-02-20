@@ -17,6 +17,21 @@
             🏠 Volver al inicio
         </a>
 
+        <form method="GET" class="row g-2 mb-3">
+            <div class="col-md-4">
+                <input type="text"
+                       class="form-control"
+                       name="referral_code"
+                       maxlength="50"
+                       placeholder="Filtrar por referido"
+                       value="{{ referral_code_filter }}">
+            </div>
+            <div class="col-auto">
+                <button type="submit" class="btn btn-primary">Filtrar</button>
+                <a href="{{ url_for('admin_payments') }}" class="btn btn-outline-secondary">Limpiar</a>
+            </div>
+        </form>
+
         <div class="table-responsive">
             <table class="table table-bordered table-hover align-middle bg-white">
                 <thead class="table-dark text-center">
@@ -26,6 +41,7 @@
                         <th>Creado</th>
                         <th>Estado</th>
                         <th>Pagado el</th>
+                        <th>Referido</th>
                         <th>Acción</th>
                     </tr>
                 </thead>
@@ -55,6 +71,10 @@
                             {% else %}
                                 —
                             {% endif %}
+                        </td>
+
+                        <td class="small">
+                            {{ t.referral_code if t.referral_code else "—" }}
                         </td>
 
                         <td>
