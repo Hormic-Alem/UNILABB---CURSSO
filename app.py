@@ -454,9 +454,9 @@ def calculate_progress_data(user, category=None):
     return completed, total, percentage
 
 
-    @app.route('/robots.txt')
+@app.route('/robots.txt')
 def robots():
-    return send_from_directory('.', 'robots.txt')
+    return send_from_directory(app.root_path, 'robots.txt', mimetype='text/plain')
 
 
 @app.route('/')
