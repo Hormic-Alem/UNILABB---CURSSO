@@ -167,6 +167,24 @@ def save_simulator_image(simulator_name, file_storage):
     return True, target_name
 
 
+def rename_simulator_image(old_name, new_name):
+    old_filename = simulator_image_filename(old_name)
+    new_filename = simulator_image_filename(new_name)
+    if not old_filename or not new_filename or old_filename == new_filename:
+        return
+
+    target_dir = os.path.join(app.root_path, 'static', 'img', 'cursos')
+    old_path = os.path.join(target_dir, old_filename)
+    new_path = os.path.join(target_dir, new_filename)
+    if not os.path.exists(old_path):
+        return
+
+    os.makedirs(target_dir, exist_ok=True)
+    if os.path.exists(new_path):
+        os.remove(new_path)
+    os.replace(old_path, new_path)
+
+
 def verify_password(stored_password, incoming_password):
     if not stored_password:
         return False, False
@@ -571,6 +589,57 @@ def create_simulator():
         return redirect(url_for('dashboard'))
 
     flash('✅ Simulador creado', 'success')
+    return redirect(url_for('dashboard'))
+
+
+@app.route('/simulators/edit/<int:sim_id>', methods=['POST'])
+def edit_simulator(sim_id):
+    if 'username' not in session or not is_admin_session():
+        return redirect(url_for('login'))
+
+    validate_csrf_or_abort()
+
+    simulator = db.session.get(Simulator, sim_id)
+    if not simulator:
+        flash('❌ Simulador no encontrado.', 'danger')
+        return redirect(url_for('dashboard'))
+
+    old_name = simulator.name
+    new_name = normalize_simulator_name(request.form.get('name'))
+    if not new_name:
+        flash('❌ Debes ingresar un nombre válido.', 'danger')
+        return redirect(url_for('dashboard'))
+
+    exists = db.session.query(Simulator.id).filter(
+        func.lower(Simulator.name) == new_name.lower(),
+        Simulator.id != sim_id
+    ).first()
+    if exists:
+        flash('❌ Ya existe otro simulador con ese nombre.', 'danger')
+        return redirect(url_for('dashboard'))
+
+    simulator.name = new_name
+    Question.query.filter(func.lower(Question.category) == old_name.lower()).update(
+        {Question.category: new_name},
+        synchronize_session=False,
+    )
+
+    users = User.query.all()
+    for user in users:
+        payload = user_to_dict(user)
+        by_category = payload['progress'].get('by_category', {})
+        if old_name in by_category:
+            if new_name in by_category:
+                merged = by_category[new_name] + [qid for qid in by_category[old_name] if qid not in by_category[new_name]]
+                by_category[new_name] = merged
+            else:
+                by_category[new_name] = by_category[old_name]
+            by_category.pop(old_name, None)
+            user.progress = payload['progress']
+
+    db.session.commit()
+    rename_simulator_image(old_name, new_name)
+    flash('✅ Nombre del simulador actualizado correctamente.', 'success')
     return redirect(url_for('dashboard'))
 
 
