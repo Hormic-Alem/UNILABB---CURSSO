@@ -674,12 +674,27 @@ def delete_simulator(sim_id):
 
     simulator = db.session.get(Simulator, sim_id)
     if simulator:
-        linked_questions = Question.query.filter_by(category=simulator.name).count()
-        if linked_questions > 0:
-            flash('No se puede eliminar porque tiene preguntas asociadas')
+        linked_questions = Question.query.filter_by(category=simulator.name).all()
+        linked_ids = [q.id for q in linked_questions]
+
+        if linked_ids:
+            QuestionStat.query.filter(QuestionStat.question_id.in_(linked_ids)).delete(synchronize_session=False)
+            Question.query.filter(Question.id.in_(linked_ids)).delete(synchronize_session=False)
+
+            users = User.query.all()
+            for user in users:
+                payload = user_to_dict(user)
+                progress = payload['progress']
+                progress['completed_questions'] = [qid for qid in progress.get('completed_questions', []) if qid not in linked_ids]
+                progress.get('by_category', {}).pop(simulator.name, None)
+                user.progress = progress
+
+            flash(f'Simulador eliminado junto con {len(linked_ids)} preguntas asociadas.', 'success')
         else:
-            db.session.delete(simulator)
-            db.session.commit()
+            flash('Simulador eliminado.', 'success')
+
+        db.session.delete(simulator)
+        db.session.commit()
 
     return redirect(url_for('dashboard'))
 
