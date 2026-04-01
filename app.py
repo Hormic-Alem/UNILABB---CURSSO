@@ -847,29 +847,59 @@ def quiz_by_category(category):
 
     session.setdefault('page', 0)
     session.setdefault('score', 0)
+    session.setdefault('quiz_answers', {})
 
     page = session['page']
+    if request.method == 'GET' and page == 0:
+        session['quiz_answers'] = {}
     start_idx = page * QUESTIONS_PER_PAGE
     end_idx = start_idx + QUESTIONS_PER_PAGE
     questions_page = questions[start_idx:end_idx]
 
     if request.method == 'POST':
+        answers = session.get('quiz_answers', {})
         for i, q in enumerate(questions_page):
             key = f'question_{start_idx + i}'
             selected = request.form.get(key)
-            register_answer(q['id'], selected == q['answer'])
-            if selected == q['answer']:
+            is_correct = selected == q['answer']
+            register_answer(q['id'], is_correct)
+            answers[q['id']] = {
+                'selected': selected or 'Sin respuesta',
+                'correct': q['answer'],
+                'is_correct': is_correct,
+            }
+            if is_correct:
                 session['score'] += 1
             mark_question_completed(user, q['id'], category)
 
+        session['quiz_answers'] = answers
         save_users(users)
         session['page'] += 1
 
         if end_idx >= total_questions:
             score = session.pop('score', 0)
             session.pop('page', None)
+            answers = session.pop('quiz_answers', {})
+            review = []
+            for q in questions:
+                answer_info = answers.get(q['id'])
+                if not answer_info:
+                    continue
+                review.append({
+                    'question': q['question'],
+                    'selected': answer_info['selected'],
+                    'correct': answer_info['correct'],
+                    'is_correct': answer_info['is_correct'],
+                })
             completed, total, percentage = calculate_progress_data(user, category)
-            return render_template('quiz_result.html', score=score, total=total, progress=percentage, category=category)
+            return render_template(
+                'quiz_result.html',
+                score=score,
+                total=total,
+                progress=percentage,
+                category=category,
+                review=review,
+            )
 
         return redirect(url_for('quiz_by_category', category=category))
 
