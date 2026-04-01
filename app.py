@@ -14,6 +14,7 @@ from sqlalchemy.engine import make_url
 from sqlalchemy.exc import ArgumentError
 from werkzeug.security import check_password_hash, generate_password_hash
 from werkzeug.utils import secure_filename
+from flask import Flask, abort, flash, redirect, render_template, request, session, url_for, send_from_directory
 
 load_dotenv()
 
@@ -451,6 +452,11 @@ def calculate_progress_data(user, category=None):
         completed = len(user['progress']['completed_questions'])
     percentage = int((completed / total) * 100) if total > 0 else 0
     return completed, total, percentage
+
+
+    @app.route('/robots.txt')
+def robots():
+    return send_from_directory('.', 'robots.txt')
 
 
 @app.route('/')

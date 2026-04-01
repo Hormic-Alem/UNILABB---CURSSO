@@ -1,0 +1,22 @@
+User-agent: *
+
+# Admin (cubre todo lo que empieza con /admin)
+Disallow: /admin
+
+# Rutas privadas
+Disallow: /dashboard
+Disallow: /api
+Disallow: /login
+Disallow: /logout
+Disallow: /register
+Disallow: /settings
+Disallow: /profile
+Disallow: /internal
+
+# Rutas sensibles específicas
+Disallow: /add_question
+Disallow: /quiz_result
+Disallow: /post_pago
+
+# Permitir todo lo demás
+Allow: /
