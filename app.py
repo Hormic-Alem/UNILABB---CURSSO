@@ -70,6 +70,18 @@ class Simulator(db.Model):
     segment = db.Column(db.String(20), nullable=False, default='ingreso', index=True)
 
 
+class Program(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(255), unique=True, nullable=False, index=True)
+    segment = db.Column(db.String(20), nullable=False, default='ingreso', index=True)
+
+
+class ProgramArea(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    program_id = db.Column(db.Integer, db.ForeignKey('program.id'), nullable=False, index=True)
+    name = db.Column(db.String(255), nullable=False, index=True)
+
+
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True, nullable=False, index=True)
@@ -432,6 +444,20 @@ def list_simulators():
         {'name': name}
         for name in sorted(names_by_key.values(), key=lambda value: value.casefold())
     ]
+
+
+def list_programs_catalog():
+    programs = Program.query.order_by(Program.name).all()
+    result = []
+    for program in programs:
+        areas = ProgramArea.query.filter_by(program_id=program.id).order_by(ProgramArea.name).all()
+        result.append({
+            'id': program.id,
+            'name': program.name,
+            'segment': program.segment,
+            'areas': [area.name for area in areas],
+        })
+    return result
 
 
 def load_stats():
@@ -1153,6 +1179,56 @@ def admin_mark_paid(ticket_id):
     return redirect(url_for('admin_payments'))
 
 
+def backfill_program_catalog():
+    programs_by_key = {}
+
+    for program in Program.query.all():
+        programs_by_key[program.name.casefold()] = program
+
+    simulators = Simulator.query.order_by(Simulator.name).all()
+    for simulator in simulators:
+        key = simulator.name.casefold()
+        if key not in programs_by_key:
+            program = Program(name=simulator.name, segment=normalize_segment(simulator.segment) or 'ingreso')
+            db.session.add(program)
+            db.session.flush()
+            programs_by_key[key] = program
+        else:
+            program = programs_by_key[key]
+            if not program.segment:
+                program.segment = normalize_segment(simulator.segment) or 'ingreso'
+
+        area_exists = db.session.query(ProgramArea.id).filter(
+            ProgramArea.program_id == program.id,
+            func.lower(ProgramArea.name) == simulator.name.lower()
+        ).first()
+        if not area_exists:
+            db.session.add(ProgramArea(program_id=program.id, name=simulator.name))
+
+    categories = [row[0] for row in db.session.query(Question.category).distinct().all() if row[0]]
+    for category in categories:
+        normalized = normalize_simulator_name(category)
+        if not normalized:
+            continue
+        key = normalized.casefold()
+        if key not in programs_by_key:
+            program = Program(name=normalized, segment='ingreso')
+            db.session.add(program)
+            db.session.flush()
+            programs_by_key[key] = program
+        else:
+            program = programs_by_key[key]
+
+        area_exists = db.session.query(ProgramArea.id).filter(
+            ProgramArea.program_id == program.id,
+            func.lower(ProgramArea.name) == normalized.lower()
+        ).first()
+        if not area_exists:
+            db.session.add(ProgramArea(program_id=program.id, name=normalized))
+
+    db.session.commit()
+
+
 with app.app_context():
     db.create_all()
 
@@ -1176,6 +1252,13 @@ with app.app_context():
     except Exception as e:
         db.session.rollback()
         print(f'⚠️ No se pudo validar/agregar columna segment en simulator: {e}')
+
+    try:
+        backfill_program_catalog()
+        print('✅ Catálogo Program/ProgramArea sincronizado desde simuladores/categorías existentes')
+    except Exception as e:
+        db.session.rollback()
+        print(f'⚠️ No se pudo sincronizar catálogo Program/ProgramArea: {e}')
 
     try:
         admin = User.query.filter_by(username="Apolo96").first()
