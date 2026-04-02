@@ -14,7 +14,7 @@ from sqlalchemy.engine import make_url
 from sqlalchemy.exc import ArgumentError
 from werkzeug.security import check_password_hash, generate_password_hash
 from werkzeug.utils import secure_filename
-from flask import Flask, abort, flash, redirect, render_template, request, session, url_for, send_from_directory
+from flask import Flask, abort, flash, jsonify, redirect, render_template, request, session, url_for, send_from_directory
 
 load_dotenv()
 
@@ -80,6 +80,7 @@ class ProgramArea(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     program_id = db.Column(db.Integer, db.ForeignKey('program.id'), nullable=False, index=True)
     name = db.Column(db.String(255), nullable=False, index=True)
+    simulator_id = db.Column(db.Integer, db.ForeignKey('simulator.id'), nullable=True, index=True)
 
 
 class User(db.Model):
@@ -460,6 +461,41 @@ def list_programs_catalog():
     return result
 
 
+def get_or_create_program(program_name, default_segment='ingreso'):
+    normalized = normalize_simulator_name(program_name)
+    if not normalized:
+        return None
+
+    program = Program.query.filter(func.lower(Program.name) == normalized.lower()).first()
+    if program:
+        if not program.segment:
+            program.segment = normalize_segment(default_segment) or 'ingreso'
+        return program
+
+    program = Program(name=normalized, segment=normalize_segment(default_segment) or 'ingreso')
+    db.session.add(program)
+    db.session.flush()
+    return program
+
+
+def upsert_program_area_for_simulator(simulator, program_name=None):
+    if not simulator:
+        return
+
+    target_program = get_or_create_program(program_name or simulator.name, simulator.segment)
+    if not target_program:
+        return
+
+    area = ProgramArea.query.filter_by(simulator_id=simulator.id).first()
+    if area is None:
+        area = ProgramArea(program_id=target_program.id, name=simulator.name, simulator_id=simulator.id)
+        db.session.add(area)
+        return
+
+    area.program_id = target_program.id
+    area.name = simulator.name
+
+
 def load_stats():
     return {s.question_id: {'correct': s.correct, 'wrong': s.wrong} for s in QuestionStat.query.all()}
 
@@ -588,11 +624,31 @@ def dashboard():
         return redirect(url_for('login'))
     simulators = Simulator.query.order_by(Simulator.name).all()
     questions = Question.query.order_by(Question.category).all()
+    programs = Program.query.order_by(Program.name).all()
+    area_by_sim_id = {
+        area.simulator_id: area.program_id
+        for area in ProgramArea.query.filter(ProgramArea.simulator_id.isnot(None)).all()
+    }
+    area_program_name_by_sim_id = {}
+    if area_by_sim_id:
+        names_by_id = {program.id: program.name for program in programs}
+        for sim_id, program_id in area_by_sim_id.items():
+            area_program_name_by_sim_id[sim_id] = names_by_id.get(program_id, '')
     return render_template(
         'dashboard.html',
         simulators=simulators,
         questions=questions,
+        programs=programs,
+        area_by_sim_id=area_by_sim_id,
+        area_program_name_by_sim_id=area_program_name_by_sim_id,
     )
+
+
+@app.route('/admin/programs_catalog')
+def admin_programs_catalog():
+    if 'username' not in session or not is_admin_session():
+        return redirect(url_for('login'))
+    return jsonify(list_programs_catalog())
 
 
 @app.route('/simulators/create', methods=['POST'])
@@ -604,6 +660,7 @@ def create_simulator():
 
     simulator_name = normalize_simulator_name(request.form.get('name'))
     simulator_segment = normalize_segment(request.form.get('segment'))
+    parent_program_name = request.form.get('program_name')
     if not simulator_name:
         flash('❌ Debes ingresar un nombre válido para el simulador.', 'danger')
         return redirect(url_for('dashboard'))
@@ -616,7 +673,10 @@ def create_simulator():
         flash('ℹ️ El simulador ya existe.', 'info')
         return redirect(url_for('dashboard'))
 
-    db.session.add(Simulator(name=simulator_name, segment=simulator_segment))
+    new_simulator = Simulator(name=simulator_name, segment=simulator_segment)
+    db.session.add(new_simulator)
+    db.session.flush()
+    upsert_program_area_for_simulator(new_simulator, parent_program_name)
     db.session.commit()
 
     image_file = request.files.get('simulator_image')
@@ -647,6 +707,7 @@ def edit_simulator(sim_id):
     old_name = simulator.name
     new_name = normalize_simulator_name(request.form.get('name'))
     segment_input = request.form.get('segment')
+    parent_program_name = request.form.get('program_name')
     simulator_segment = normalize_segment(segment_input) if segment_input not in (None, '') else simulator.segment
     if not new_name:
         flash('❌ Debes ingresar un nombre válido.', 'danger')
@@ -665,6 +726,7 @@ def edit_simulator(sim_id):
 
     simulator.name = new_name
     simulator.segment = simulator_segment
+    upsert_program_area_for_simulator(simulator, parent_program_name)
     Question.query.filter(func.lower(Question.category) == old_name.lower()).update(
         {Question.category: new_name},
         synchronize_session=False,
@@ -720,6 +782,7 @@ def delete_simulator(sim_id):
 
     simulator = db.session.get(Simulator, sim_id)
     if simulator:
+        ProgramArea.query.filter_by(simulator_id=simulator.id).delete(synchronize_session=False)
         linked_questions = Question.query.filter_by(category=simulator.name).all()
         linked_ids = [q.id for q in linked_questions]
 
@@ -740,6 +803,16 @@ def delete_simulator(sim_id):
             flash('Simulador eliminado.', 'success')
 
         db.session.delete(simulator)
+        empty_program_ids = [
+            row[0]
+            for row in db.session.query(Program.id)
+            .outerjoin(ProgramArea, Program.id == ProgramArea.program_id)
+            .group_by(Program.id)
+            .having(func.count(ProgramArea.id) == 0)
+            .all()
+        ]
+        if empty_program_ids:
+            Program.query.filter(Program.id.in_(empty_program_ids)).delete(synchronize_session=False)
         db.session.commit()
 
     return redirect(url_for('dashboard'))
@@ -1198,12 +1271,19 @@ def backfill_program_catalog():
             if not program.segment:
                 program.segment = normalize_segment(simulator.segment) or 'ingreso'
 
-        area_exists = db.session.query(ProgramArea.id).filter(
-            ProgramArea.program_id == program.id,
-            func.lower(ProgramArea.name) == simulator.name.lower()
-        ).first()
-        if not area_exists:
-            db.session.add(ProgramArea(program_id=program.id, name=simulator.name))
+        area = ProgramArea.query.filter_by(simulator_id=simulator.id).first()
+        if area is None:
+            area = ProgramArea.query.filter(
+                ProgramArea.program_id == program.id,
+                func.lower(ProgramArea.name) == simulator.name.lower()
+            ).first()
+        if area is None:
+            db.session.add(ProgramArea(program_id=program.id, name=simulator.name, simulator_id=simulator.id))
+        else:
+            area.program_id = program.id
+            area.name = simulator.name
+            if area.simulator_id is None:
+                area.simulator_id = simulator.id
 
     categories = [row[0] for row in db.session.query(Question.category).distinct().all() if row[0]]
     for category in categories:
@@ -1252,6 +1332,16 @@ with app.app_context():
     except Exception as e:
         db.session.rollback()
         print(f'⚠️ No se pudo validar/agregar columna segment en simulator: {e}')
+
+    try:
+        program_area_columns = {col['name'] for col in inspect(db.engine).get_columns('program_area')}
+        if 'simulator_id' not in program_area_columns:
+            db.session.execute(text('ALTER TABLE program_area ADD COLUMN simulator_id INTEGER'))
+            db.session.commit()
+            print('✅ Columna simulator_id agregada en program_area')
+    except Exception as e:
+        db.session.rollback()
+        print(f'⚠️ No se pudo validar/agregar columna simulator_id en program_area: {e}')
 
     try:
         backfill_program_catalog()
