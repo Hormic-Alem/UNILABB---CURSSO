@@ -632,7 +632,7 @@ def home():
                 item['name'].casefold()
                 for program in programs
                 for item in program.get('area_items', [])
-                if item.get('simulator_id') and item['name'].casefold() != program['name'].casefold()
+                if item['name'].casefold() != program['name'].casefold()
             }
             for program in programs:
                 # Mostrar solo programas padre o programas independientes.
@@ -697,8 +697,19 @@ def program_areas(program_id):
 
     areas = ProgramArea.query.filter_by(program_id=program_id).order_by(ProgramArea.name).all()
     if not areas:
-        flash('Este programa aún no tiene áreas disponibles.', 'warning')
-        return redirect(url_for('landing'))
+        fallback_simulators = Simulator.query.filter(
+            func.lower(Simulator.segment) == (program.segment or 'ingreso').lower(),
+            func.lower(Simulator.name) != program.name.lower()
+        ).order_by(Simulator.name).all()
+        fallback_names = []
+        for sim in fallback_simulators:
+            questions_total = Question.query.filter(func.lower(Question.category) == sim.name.lower()).count()
+            if questions_total > 0:
+                fallback_names.append(sim.name)
+        areas = [type('AreaFallback', (), {'name': name}) for name in fallback_names]
+        if not areas:
+            flash('Este programa aún no tiene áreas disponibles.', 'warning')
+            return redirect(url_for('landing'))
 
     user = None
     if 'username' in session:
@@ -1256,7 +1267,7 @@ def landing():
                 item['name'].casefold()
                 for program in programs
                 for item in program.get('area_items', [])
-                if item.get('simulator_id') and item['name'].casefold() != program['name'].casefold()
+                if item['name'].casefold() != program['name'].casefold()
             }
             course_cards = [
                 {'name': p['name'], 'segment': p.get('segment', 'ingreso'), 'program_id': p.get('id')}
