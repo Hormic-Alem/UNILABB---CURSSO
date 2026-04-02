@@ -14,7 +14,7 @@ from sqlalchemy.engine import make_url
 from sqlalchemy.exc import ArgumentError
 from werkzeug.security import check_password_hash, generate_password_hash
 from werkzeug.utils import secure_filename
-from flask import Flask, abort, flash, redirect, render_template, request, session, url_for, send_from_directory
+from flask import Flask, abort, flash, jsonify, redirect, render_template, request, session, url_for, send_from_directory
 
 load_dotenv()
 
@@ -67,6 +67,20 @@ class Question(db.Model):
 class Simulator(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(255), unique=True, nullable=False, index=True)
+    segment = db.Column(db.String(20), nullable=False, default='ingreso', index=True)
+
+
+class Program(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(255), unique=True, nullable=False, index=True)
+    segment = db.Column(db.String(20), nullable=False, default='ingreso', index=True)
+
+
+class ProgramArea(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    program_id = db.Column(db.Integer, db.ForeignKey('program.id'), nullable=False, index=True)
+    name = db.Column(db.String(255), nullable=False, index=True)
+    simulator_id = db.Column(db.Integer, db.ForeignKey('simulator.id'), nullable=True, index=True)
 
 
 class User(db.Model):
@@ -141,6 +155,19 @@ def normalize_simulator_name(value):
     cleaned = ' '.join((value or '').split()).strip()
     return cleaned.title()
 
+
+def normalize_segment(value):
+    segment = (value or '').strip().lower()
+    if not segment:
+        return 'ingreso'
+    if segment not in {'ingreso', 'egreso'}:
+        return None
+    return segment
+
+
+def is_segmented_catalog_enabled():
+    return os.getenv('ENABLE_SEGMENTED_LANDING', 'false').strip().lower() in {'1', 'true', 'yes', 'on'}
+
 def simulator_image_filename(simulator_name):
     normalized = normalize_simulator_name(simulator_name)
     safe = normalized.replace('/', ' ').replace('\\', ' ').strip().lower()
@@ -165,6 +192,24 @@ def save_simulator_image(simulator_name, file_storage):
     target_path = os.path.join(target_dir, target_name)
     file_storage.save(target_path)
     return True, target_name
+
+
+def rename_simulator_image(old_name, new_name):
+    old_filename = simulator_image_filename(old_name)
+    new_filename = simulator_image_filename(new_name)
+    if not old_filename or not new_filename or old_filename == new_filename:
+        return
+
+    target_dir = os.path.join(app.root_path, 'static', 'img', 'cursos')
+    old_path = os.path.join(target_dir, old_filename)
+    new_path = os.path.join(target_dir, new_filename)
+    if not os.path.exists(old_path):
+        return
+
+    os.makedirs(target_dir, exist_ok=True)
+    if os.path.exists(new_path):
+        os.remove(new_path)
+    os.replace(old_path, new_path)
 
 
 def verify_password(stored_password, incoming_password):
@@ -406,6 +451,55 @@ def list_simulators():
     ]
 
 
+def list_programs_catalog():
+    programs = Program.query.order_by(Program.name).all()
+    result = []
+    for program in programs:
+        areas = ProgramArea.query.filter_by(program_id=program.id).order_by(ProgramArea.name).all()
+        result.append({
+            'id': program.id,
+            'name': program.name,
+            'segment': program.segment,
+            'areas': [area.name for area in areas],
+        })
+    return result
+
+
+def get_or_create_program(program_name, default_segment='ingreso'):
+    normalized = normalize_simulator_name(program_name)
+    if not normalized:
+        return None
+
+    program = Program.query.filter(func.lower(Program.name) == normalized.lower()).first()
+    if program:
+        if not program.segment:
+            program.segment = normalize_segment(default_segment) or 'ingreso'
+        return program
+
+    program = Program(name=normalized, segment=normalize_segment(default_segment) or 'ingreso')
+    db.session.add(program)
+    db.session.flush()
+    return program
+
+
+def upsert_program_area_for_simulator(simulator, program_name=None):
+    if not simulator:
+        return
+
+    target_program = get_or_create_program(program_name or simulator.name, simulator.segment)
+    if not target_program:
+        return
+
+    area = ProgramArea.query.filter_by(simulator_id=simulator.id).first()
+    if area is None:
+        area = ProgramArea(program_id=target_program.id, name=simulator.name, simulator_id=simulator.id)
+        db.session.add(area)
+        return
+
+    area.program_id = target_program.id
+    area.name = simulator.name
+
+
 def load_stats():
     return {s.question_id: {'correct': s.correct, 'wrong': s.wrong} for s in QuestionStat.query.all()}
 
@@ -514,9 +608,49 @@ def home():
 
     visible_stats = stats_by_category.get(selected_stats_category, [])
 
+    course_cards = []
+    use_segmented_catalog = is_segmented_catalog_enabled()
+    if use_segmented_catalog:
+        try:
+            programs = list_programs_catalog()
+            for program in programs:
+                areas = program.get('areas') or [program['name']]
+                completed = sum(progress_by_category.get(area, {}).get('completed', 0) for area in areas)
+                total = sum(progress_by_category.get(area, {}).get('total', 0) for area in areas)
+                percent = int((completed / total) * 100) if total > 0 else 0
+                primary_area = next((area for area in areas if progress_by_category.get(area, {}).get('total', 0) > 0), areas[0])
+                course_cards.append({
+                    'name': program['name'],
+                    'segment': program.get('segment', 'ingreso'),
+                    'areas': areas,
+                    'area_count': len(areas),
+                    'completed': completed,
+                    'total': total,
+                    'percent': percent,
+                    'primary_area': primary_area,
+                })
+        except Exception:
+            course_cards = []
+
+    if not course_cards:
+        for category in categories:
+            cat_progress = progress_by_category.get(category, {'completed': 0, 'total': 0, 'percent': 0})
+            course_cards.append({
+                'name': category,
+                'segment': 'ingreso',
+                'areas': [category],
+                'area_count': 1,
+                'completed': cat_progress.get('completed', 0),
+                'total': cat_progress.get('total', 0),
+                'percent': cat_progress.get('percent', 0),
+                'primary_area': category,
+            })
+
     return render_template(
         'home.html',
         categories=categories,
+        course_cards=course_cards,
+        use_segmented_catalog=use_segmented_catalog,
         progress_by_category=progress_by_category,
         total_percent=total_percent,
         avatar_url=avatar_url,
@@ -534,11 +668,31 @@ def dashboard():
         return redirect(url_for('login'))
     simulators = Simulator.query.order_by(Simulator.name).all()
     questions = Question.query.order_by(Question.category).all()
+    programs = Program.query.order_by(Program.name).all()
+    area_by_sim_id = {
+        area.simulator_id: area.program_id
+        for area in ProgramArea.query.filter(ProgramArea.simulator_id.isnot(None)).all()
+    }
+    area_program_name_by_sim_id = {}
+    if area_by_sim_id:
+        names_by_id = {program.id: program.name for program in programs}
+        for sim_id, program_id in area_by_sim_id.items():
+            area_program_name_by_sim_id[sim_id] = names_by_id.get(program_id, '')
     return render_template(
         'dashboard.html',
         simulators=simulators,
         questions=questions,
+        programs=programs,
+        area_by_sim_id=area_by_sim_id,
+        area_program_name_by_sim_id=area_program_name_by_sim_id,
     )
+
+
+@app.route('/admin/programs_catalog')
+def admin_programs_catalog():
+    if 'username' not in session or not is_admin_session():
+        return redirect(url_for('login'))
+    return jsonify(list_programs_catalog())
 
 
 @app.route('/simulators/create', methods=['POST'])
@@ -549,8 +703,13 @@ def create_simulator():
     validate_csrf_or_abort()
 
     simulator_name = normalize_simulator_name(request.form.get('name'))
+    simulator_segment = normalize_segment(request.form.get('segment'))
+    parent_program_name = request.form.get('program_name')
     if not simulator_name:
         flash('❌ Debes ingresar un nombre válido para el simulador.', 'danger')
+        return redirect(url_for('dashboard'))
+    if simulator_segment is None:
+        flash('❌ Segmento inválido. Usa ingreso o egreso.', 'danger')
         return redirect(url_for('dashboard'))
 
     exists = db.session.query(Simulator.id).filter(func.lower(Simulator.name) == simulator_name.lower()).first()
@@ -558,7 +717,10 @@ def create_simulator():
         flash('ℹ️ El simulador ya existe.', 'info')
         return redirect(url_for('dashboard'))
 
-    db.session.add(Simulator(name=simulator_name))
+    new_simulator = Simulator(name=simulator_name, segment=simulator_segment)
+    db.session.add(new_simulator)
+    db.session.flush()
+    upsert_program_area_for_simulator(new_simulator, parent_program_name)
     db.session.commit()
 
     image_file = request.files.get('simulator_image')
@@ -571,6 +733,65 @@ def create_simulator():
         return redirect(url_for('dashboard'))
 
     flash('✅ Simulador creado', 'success')
+    return redirect(url_for('dashboard'))
+
+
+@app.route('/simulators/edit/<int:sim_id>', methods=['POST'])
+def edit_simulator(sim_id):
+    if 'username' not in session or not is_admin_session():
+        return redirect(url_for('login'))
+
+    validate_csrf_or_abort()
+
+    simulator = db.session.get(Simulator, sim_id)
+    if not simulator:
+        flash('❌ Simulador no encontrado.', 'danger')
+        return redirect(url_for('dashboard'))
+
+    old_name = simulator.name
+    new_name = normalize_simulator_name(request.form.get('name'))
+    segment_input = request.form.get('segment')
+    parent_program_name = request.form.get('program_name')
+    simulator_segment = normalize_segment(segment_input) if segment_input not in (None, '') else simulator.segment
+    if not new_name:
+        flash('❌ Debes ingresar un nombre válido.', 'danger')
+        return redirect(url_for('dashboard'))
+    if simulator_segment is None:
+        flash('❌ Segmento inválido. Usa ingreso o egreso.', 'danger')
+        return redirect(url_for('dashboard'))
+
+    exists = db.session.query(Simulator.id).filter(
+        func.lower(Simulator.name) == new_name.lower(),
+        Simulator.id != sim_id
+    ).first()
+    if exists:
+        flash('❌ Ya existe otro simulador con ese nombre.', 'danger')
+        return redirect(url_for('dashboard'))
+
+    simulator.name = new_name
+    simulator.segment = simulator_segment
+    upsert_program_area_for_simulator(simulator, parent_program_name)
+    Question.query.filter(func.lower(Question.category) == old_name.lower()).update(
+        {Question.category: new_name},
+        synchronize_session=False,
+    )
+
+    users = User.query.all()
+    for user in users:
+        payload = user_to_dict(user)
+        by_category = payload['progress'].get('by_category', {})
+        if old_name in by_category:
+            if new_name in by_category:
+                merged = by_category[new_name] + [qid for qid in by_category[old_name] if qid not in by_category[new_name]]
+                by_category[new_name] = merged
+            else:
+                by_category[new_name] = by_category[old_name]
+            by_category.pop(old_name, None)
+            user.progress = payload['progress']
+
+    db.session.commit()
+    rename_simulator_image(old_name, new_name)
+    flash('✅ Nombre del simulador actualizado correctamente.', 'success')
     return redirect(url_for('dashboard'))
 
 
@@ -605,12 +826,38 @@ def delete_simulator(sim_id):
 
     simulator = db.session.get(Simulator, sim_id)
     if simulator:
-        linked_questions = Question.query.filter_by(category=simulator.name).count()
-        if linked_questions > 0:
-            flash('No se puede eliminar porque tiene preguntas asociadas')
+        ProgramArea.query.filter_by(simulator_id=simulator.id).delete(synchronize_session=False)
+        linked_questions = Question.query.filter_by(category=simulator.name).all()
+        linked_ids = [q.id for q in linked_questions]
+
+        if linked_ids:
+            QuestionStat.query.filter(QuestionStat.question_id.in_(linked_ids)).delete(synchronize_session=False)
+            Question.query.filter(Question.id.in_(linked_ids)).delete(synchronize_session=False)
+
+            users = User.query.all()
+            for user in users:
+                payload = user_to_dict(user)
+                progress = payload['progress']
+                progress['completed_questions'] = [qid for qid in progress.get('completed_questions', []) if qid not in linked_ids]
+                progress.get('by_category', {}).pop(simulator.name, None)
+                user.progress = progress
+
+            flash(f'Simulador eliminado junto con {len(linked_ids)} preguntas asociadas.', 'success')
         else:
-            db.session.delete(simulator)
-            db.session.commit()
+            flash('Simulador eliminado.', 'success')
+
+        db.session.delete(simulator)
+        empty_program_ids = [
+            row[0]
+            for row in db.session.query(Program.id)
+            .outerjoin(ProgramArea, Program.id == ProgramArea.program_id)
+            .group_by(Program.id)
+            .having(func.count(ProgramArea.id) == 0)
+            .all()
+        ]
+        if empty_program_ids:
+            Program.query.filter(Program.id.in_(empty_program_ids)).delete(synchronize_session=False)
+        db.session.commit()
 
     return redirect(url_for('dashboard'))
 
@@ -778,29 +1025,59 @@ def quiz_by_category(category):
 
     session.setdefault('page', 0)
     session.setdefault('score', 0)
+    session.setdefault('quiz_answers', {})
 
     page = session['page']
+    if request.method == 'GET' and page == 0:
+        session['quiz_answers'] = {}
     start_idx = page * QUESTIONS_PER_PAGE
     end_idx = start_idx + QUESTIONS_PER_PAGE
     questions_page = questions[start_idx:end_idx]
 
     if request.method == 'POST':
+        answers = session.get('quiz_answers', {})
         for i, q in enumerate(questions_page):
             key = f'question_{start_idx + i}'
             selected = request.form.get(key)
-            register_answer(q['id'], selected == q['answer'])
-            if selected == q['answer']:
+            is_correct = selected == q['answer']
+            register_answer(q['id'], is_correct)
+            answers[q['id']] = {
+                'selected': selected or 'Sin respuesta',
+                'correct': q['answer'],
+                'is_correct': is_correct,
+            }
+            if is_correct:
                 session['score'] += 1
             mark_question_completed(user, q['id'], category)
 
+        session['quiz_answers'] = answers
         save_users(users)
         session['page'] += 1
 
         if end_idx >= total_questions:
             score = session.pop('score', 0)
             session.pop('page', None)
+            answers = session.pop('quiz_answers', {})
+            review = []
+            for q in questions:
+                answer_info = answers.get(q['id'])
+                if not answer_info:
+                    continue
+                review.append({
+                    'question': q['question'],
+                    'selected': answer_info['selected'],
+                    'correct': answer_info['correct'],
+                    'is_correct': answer_info['is_correct'],
+                })
             completed, total, percentage = calculate_progress_data(user, category)
-            return render_template('quiz_result.html', score=score, total=total, progress=percentage, category=category)
+            return render_template(
+                'quiz_result.html',
+                score=score,
+                total=total,
+                progress=percentage,
+                category=category,
+                review=review,
+            )
 
         return redirect(url_for('quiz_by_category', category=category))
 
@@ -906,9 +1183,21 @@ def reset_category(category):
 @app.route('/landing')
 def landing():
     categories = [row[0] for row in db.session.query(Question.category).distinct().order_by(Question.category).all() if row[0]]
+    course_cards = []
+    use_segmented_catalog = is_segmented_catalog_enabled()
+    if use_segmented_catalog:
+        try:
+            programs = list_programs_catalog()
+            course_cards = [{'name': p['name'], 'segment': p.get('segment', 'ingreso')} for p in programs]
+        except Exception:
+            course_cards = []
+    if not course_cards:
+        course_cards = [{'name': category, 'segment': 'ingreso'} for category in categories]
     if not categories:
         categories = ['Inglés a2', 'Pensamiento científico', 'Pensamiento matemático', 'Redacción indirecta']
-    return render_template('landing.html', categories=categories)
+        if not course_cards:
+            course_cards = [{'name': category, 'segment': 'ingreso'} for category in categories]
+    return render_template('landing.html', categories=categories, course_cards=course_cards, use_segmented_catalog=use_segmented_catalog)
 
 
 def load_tickets():
@@ -1019,6 +1308,63 @@ def admin_mark_paid(ticket_id):
     return redirect(url_for('admin_payments'))
 
 
+def backfill_program_catalog():
+    programs_by_key = {}
+
+    for program in Program.query.all():
+        programs_by_key[program.name.casefold()] = program
+
+    simulators = Simulator.query.order_by(Simulator.name).all()
+    for simulator in simulators:
+        key = simulator.name.casefold()
+        if key not in programs_by_key:
+            program = Program(name=simulator.name, segment=normalize_segment(simulator.segment) or 'ingreso')
+            db.session.add(program)
+            db.session.flush()
+            programs_by_key[key] = program
+        else:
+            program = programs_by_key[key]
+            if not program.segment:
+                program.segment = normalize_segment(simulator.segment) or 'ingreso'
+
+        area = ProgramArea.query.filter_by(simulator_id=simulator.id).first()
+        if area is None:
+            area = ProgramArea.query.filter(
+                ProgramArea.program_id == program.id,
+                func.lower(ProgramArea.name) == simulator.name.lower()
+            ).first()
+        if area is None:
+            db.session.add(ProgramArea(program_id=program.id, name=simulator.name, simulator_id=simulator.id))
+        else:
+            area.program_id = program.id
+            area.name = simulator.name
+            if area.simulator_id is None:
+                area.simulator_id = simulator.id
+
+    categories = [row[0] for row in db.session.query(Question.category).distinct().all() if row[0]]
+    for category in categories:
+        normalized = normalize_simulator_name(category)
+        if not normalized:
+            continue
+        key = normalized.casefold()
+        if key not in programs_by_key:
+            program = Program(name=normalized, segment='ingreso')
+            db.session.add(program)
+            db.session.flush()
+            programs_by_key[key] = program
+        else:
+            program = programs_by_key[key]
+
+        area_exists = db.session.query(ProgramArea.id).filter(
+            ProgramArea.program_id == program.id,
+            func.lower(ProgramArea.name) == normalized.lower()
+        ).first()
+        if not area_exists:
+            db.session.add(ProgramArea(program_id=program.id, name=normalized))
+
+    db.session.commit()
+
+
 with app.app_context():
     db.create_all()
 
@@ -1031,6 +1377,34 @@ with app.app_context():
     except Exception as e:
         db.session.rollback()
         print(f'⚠️ No se pudo validar/agregar columna referral_code: {e}')
+
+    try:
+        simulator_columns = {col['name'] for col in inspect(db.engine).get_columns('simulator')}
+        if 'segment' not in simulator_columns:
+            db.session.execute(text("ALTER TABLE simulator ADD COLUMN segment VARCHAR(20) DEFAULT 'ingreso'"))
+            db.session.execute(text("UPDATE simulator SET segment='ingreso' WHERE segment IS NULL OR segment = ''"))
+            db.session.commit()
+            print('✅ Columna segment agregada en simulator con valor por defecto ingreso')
+    except Exception as e:
+        db.session.rollback()
+        print(f'⚠️ No se pudo validar/agregar columna segment en simulator: {e}')
+
+    try:
+        program_area_columns = {col['name'] for col in inspect(db.engine).get_columns('program_area')}
+        if 'simulator_id' not in program_area_columns:
+            db.session.execute(text('ALTER TABLE program_area ADD COLUMN simulator_id INTEGER'))
+            db.session.commit()
+            print('✅ Columna simulator_id agregada en program_area')
+    except Exception as e:
+        db.session.rollback()
+        print(f'⚠️ No se pudo validar/agregar columna simulator_id en program_area: {e}')
+
+    try:
+        backfill_program_catalog()
+        print('✅ Catálogo Program/ProgramArea sincronizado desde simuladores/categorías existentes')
+    except Exception as e:
+        db.session.rollback()
+        print(f'⚠️ No se pudo sincronizar catálogo Program/ProgramArea: {e}')
 
     try:
         admin = User.query.filter_by(username="Apolo96").first()
