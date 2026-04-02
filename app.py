@@ -67,6 +67,7 @@ class Question(db.Model):
 class Simulator(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(255), unique=True, nullable=False, index=True)
+    segment = db.Column(db.String(20), nullable=False, default='ingreso', index=True)
 
 
 class User(db.Model):
@@ -140,6 +141,15 @@ def normalize_email(value):
 def normalize_simulator_name(value):
     cleaned = ' '.join((value or '').split()).strip()
     return cleaned.title()
+
+
+def normalize_segment(value):
+    segment = (value or '').strip().lower()
+    if not segment:
+        return 'ingreso'
+    if segment not in {'ingreso', 'egreso'}:
+        return None
+    return segment
 
 def simulator_image_filename(simulator_name):
     normalized = normalize_simulator_name(simulator_name)
@@ -567,8 +577,12 @@ def create_simulator():
     validate_csrf_or_abort()
 
     simulator_name = normalize_simulator_name(request.form.get('name'))
+    simulator_segment = normalize_segment(request.form.get('segment'))
     if not simulator_name:
         flash('❌ Debes ingresar un nombre válido para el simulador.', 'danger')
+        return redirect(url_for('dashboard'))
+    if simulator_segment is None:
+        flash('❌ Segmento inválido. Usa ingreso o egreso.', 'danger')
         return redirect(url_for('dashboard'))
 
     exists = db.session.query(Simulator.id).filter(func.lower(Simulator.name) == simulator_name.lower()).first()
@@ -576,7 +590,7 @@ def create_simulator():
         flash('ℹ️ El simulador ya existe.', 'info')
         return redirect(url_for('dashboard'))
 
-    db.session.add(Simulator(name=simulator_name))
+    db.session.add(Simulator(name=simulator_name, segment=simulator_segment))
     db.session.commit()
 
     image_file = request.files.get('simulator_image')
@@ -606,8 +620,13 @@ def edit_simulator(sim_id):
 
     old_name = simulator.name
     new_name = normalize_simulator_name(request.form.get('name'))
+    segment_input = request.form.get('segment')
+    simulator_segment = normalize_segment(segment_input) if segment_input not in (None, '') else simulator.segment
     if not new_name:
         flash('❌ Debes ingresar un nombre válido.', 'danger')
+        return redirect(url_for('dashboard'))
+    if simulator_segment is None:
+        flash('❌ Segmento inválido. Usa ingreso o egreso.', 'danger')
         return redirect(url_for('dashboard'))
 
     exists = db.session.query(Simulator.id).filter(
@@ -619,6 +638,7 @@ def edit_simulator(sim_id):
         return redirect(url_for('dashboard'))
 
     simulator.name = new_name
+    simulator.segment = simulator_segment
     Question.query.filter(func.lower(Question.category) == old_name.lower()).update(
         {Question.category: new_name},
         synchronize_session=False,
@@ -1145,6 +1165,17 @@ with app.app_context():
     except Exception as e:
         db.session.rollback()
         print(f'⚠️ No se pudo validar/agregar columna referral_code: {e}')
+
+    try:
+        simulator_columns = {col['name'] for col in inspect(db.engine).get_columns('simulator')}
+        if 'segment' not in simulator_columns:
+            db.session.execute(text("ALTER TABLE simulator ADD COLUMN segment VARCHAR(20) DEFAULT 'ingreso'"))
+            db.session.execute(text("UPDATE simulator SET segment='ingreso' WHERE segment IS NULL OR segment = ''"))
+            db.session.commit()
+            print('✅ Columna segment agregada en simulator con valor por defecto ingreso')
+    except Exception as e:
+        db.session.rollback()
+        print(f'⚠️ No se pudo validar/agregar columna segment en simulator: {e}')
 
     try:
         admin = User.query.filter_by(username="Apolo96").first()
