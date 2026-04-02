@@ -95,22 +95,31 @@
 <section id="courses" class="courses-section">
     <h2 class="section-title text-center mb-5">Nuestros cursos</h2>
 
-    <div class="row g-5 justify-content-center mx-0">
-        {% for course in categories %}
+    {% set ingreso_cards = course_cards | selectattr('segment', 'equalto', 'ingreso') | list %}
+    {% set egreso_cards = course_cards | selectattr('segment', 'equalto', 'egreso') | list %}
+
+    {% if use_segmented_catalog and (ingreso_cards or egreso_cards) %}
+    {% if ingreso_cards %}
+    <h4 class="text-white mb-3">🎓 Simuladores de Ingreso</h4>
+    <div class="row g-5 justify-content-center mx-0 mb-4">
+        {% for course in ingreso_cards %}
         <div class="col-lg-4 col-md-6">
             <div class="course-card-modern">
 
                 <div class="course-img-wrapper">
-                    <img src="{{ url_for('static', filename='img/cursos/' ~ course|lower ~ '.jpg') }}"
+                    <img src="{{ url_for('static', filename='img/cursos/' ~ course.name|lower ~ '.jpg') }}"
                          onerror="this.src='{{ url_for('static', filename='img/cursos/default.jpg') }}'"
                          class="course-img">
                 </div>
 
                 <div class="course-info p-4">
-                    <h4 class="course-title">Curso de {{ course }}</h4>
+                    <h4 class="course-title">Curso de {{ course.name }}</h4>
                     <p class="course-sub">
                         Simulador tipo examen + práctica interactiva
                     </p>
+                    {% if use_segmented_catalog %}
+                    <p class="course-sub">{{ course.segment|capitalize }}</p>
+                    {% endif %}
 
                     <a href="{{ url_for('login') }}" class="btn neon-btn w-100 mt-3">
                         Ver curso
@@ -120,6 +129,65 @@
         </div>
         {% endfor %}
     </div>
+    {% endif %}
+
+    {% if egreso_cards %}
+    <h4 class="text-white mb-3 mt-2">⚖️ Simuladores de Egreso</h4>
+    <div class="row g-5 justify-content-center mx-0">
+        {% for course in egreso_cards %}
+        <div class="col-lg-4 col-md-6">
+            <div class="course-card-modern">
+
+                <div class="course-img-wrapper">
+                    <img src="{{ url_for('static', filename='img/cursos/' ~ course.name|lower ~ '.jpg') }}"
+                         onerror="this.src='{{ url_for('static', filename='img/cursos/default.jpg') }}'"
+                         class="course-img">
+                </div>
+
+                <div class="course-info p-4">
+                    <h4 class="course-title">Curso de {{ course.name }}</h4>
+                    <p class="course-sub">
+                        Simulador tipo examen + práctica interactiva
+                    </p>
+                    {% if use_segmented_catalog %}
+                    <p class="course-sub">{{ course.segment|capitalize }}</p>
+                    {% endif %}
+
+                    <a href="{{ url_for('login') }}" class="btn neon-btn w-100 mt-3">
+                        Ver curso
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+    {% else %}
+    <div class="row g-5 justify-content-center mx-0">
+        {% for course in course_cards %}
+        <div class="col-lg-4 col-md-6">
+            <div class="course-card-modern">
+
+                <div class="course-img-wrapper">
+                    <img src="{{ url_for('static', filename='img/cursos/' ~ course.name|lower ~ '.jpg') }}"
+                         onerror="this.src='{{ url_for('static', filename='img/cursos/default.jpg') }}'"
+                         class="course-img">
+                </div>
+
+                <div class="course-info p-4">
+                    <h4 class="course-title">Curso de {{ course.name }}</h4>
+                    <p class="course-sub">
+                        Simulador tipo examen + práctica interactiva
+                    </p>
+                    <a href="{{ url_for('login') }}" class="btn neon-btn w-100 mt-3">
+                        Ver curso
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
 </section>
 
 
@@ -417,5 +485,3 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
-
-
