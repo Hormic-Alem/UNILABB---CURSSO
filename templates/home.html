@@ -71,10 +71,17 @@
                     </div>
                 </div>
 
+                {% if use_segmented_catalog and card.area_count > 1 and card.program_id %}
+                <a href="{{ url_for('program_areas', program_id=card.program_id) }}"
+                   class="btn neon-btn w-100 mb-2">
+                   Ver áreas del programa
+                </a>
+                {% else %}
                 <a href="{{ url_for('quiz_by_category', category=card.primary_area) }}"
                    class="btn neon-btn w-100 mb-2">
                    Entrar al curso
                 </a>
+                {% endif %}
 
                 <form action="{{ url_for('reset_category', category=card.primary_area) }}" method="POST">
                     <button class="btn neon-outline-btn w-100">Reiniciar curso</button>

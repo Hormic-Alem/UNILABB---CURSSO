@@ -620,6 +620,7 @@ def home():
                 percent = int((completed / total) * 100) if total > 0 else 0
                 primary_area = next((area for area in areas if progress_by_category.get(area, {}).get('total', 0) > 0), areas[0])
                 course_cards.append({
+                    'program_id': program.get('id'),
                     'name': program['name'],
                     'segment': program.get('segment', 'ingreso'),
                     'areas': areas,
@@ -636,6 +637,7 @@ def home():
         for category in categories:
             cat_progress = progress_by_category.get(category, {'completed': 0, 'total': 0, 'percent': 0})
             course_cards.append({
+                'program_id': None,
                 'name': category,
                 'segment': 'ingreso',
                 'areas': [category],
@@ -660,6 +662,38 @@ def home():
         selected_stats_category=selected_stats_category,
         visible_stats=visible_stats,
     )
+
+
+@app.route('/program/<int:program_id>')
+def program_areas(program_id):
+    if 'username' not in session:
+        return redirect(url_for('login'))
+
+    program = db.session.get(Program, program_id)
+    if not program:
+        flash('Programa no encontrado.', 'warning')
+        return redirect(url_for('home'))
+
+    areas = ProgramArea.query.filter_by(program_id=program_id).order_by(ProgramArea.name).all()
+    if not areas:
+        flash('Este programa aún no tiene áreas disponibles.', 'warning')
+        return redirect(url_for('home'))
+
+    users = load_users()
+    user = next(u for u in users if u['username'] == session['username'])
+    normalize_user_progress(user)
+
+    area_items = []
+    for area in areas:
+        completed, total, percent = calculate_progress_data(user, area.name)
+        area_items.append({
+            'name': area.name,
+            'completed': completed,
+            'total': total,
+            'percent': percent,
+        })
+
+    return render_template('program_areas.html', program=program, areas=area_items)
 
 
 @app.route('/dashboard')
