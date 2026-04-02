@@ -67,6 +67,7 @@ class Question(db.Model):
 class Simulator(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(255), unique=True, nullable=False, index=True)
+    segment = db.Column(db.String(20), nullable=False, default='ingreso', index=True)
 
 
 class User(db.Model):
@@ -141,6 +142,15 @@ def normalize_simulator_name(value):
     cleaned = ' '.join((value or '').split()).strip()
     return cleaned.title()
 
+
+def normalize_segment(value):
+    segment = (value or '').strip().lower()
+    if not segment:
+        return 'ingreso'
+    if segment not in {'ingreso', 'egreso'}:
+        return None
+    return segment
+
 def simulator_image_filename(simulator_name):
     normalized = normalize_simulator_name(simulator_name)
     safe = normalized.replace('/', ' ').replace('\\', ' ').strip().lower()
@@ -165,6 +175,24 @@ def save_simulator_image(simulator_name, file_storage):
     target_path = os.path.join(target_dir, target_name)
     file_storage.save(target_path)
     return True, target_name
+
+
+def rename_simulator_image(old_name, new_name):
+    old_filename = simulator_image_filename(old_name)
+    new_filename = simulator_image_filename(new_name)
+    if not old_filename or not new_filename or old_filename == new_filename:
+        return
+
+    target_dir = os.path.join(app.root_path, 'static', 'img', 'cursos')
+    old_path = os.path.join(target_dir, old_filename)
+    new_path = os.path.join(target_dir, new_filename)
+    if not os.path.exists(old_path):
+        return
+
+    os.makedirs(target_dir, exist_ok=True)
+    if os.path.exists(new_path):
+        os.remove(new_path)
+    os.replace(old_path, new_path)
 
 
 def verify_password(stored_password, incoming_password):
@@ -549,8 +577,12 @@ def create_simulator():
     validate_csrf_or_abort()
 
     simulator_name = normalize_simulator_name(request.form.get('name'))
+    simulator_segment = normalize_segment(request.form.get('segment'))
     if not simulator_name:
         flash('❌ Debes ingresar un nombre válido para el simulador.', 'danger')
+        return redirect(url_for('dashboard'))
+    if simulator_segment is None:
+        flash('❌ Segmento inválido. Usa ingreso o egreso.', 'danger')
         return redirect(url_for('dashboard'))
 
     exists = db.session.query(Simulator.id).filter(func.lower(Simulator.name) == simulator_name.lower()).first()
@@ -558,7 +590,7 @@ def create_simulator():
         flash('ℹ️ El simulador ya existe.', 'info')
         return redirect(url_for('dashboard'))
 
-    db.session.add(Simulator(name=simulator_name))
+    db.session.add(Simulator(name=simulator_name, segment=simulator_segment))
     db.session.commit()
 
     image_file = request.files.get('simulator_image')
@@ -571,6 +603,63 @@ def create_simulator():
         return redirect(url_for('dashboard'))
 
     flash('✅ Simulador creado', 'success')
+    return redirect(url_for('dashboard'))
+
+
+@app.route('/simulators/edit/<int:sim_id>', methods=['POST'])
+def edit_simulator(sim_id):
+    if 'username' not in session or not is_admin_session():
+        return redirect(url_for('login'))
+
+    validate_csrf_or_abort()
+
+    simulator = db.session.get(Simulator, sim_id)
+    if not simulator:
+        flash('❌ Simulador no encontrado.', 'danger')
+        return redirect(url_for('dashboard'))
+
+    old_name = simulator.name
+    new_name = normalize_simulator_name(request.form.get('name'))
+    segment_input = request.form.get('segment')
+    simulator_segment = normalize_segment(segment_input) if segment_input not in (None, '') else simulator.segment
+    if not new_name:
+        flash('❌ Debes ingresar un nombre válido.', 'danger')
+        return redirect(url_for('dashboard'))
+    if simulator_segment is None:
+        flash('❌ Segmento inválido. Usa ingreso o egreso.', 'danger')
+        return redirect(url_for('dashboard'))
+
+    exists = db.session.query(Simulator.id).filter(
+        func.lower(Simulator.name) == new_name.lower(),
+        Simulator.id != sim_id
+    ).first()
+    if exists:
+        flash('❌ Ya existe otro simulador con ese nombre.', 'danger')
+        return redirect(url_for('dashboard'))
+
+    simulator.name = new_name
+    simulator.segment = simulator_segment
+    Question.query.filter(func.lower(Question.category) == old_name.lower()).update(
+        {Question.category: new_name},
+        synchronize_session=False,
+    )
+
+    users = User.query.all()
+    for user in users:
+        payload = user_to_dict(user)
+        by_category = payload['progress'].get('by_category', {})
+        if old_name in by_category:
+            if new_name in by_category:
+                merged = by_category[new_name] + [qid for qid in by_category[old_name] if qid not in by_category[new_name]]
+                by_category[new_name] = merged
+            else:
+                by_category[new_name] = by_category[old_name]
+            by_category.pop(old_name, None)
+            user.progress = payload['progress']
+
+    db.session.commit()
+    rename_simulator_image(old_name, new_name)
+    flash('✅ Nombre del simulador actualizado correctamente.', 'success')
     return redirect(url_for('dashboard'))
 
 
@@ -605,12 +694,27 @@ def delete_simulator(sim_id):
 
     simulator = db.session.get(Simulator, sim_id)
     if simulator:
-        linked_questions = Question.query.filter_by(category=simulator.name).count()
-        if linked_questions > 0:
-            flash('No se puede eliminar porque tiene preguntas asociadas')
+        linked_questions = Question.query.filter_by(category=simulator.name).all()
+        linked_ids = [q.id for q in linked_questions]
+
+        if linked_ids:
+            QuestionStat.query.filter(QuestionStat.question_id.in_(linked_ids)).delete(synchronize_session=False)
+            Question.query.filter(Question.id.in_(linked_ids)).delete(synchronize_session=False)
+
+            users = User.query.all()
+            for user in users:
+                payload = user_to_dict(user)
+                progress = payload['progress']
+                progress['completed_questions'] = [qid for qid in progress.get('completed_questions', []) if qid not in linked_ids]
+                progress.get('by_category', {}).pop(simulator.name, None)
+                user.progress = progress
+
+            flash(f'Simulador eliminado junto con {len(linked_ids)} preguntas asociadas.', 'success')
         else:
-            db.session.delete(simulator)
-            db.session.commit()
+            flash('Simulador eliminado.', 'success')
+
+        db.session.delete(simulator)
+        db.session.commit()
 
     return redirect(url_for('dashboard'))
 
@@ -778,29 +882,59 @@ def quiz_by_category(category):
 
     session.setdefault('page', 0)
     session.setdefault('score', 0)
+    session.setdefault('quiz_answers', {})
 
     page = session['page']
+    if request.method == 'GET' and page == 0:
+        session['quiz_answers'] = {}
     start_idx = page * QUESTIONS_PER_PAGE
     end_idx = start_idx + QUESTIONS_PER_PAGE
     questions_page = questions[start_idx:end_idx]
 
     if request.method == 'POST':
+        answers = session.get('quiz_answers', {})
         for i, q in enumerate(questions_page):
             key = f'question_{start_idx + i}'
             selected = request.form.get(key)
-            register_answer(q['id'], selected == q['answer'])
-            if selected == q['answer']:
+            is_correct = selected == q['answer']
+            register_answer(q['id'], is_correct)
+            answers[q['id']] = {
+                'selected': selected or 'Sin respuesta',
+                'correct': q['answer'],
+                'is_correct': is_correct,
+            }
+            if is_correct:
                 session['score'] += 1
             mark_question_completed(user, q['id'], category)
 
+        session['quiz_answers'] = answers
         save_users(users)
         session['page'] += 1
 
         if end_idx >= total_questions:
             score = session.pop('score', 0)
             session.pop('page', None)
+            answers = session.pop('quiz_answers', {})
+            review = []
+            for q in questions:
+                answer_info = answers.get(q['id'])
+                if not answer_info:
+                    continue
+                review.append({
+                    'question': q['question'],
+                    'selected': answer_info['selected'],
+                    'correct': answer_info['correct'],
+                    'is_correct': answer_info['is_correct'],
+                })
             completed, total, percentage = calculate_progress_data(user, category)
-            return render_template('quiz_result.html', score=score, total=total, progress=percentage, category=category)
+            return render_template(
+                'quiz_result.html',
+                score=score,
+                total=total,
+                progress=percentage,
+                category=category,
+                review=review,
+            )
 
         return redirect(url_for('quiz_by_category', category=category))
 
@@ -1031,6 +1165,17 @@ with app.app_context():
     except Exception as e:
         db.session.rollback()
         print(f'⚠️ No se pudo validar/agregar columna referral_code: {e}')
+
+    try:
+        simulator_columns = {col['name'] for col in inspect(db.engine).get_columns('simulator')}
+        if 'segment' not in simulator_columns:
+            db.session.execute(text("ALTER TABLE simulator ADD COLUMN segment VARCHAR(20) DEFAULT 'ingreso'"))
+            db.session.execute(text("UPDATE simulator SET segment='ingreso' WHERE segment IS NULL OR segment = ''"))
+            db.session.commit()
+            print('✅ Columna segment agregada en simulator con valor por defecto ingreso')
+    except Exception as e:
+        db.session.rollback()
+        print(f'⚠️ No se pudo validar/agregar columna segment en simulator: {e}')
 
     try:
         admin = User.query.filter_by(username="Apolo96").first()
