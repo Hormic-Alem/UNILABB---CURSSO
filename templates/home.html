@@ -39,41 +39,44 @@
 
 <div class="row g-4 justify-content-center">
 
-{% for category in categories %}
+{% for card in course_cards %}
     <div class="col-md-6 col-lg-4">
         <div class="course-card-modern">
 
             <!-- ========== IMAGEN AUTOMÁTICA DEL CURSO ========== -->
             <div class="course-img-wrapper">
                 <img 
-                    src="{{ url_for('static', filename='img/cursos/' ~ category|lower ~ '.jpg') }}"
+                    src="{{ url_for('static', filename='img/cursos/' ~ card.name|lower ~ '.jpg') }}"
                     onerror="this.src='{{ url_for('static', filename='img/cursos/default.jpg') }}'"
                     class="course-img">
             </div>
 
             <div class="course-info p-4">
-                <h5 class="course-title">Curso de {{ category|capitalize }}</h5>
+                <h5 class="course-title">Curso de {{ card.name|capitalize }}</h5>
                 <p class="course-sub">Práctica interactiva tipo examen</p>
+                {% if use_segmented_catalog and card.area_count > 1 %}
+                <p class="course-sub mb-1">Áreas incluidas: {{ card.area_count }}</p>
+                {% endif %}
 
                 <p class="progress-text">
                     Progreso:
-                    {{ progress_by_category[category].completed }} /
-                    {{ progress_by_category[category].total }} preguntas
+                    {{ card.completed }} /
+                    {{ card.total }} preguntas
                 </p>
 
                 <div class="progress mb-3 modern-progress">
                     <div class="progress-bar"
-                         style="width: {{ progress_by_category[category].percent }}%;">
-                         {{ progress_by_category[category].percent }}%
+                         style="width: {{ card.percent }}%;">
+                         {{ card.percent }}%
                     </div>
                 </div>
 
-                <a href="{{ url_for('quiz_by_category', category=category) }}"
+                <a href="{{ url_for('quiz_by_category', category=card.primary_area) }}"
                    class="btn neon-btn w-100 mb-2">
                    Entrar al curso
                 </a>
 
-                <form action="{{ url_for('reset_category', category=category) }}" method="POST">
+                <form action="{{ url_for('reset_category', category=card.primary_area) }}" method="POST">
                     <button class="btn neon-outline-btn w-100">Reiniciar curso</button>
                 </form>
             </div>

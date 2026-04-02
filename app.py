@@ -164,6 +164,10 @@ def normalize_segment(value):
         return None
     return segment
 
+
+def is_segmented_catalog_enabled():
+    return os.getenv('ENABLE_SEGMENTED_LANDING', 'false').strip().lower() in {'1', 'true', 'yes', 'on'}
+
 def simulator_image_filename(simulator_name):
     normalized = normalize_simulator_name(simulator_name)
     safe = normalized.replace('/', ' ').replace('\\', ' ').strip().lower()
@@ -604,9 +608,49 @@ def home():
 
     visible_stats = stats_by_category.get(selected_stats_category, [])
 
+    course_cards = []
+    use_segmented_catalog = is_segmented_catalog_enabled()
+    if use_segmented_catalog:
+        try:
+            programs = list_programs_catalog()
+            for program in programs:
+                areas = program.get('areas') or [program['name']]
+                completed = sum(progress_by_category.get(area, {}).get('completed', 0) for area in areas)
+                total = sum(progress_by_category.get(area, {}).get('total', 0) for area in areas)
+                percent = int((completed / total) * 100) if total > 0 else 0
+                primary_area = next((area for area in areas if progress_by_category.get(area, {}).get('total', 0) > 0), areas[0])
+                course_cards.append({
+                    'name': program['name'],
+                    'segment': program.get('segment', 'ingreso'),
+                    'areas': areas,
+                    'area_count': len(areas),
+                    'completed': completed,
+                    'total': total,
+                    'percent': percent,
+                    'primary_area': primary_area,
+                })
+        except Exception:
+            course_cards = []
+
+    if not course_cards:
+        for category in categories:
+            cat_progress = progress_by_category.get(category, {'completed': 0, 'total': 0, 'percent': 0})
+            course_cards.append({
+                'name': category,
+                'segment': 'ingreso',
+                'areas': [category],
+                'area_count': 1,
+                'completed': cat_progress.get('completed', 0),
+                'total': cat_progress.get('total', 0),
+                'percent': cat_progress.get('percent', 0),
+                'primary_area': category,
+            })
+
     return render_template(
         'home.html',
         categories=categories,
+        course_cards=course_cards,
+        use_segmented_catalog=use_segmented_catalog,
         progress_by_category=progress_by_category,
         total_percent=total_percent,
         avatar_url=avatar_url,
@@ -1139,9 +1183,21 @@ def reset_category(category):
 @app.route('/landing')
 def landing():
     categories = [row[0] for row in db.session.query(Question.category).distinct().order_by(Question.category).all() if row[0]]
+    course_cards = []
+    use_segmented_catalog = is_segmented_catalog_enabled()
+    if use_segmented_catalog:
+        try:
+            programs = list_programs_catalog()
+            course_cards = [{'name': p['name'], 'segment': p.get('segment', 'ingreso')} for p in programs]
+        except Exception:
+            course_cards = []
+    if not course_cards:
+        course_cards = [{'name': category, 'segment': 'ingreso'} for category in categories]
     if not categories:
         categories = ['Inglés a2', 'Pensamiento científico', 'Pensamiento matemático', 'Redacción indirecta']
-    return render_template('landing.html', categories=categories)
+        if not course_cards:
+            course_cards = [{'name': category, 'segment': 'ingreso'} for category in categories]
+    return render_template('landing.html', categories=categories, course_cards=course_cards, use_segmented_catalog=use_segmented_catalog)
 
 
 def load_tickets():
