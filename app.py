@@ -475,6 +475,7 @@ def list_programs_catalog():
             'name': program.name,
             'segment': program.segment,
             'areas': [area.name for area in areas],
+            'area_items': [{'name': area.name, 'simulator_id': area.simulator_id} for area in areas],
         })
     return result
 
@@ -627,7 +628,16 @@ def home():
     if use_segmented_catalog:
         try:
             programs = list_programs_catalog()
+            child_area_names = {
+                item['name'].casefold()
+                for program in programs
+                for item in program.get('area_items', [])
+                if item.get('simulator_id') and item['name'].casefold() != program['name'].casefold()
+            }
             for program in programs:
+                # Mostrar solo programas padre o programas independientes.
+                if program['name'].casefold() in child_area_names:
+                    continue
                 areas = program.get('areas') or [program['name']]
                 completed = sum(progress_by_category.get(area, {}).get('completed', 0) for area in areas)
                 total = sum(progress_by_category.get(area, {}).get('total', 0) for area in areas)
@@ -680,26 +690,29 @@ def home():
 
 @app.route('/program/<int:program_id>')
 def program_areas(program_id):
-    if 'username' not in session:
-        return redirect(url_for('login'))
-
     program = db.session.get(Program, program_id)
     if not program:
         flash('Programa no encontrado.', 'warning')
-        return redirect(url_for('home'))
+        return redirect(url_for('landing'))
 
     areas = ProgramArea.query.filter_by(program_id=program_id).order_by(ProgramArea.name).all()
     if not areas:
         flash('Este programa aún no tiene áreas disponibles.', 'warning')
-        return redirect(url_for('home'))
+        return redirect(url_for('landing'))
 
-    users = load_users()
-    user = next(u for u in users if u['username'] == session['username'])
-    normalize_user_progress(user)
+    user = None
+    if 'username' in session:
+        users = load_users()
+        user = next((u for u in users if u['username'] == session['username']), None)
+        if user:
+            normalize_user_progress(user)
 
     area_items = []
     for area in areas:
-        completed, total, percent = calculate_progress_data(user, area.name)
+        if user:
+            completed, total, percent = calculate_progress_data(user, area.name)
+        else:
+            completed, total, percent = 0, 0, 0
         area_items.append({
             'name': area.name,
             'completed': completed,
@@ -707,7 +720,7 @@ def program_areas(program_id):
             'percent': percent,
         })
 
-    return render_template('program_areas.html', program=program, areas=area_items)
+    return render_template('program_areas.html', program=program, areas=area_items, can_start=bool(user))
 
 
 @app.route('/dashboard')
@@ -1236,15 +1249,25 @@ def landing():
     if use_segmented_catalog:
         try:
             programs = list_programs_catalog()
-            course_cards = [{'name': p['name'], 'segment': p.get('segment', 'ingreso')} for p in programs]
+            child_area_names = {
+                item['name'].casefold()
+                for program in programs
+                for item in program.get('area_items', [])
+                if item.get('simulator_id') and item['name'].casefold() != program['name'].casefold()
+            }
+            course_cards = [
+                {'name': p['name'], 'segment': p.get('segment', 'ingreso'), 'program_id': p.get('id')}
+                for p in programs
+                if p['name'].casefold() not in child_area_names
+            ]
         except Exception:
             course_cards = []
     if not course_cards:
-        course_cards = [{'name': category, 'segment': 'ingreso'} for category in categories]
+        course_cards = [{'name': category, 'segment': 'ingreso', 'program_id': None} for category in categories]
     if not categories:
         categories = ['Inglés a2', 'Pensamiento científico', 'Pensamiento matemático', 'Redacción indirecta']
         if not course_cards:
-            course_cards = [{'name': category, 'segment': 'ingreso'} for category in categories]
+            course_cards = [{'name': category, 'segment': 'ingreso', 'program_id': None} for category in categories]
     return render_template('landing.html', categories=categories, course_cards=course_cards, use_segmented_catalog=use_segmented_catalog)
 
 

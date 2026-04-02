@@ -121,7 +121,7 @@
                     <p class="course-sub">{{ course.segment|capitalize }}</p>
                     {% endif %}
 
-                    <a href="{{ url_for('login') }}" class="btn neon-btn w-100 mt-3">
+                    <a href="{% if course.program_id %}{{ url_for('program_areas', program_id=course.program_id) }}{% else %}{{ url_for('login') }}{% endif %}" class="btn neon-btn w-100 mt-3">
                         Ver curso
                     </a>
                 </div>
@@ -153,7 +153,7 @@
                     <p class="course-sub">{{ course.segment|capitalize }}</p>
                     {% endif %}
 
-                    <a href="{{ url_for('login') }}" class="btn neon-btn w-100 mt-3">
+                    <a href="{% if course.program_id %}{{ url_for('program_areas', program_id=course.program_id) }}{% else %}{{ url_for('login') }}{% endif %}" class="btn neon-btn w-100 mt-3">
                         Ver curso
                     </a>
                 </div>
@@ -179,7 +179,7 @@
                     <p class="course-sub">
                         Simulador tipo examen + práctica interactiva
                     </p>
-                    <a href="{{ url_for('login') }}" class="btn neon-btn w-100 mt-3">
+                    <a href="{% if course.program_id %}{{ url_for('program_areas', program_id=course.program_id) }}{% else %}{{ url_for('login') }}{% endif %}" class="btn neon-btn w-100 mt-3">
                         Ver curso
                     </a>
                 </div>

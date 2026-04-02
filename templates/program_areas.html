@@ -7,7 +7,7 @@
             <h2 class="text-white mb-1">Programa: {{ program.name }}</h2>
             <p class="text-light mb-0">Selecciona un área para comenzar tu simulador.</p>
         </div>
-        <a href="{{ url_for('home') }}" class="btn neon-outline-btn">← Volver a cursos</a>
+        <a href="{{ url_for('home') if session.get('username') else url_for('landing') }}" class="btn neon-outline-btn">← Volver a cursos</a>
     </div>
 </div>
 
@@ -36,9 +36,15 @@
                     </div>
                 </div>
 
+                {% if can_start %}
                 <a href="{{ url_for('quiz_by_category', category=area.name) }}" class="btn neon-btn w-100">
                     Entrar al área
                 </a>
+                {% else %}
+                <a href="{{ url_for('login') }}" class="btn neon-btn w-100">
+                    Inicia sesión para practicar
+                </a>
+                {% endif %}
             </div>
         </div>
     </div>
