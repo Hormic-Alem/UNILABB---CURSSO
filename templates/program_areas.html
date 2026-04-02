@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="card neon-card mb-4 p-4">
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+        <div>
+            <h2 class="text-white mb-1">Programa: {{ program.name }}</h2>
+            <p class="text-light mb-0">Selecciona un área para comenzar tu simulador.</p>
+        </div>
+        <a href="{{ url_for('home') if session.get('username') else url_for('landing') }}" class="btn neon-outline-btn">← Volver a cursos</a>
+    </div>
+</div>
+
+<div class="row g-4">
+    {% for area in areas %}
+    <div class="col-md-6 col-lg-4">
+        <div class="course-card-modern">
+            <div class="course-img-wrapper">
+                <img
+                    src="{{ url_for('static', filename='img/cursos/' ~ area.name|lower ~ '.jpg') }}"
+                    onerror="this.src='{{ url_for('static', filename='img/cursos/default.jpg') }}'"
+                    class="course-img">
+            </div>
+
+            <div class="course-info p-4">
+                <h5 class="course-title">{{ area.name }}</h5>
+                <p class="course-sub">Área del programa {{ program.name }}</p>
+
+                <p class="progress-text">
+                    Progreso: {{ area.completed }} / {{ area.total }} preguntas
+                </p>
+
+                <div class="progress mb-3 modern-progress">
+                    <div class="progress-bar" style="width: {{ area.percent }}%;">
+                        {{ area.percent }}%
+                    </div>
+                </div>
+
+                {% if can_start %}
+                <a href="{{ url_for('quiz_by_category', category=area.name) }}" class="btn neon-btn w-100">
+                    Entrar al área
+                </a>
+                {% else %}
+                <a href="{{ url_for('login') }}" class="btn neon-btn w-100">
+                    Inicia sesión para practicar
+                </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+{% endblock %}
