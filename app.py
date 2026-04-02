@@ -166,7 +166,21 @@ def normalize_segment(value):
 
 
 def is_segmented_catalog_enabled():
-    return os.getenv('ENABLE_SEGMENTED_LANDING', 'false').strip().lower() in {'1', 'true', 'yes', 'on'}
+    raw = os.getenv('ENABLE_SEGMENTED_LANDING', 'auto').strip().lower()
+    if raw in {'1', 'true', 'yes', 'on'}:
+        return True
+    if raw in {'0', 'false', 'no', 'off'}:
+        return False
+
+    # Modo automático: activar si hay al menos un registro de egreso.
+    try:
+        has_egreso_simulator = db.session.query(Simulator.id).filter(func.lower(Simulator.segment) == 'egreso').first()
+        if has_egreso_simulator:
+            return True
+        has_egreso_program = db.session.query(Program.id).filter(func.lower(Program.segment) == 'egreso').first()
+        return bool(has_egreso_program)
+    except Exception:
+        return False
 
 def simulator_image_filename(simulator_name):
     normalized = normalize_simulator_name(simulator_name)
