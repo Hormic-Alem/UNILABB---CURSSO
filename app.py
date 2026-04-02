@@ -709,10 +709,13 @@ def program_areas(program_id):
 
     area_items = []
     for area in areas:
+        total = Question.query.filter(func.lower(Question.category) == area.name.lower()).count()
         if user:
-            completed, total, percent = calculate_progress_data(user, area.name)
+            completed = len(user.get('progress', {}).get('by_category', {}).get(area.name, []))
+            completed = min(completed, total)
+            percent = int((completed / total) * 100) if total > 0 else 0
         else:
-            completed, total, percent = 0, 0, 0
+            completed, percent = 0, 0
         area_items.append({
             'name': area.name,
             'completed': completed,

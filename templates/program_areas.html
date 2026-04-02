@@ -26,9 +26,15 @@
                 <h5 class="course-title">{{ area.name }}</h5>
                 <p class="course-sub">Área del programa {{ program.name }}</p>
 
+                {% if can_start %}
                 <p class="progress-text">
                     Progreso: {{ area.completed }} / {{ area.total }} preguntas
                 </p>
+                {% else %}
+                <p class="progress-text">
+                    Reactivos disponibles: {{ area.total }}
+                </p>
+                {% endif %}
 
                 <div class="progress mb-3 modern-progress">
                     <div class="progress-bar" style="width: {{ area.percent }}%;">
