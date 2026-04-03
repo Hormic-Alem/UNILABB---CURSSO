@@ -539,6 +539,41 @@ def list_programs_catalog():
     return result
 
 
+def build_program_fallback_meta(programs):
+    question_rows = (
+        db.session.query(func.lower(Question.category), func.count(Question.id))
+        .group_by(func.lower(Question.category))
+        .all()
+    )
+    question_count_by_category = {category: total for category, total in question_rows}
+
+    simulators = Simulator.query.order_by(Simulator.name).all()
+    sim_names_with_questions_by_segment = {}
+    for simulator in simulators:
+        segment = normalize_segment(simulator.segment) or 'ingreso'
+        if question_count_by_category.get(simulator.name.lower(), 0) <= 0:
+            continue
+        sim_names_with_questions_by_segment.setdefault(segment, set()).add(simulator.name.casefold())
+
+    meta = {}
+    for program in programs:
+        program_name = program.get('name', '')
+        segment = normalize_segment(program.get('segment')) or 'ingreso'
+        direct_total = question_count_by_category.get(program_name.lower(), 0)
+        sibling_names = {
+            name
+            for name in sim_names_with_questions_by_segment.get(segment, set())
+            if name != program_name.casefold()
+        }
+        fallback_parent = direct_total == 0 and len(sibling_names) > 0
+        meta[program_name.casefold()] = {
+            'direct_total': direct_total,
+            'fallback_parent': fallback_parent,
+            'fallback_area_count': len(sibling_names),
+        }
+    return meta
+
+
 def get_or_create_program(program_name, default_segment='ingreso'):
     normalized = normalize_simulator_name(program_name)
     if not normalized:
@@ -687,18 +722,13 @@ def home():
     if use_segmented_catalog:
         try:
             programs = list_programs_catalog()
+            fallback_meta = build_program_fallback_meta(programs)
             child_area_names = {
                 item['name'].casefold()
                 for program in programs
                 for item in program.get('area_items', [])
                 if item['name'].casefold() != program['name'].casefold()
             }
-            parent_program_names = {
-                program['name'].casefold()
-                for program in programs
-                if any(area.casefold() != program['name'].casefold() for area in (program.get('areas') or []))
-            }
-            fallback_mark_all_as_parent = len(parent_program_names) == 0
             for program in programs:
                 # Mostrar solo programas padre o programas independientes.
                 if program['name'].casefold() in child_area_names:
@@ -708,14 +738,18 @@ def home():
                 total = sum(progress_by_category.get(area, {}).get('total', 0) for area in areas)
                 percent = int((completed / total) * 100) if total > 0 else 0
                 primary_area = next((area for area in areas if progress_by_category.get(area, {}).get('total', 0) > 0), areas[0])
-                is_parent = any(area.casefold() != program['name'].casefold() for area in areas) or fallback_mark_all_as_parent
+                has_real_children = any(area.casefold() != program['name'].casefold() for area in areas)
+                fallback = fallback_meta.get(program['name'].casefold(), {})
+                is_parent = has_real_children or fallback.get('fallback_parent', False)
+                link_to_program = has_real_children or fallback.get('fallback_parent', False)
                 course_cards.append({
                     'program_id': program.get('id'),
                     'name': program['name'],
                     'segment': program.get('segment', 'ingreso'),
                     'areas': areas,
-                    'area_count': len(areas),
+                    'area_count': len(areas) if has_real_children else max(1, fallback.get('fallback_area_count', len(areas))),
                     'is_parent': is_parent,
+                    'link_to_program': link_to_program,
                     'completed': completed,
                     'total': total,
                     'percent': percent,
@@ -734,6 +768,7 @@ def home():
                 'areas': [category],
                 'area_count': 1,
                 'is_parent': False,
+                'link_to_program': False,
                 'completed': cat_progress.get('completed', 0),
                 'total': cat_progress.get('total', 0),
                 'percent': cat_progress.get('percent', 0),
@@ -833,14 +868,26 @@ def dashboard():
     for program in programs:
         areas = ProgramArea.query.filter_by(program_id=program.id).all()
         child_count = sum(1 for area in areas if area.name.casefold() != program.name.casefold())
+        direct_total = Question.query.filter(func.lower(Question.category) == program.name.lower()).count()
+        sibling_with_questions = (
+            db.session.query(Simulator.id)
+            .filter(
+                func.lower(Simulator.segment) == (program.segment or 'ingreso').lower(),
+                func.lower(Simulator.name) != program.name.lower(),
+                func.lower(Simulator.name).in_(
+                    db.session.query(func.lower(Question.category)).distinct()
+                ),
+            )
+            .count()
+        )
+        inferred_parent = direct_total == 0 and sibling_with_questions > 0
         program_meta[program.id] = {
             'areas_count': len(areas),
             'child_count': child_count,
-            'is_parent': child_count > 0,
+            'is_parent': child_count > 0 or inferred_parent,
+            'display_area_count': child_count if child_count > 0 else sibling_with_questions,
         }
     parent_program_ids = [program.id for program in programs if program_meta.get(program.id, {}).get('is_parent')]
-    if not parent_program_ids:
-        parent_program_ids = [program.id for program in programs]
     return render_template(
         'dashboard.html',
         simulators=simulators,
@@ -1388,24 +1435,19 @@ def landing():
     if use_segmented_catalog:
         try:
             programs = list_programs_catalog()
+            fallback_meta = build_program_fallback_meta(programs)
             child_area_names = {
                 item['name'].casefold()
                 for program in programs
                 for item in program.get('area_items', [])
                 if item['name'].casefold() != program['name'].casefold()
             }
-            parent_program_names = {
-                p['name'].casefold()
-                for p in programs
-                if any(area.casefold() != p['name'].casefold() for area in (p.get('areas') or []))
-            }
-            fallback_mark_all_as_parent = len(parent_program_names) == 0
             course_cards = [
                 {
                     'name': p['name'],
                     'segment': p.get('segment', 'ingreso'),
                     'program_id': p.get('id'),
-                    'is_parent': any(area.casefold() != p['name'].casefold() for area in (p.get('areas') or [])) or fallback_mark_all_as_parent,
+                    'is_parent': any(area.casefold() != p['name'].casefold() for area in (p.get('areas') or [])) or fallback_meta.get(p['name'].casefold(), {}).get('fallback_parent', False),
                 }
                 for p in programs
                 if p['name'].casefold() not in child_area_names

@@ -194,7 +194,7 @@
           <li class="d-flex align-items-center justify-content-between gap-2 mb-2 flex-wrap">
             <span>
               {{ program.name }}
-              <small class="text-muted">({{ program_meta.get(program.id, {}).get('child_count', 0) }} áreas)</small>
+              <small class="text-muted">({{ program_meta.get(program.id, {}).get('display_area_count', 0) }} áreas)</small>
             </span>
             <form method="POST" action="{{ url_for('upload_program_image', program_id=program.id) }}" enctype="multipart/form-data" class="d-flex align-items-center gap-2">
               <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
