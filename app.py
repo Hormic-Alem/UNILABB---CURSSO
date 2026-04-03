@@ -1448,13 +1448,19 @@ def admin_users_unlock():
         flash('Demasiados intentos fallidos. Intenta nuevamente en 15 minutos.', 'danger')
         return redirect(url_for('admin_users'))
 
-    expected_password = (os.environ.get('ADMIN_USERS_PASSWORD') or '').strip()
-    if not expected_password:
-        flash('ADMIN_USERS_PASSWORD no está configurada. Contacta al administrador del sistema.', 'danger')
-        return redirect(url_for('admin_users'))
-
     provided_password = request.form.get('admin_users_password', '')
-    if secrets.compare_digest(provided_password, expected_password):
+    expected_password = (os.environ.get('ADMIN_USERS_PASSWORD') or '').strip()
+
+    is_unlock_valid = False
+    if expected_password:
+        is_unlock_valid = secrets.compare_digest(provided_password, expected_password)
+    else:
+        users = load_users()
+        current_admin = next((u for u in users if u.get('username') == session.get('username')), None)
+        if current_admin:
+            is_unlock_valid, _ = verify_password(current_admin.get('password'), provided_password)
+
+    if is_unlock_valid:
         clear_failed_attempts('admin_users_unlock')
         session['admin_users_unlocked'] = True
         flash('Acceso a administración de usuarios desbloqueado.', 'success')
