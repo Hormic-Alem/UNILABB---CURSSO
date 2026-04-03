@@ -4,6 +4,7 @@ import csv
 import io
 import os
 import secrets
+import time
 import zipfile
 import xml.etree.ElementTree as ET
 
@@ -52,6 +53,41 @@ db = SQLAlchemy(app)
 
 
 QUESTIONS_PER_PAGE = 3
+LOGIN_RATE_LIMIT_ATTEMPTS = 8
+ADMIN_UNLOCK_RATE_LIMIT_ATTEMPTS = 5
+RATE_LIMIT_WINDOW_SECONDS = 15 * 60
+_FAILED_ATTEMPTS = {}
+
+
+def _client_ip():
+    forwarded_for = (request.headers.get('X-Forwarded-For') or '').split(',')[0].strip()
+    return forwarded_for or request.remote_addr or 'unknown'
+
+
+def _prune_attempts(key, window_seconds):
+    now = time.time()
+    timestamps = [ts for ts in _FAILED_ATTEMPTS.get(key, []) if now - ts <= window_seconds]
+    _FAILED_ATTEMPTS[key] = timestamps
+    return timestamps
+
+
+def register_failed_attempt(scope):
+    key = f'{scope}:{_client_ip()}'
+    timestamps = _prune_attempts(key, RATE_LIMIT_WINDOW_SECONDS)
+    timestamps.append(time.time())
+    _FAILED_ATTEMPTS[key] = timestamps
+    return len(timestamps)
+
+
+def clear_failed_attempts(scope):
+    key = f'{scope}:{_client_ip()}'
+    _FAILED_ATTEMPTS.pop(key, None)
+
+
+def is_rate_limited(scope, max_attempts):
+    key = f'{scope}:{_client_ip()}'
+    timestamps = _prune_attempts(key, RATE_LIMIT_WINDOW_SECONDS)
+    return len(timestamps) >= max_attempts
 
 
 
@@ -1205,6 +1241,10 @@ def login():
     message = ''
 
     if request.method == 'POST':
+        if is_rate_limited('login', LOGIN_RATE_LIMIT_ATTEMPTS):
+            message = 'Demasiados intentos de inicio de sesión. Intenta nuevamente en 15 minutos.'
+            return render_template('login.html', message=message), 429
+
         identifier = normalize_username(request.form['username'])
         password = request.form['password']
 
@@ -1226,10 +1266,13 @@ def login():
             is_valid_password, is_legacy_password = verify_password(user.get('password'), password)
 
         if not user or not is_valid_password:
+            register_failed_attempt('login')
             message = 'Credenciales incorrectas.'
         elif not user.get('active'):
+            register_failed_attempt('login')
             message = 'Tu cuenta aún no ha sido activada por el administrador.'
         else:
+            clear_failed_attempts('login')
             if is_legacy_password:
                 user['password'] = generate_password_hash(password)
                 save_users(users)
@@ -1401,12 +1444,22 @@ def admin_users_unlock():
 
     validate_csrf_or_abort()
 
-    expected_password = os.environ.get('ADMIN_USERS_PASSWORD', 'MiataMx5')
+    if is_rate_limited('admin_users_unlock', ADMIN_UNLOCK_RATE_LIMIT_ATTEMPTS):
+        flash('Demasiados intentos fallidos. Intenta nuevamente en 15 minutos.', 'danger')
+        return redirect(url_for('admin_users'))
+
+    expected_password = (os.environ.get('ADMIN_USERS_PASSWORD') or '').strip()
+    if not expected_password:
+        flash('ADMIN_USERS_PASSWORD no está configurada. Contacta al administrador del sistema.', 'danger')
+        return redirect(url_for('admin_users'))
+
     provided_password = request.form.get('admin_users_password', '')
     if secrets.compare_digest(provided_password, expected_password):
+        clear_failed_attempts('admin_users_unlock')
         session['admin_users_unlocked'] = True
         flash('Acceso a administración de usuarios desbloqueado.', 'success')
     else:
+        register_failed_attempt('admin_users_unlock')
         flash('Contraseña secundaria incorrecta.', 'danger')
     return redirect(url_for('admin_users'))
 
