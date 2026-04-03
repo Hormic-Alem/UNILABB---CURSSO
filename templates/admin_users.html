@@ -17,6 +17,22 @@
         {% endif %}
     {% endwith %}
 
+    {% if locked %}
+    <div class="card p-3 mb-3" style="max-width: 520px;">
+        <h5 class="mb-3">🔒 Verificación adicional</h5>
+        <form method="POST" action="{{ url_for('admin_users_unlock') }}" class="d-flex flex-column gap-2">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <label class="form-label">Contraseña secundaria</label>
+            <input type="password" name="admin_users_password" class="form-control" required>
+            <button type="submit" class="btn btn-primary">Desbloquear</button>
+        </form>
+    </div>
+    {% else %}
+    <form method="POST" action="{{ url_for('admin_users_lock') }}" class="mb-3">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <button type="submit" class="btn btn-outline-danger">🔒 Bloquear esta sección</button>
+    </form>
+
     <table class="table table-bordered">
         <thead>
             <tr>
@@ -71,5 +87,6 @@
             {% endfor %}
         </tbody>
     </table>
+    {% endif %}
 </body>
 </html>

@@ -1387,8 +1387,40 @@ def admin_users():
     if 'username' not in session or not is_admin_session():
         return redirect(url_for('login'))
 
+    if not session.get('admin_users_unlocked'):
+        return render_template('admin_users.html', users=[], locked=True)
+
     users = load_users()
-    return render_template('admin_users.html', users=users)
+    return render_template('admin_users.html', users=users, locked=False)
+
+
+@app.route('/admin_users/unlock', methods=['POST'])
+def admin_users_unlock():
+    if 'username' not in session or not is_admin_session():
+        return redirect(url_for('login'))
+
+    validate_csrf_or_abort()
+
+    expected_password = os.environ.get('ADMIN_USERS_PASSWORD', 'MiataMx5')
+    provided_password = request.form.get('admin_users_password', '')
+    if secrets.compare_digest(provided_password, expected_password):
+        session['admin_users_unlocked'] = True
+        flash('Acceso a administración de usuarios desbloqueado.', 'success')
+    else:
+        flash('Contraseña secundaria incorrecta.', 'danger')
+    return redirect(url_for('admin_users'))
+
+
+@app.route('/admin_users/lock', methods=['POST'])
+def admin_users_lock():
+    if 'username' not in session or not is_admin_session():
+        return redirect(url_for('login'))
+
+    validate_csrf_or_abort()
+
+    session.pop('admin_users_unlocked', None)
+    flash('Acceso a administración de usuarios bloqueado.', 'info')
+    return redirect(url_for('dashboard'))
 
 
 @app.route('/toggle_user/<username>', methods=['POST'])
