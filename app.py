@@ -693,6 +693,12 @@ def home():
                 for item in program.get('area_items', [])
                 if item['name'].casefold() != program['name'].casefold()
             }
+            parent_program_names = {
+                program['name'].casefold()
+                for program in programs
+                if any(area.casefold() != program['name'].casefold() for area in (program.get('areas') or []))
+            }
+            fallback_mark_all_as_parent = len(parent_program_names) == 0
             for program in programs:
                 # Mostrar solo programas padre o programas independientes.
                 if program['name'].casefold() in child_area_names:
@@ -702,7 +708,7 @@ def home():
                 total = sum(progress_by_category.get(area, {}).get('total', 0) for area in areas)
                 percent = int((completed / total) * 100) if total > 0 else 0
                 primary_area = next((area for area in areas if progress_by_category.get(area, {}).get('total', 0) > 0), areas[0])
-                is_parent = any(area.casefold() != program['name'].casefold() for area in areas)
+                is_parent = any(area.casefold() != program['name'].casefold() for area in areas) or fallback_mark_all_as_parent
                 course_cards.append({
                     'program_id': program.get('id'),
                     'name': program['name'],
@@ -832,6 +838,9 @@ def dashboard():
             'child_count': child_count,
             'is_parent': child_count > 0,
         }
+    parent_program_ids = [program.id for program in programs if program_meta.get(program.id, {}).get('is_parent')]
+    if not parent_program_ids:
+        parent_program_ids = [program.id for program in programs]
     return render_template(
         'dashboard.html',
         simulators=simulators,
@@ -840,6 +849,7 @@ def dashboard():
         area_by_sim_id=area_by_sim_id,
         area_program_name_by_sim_id=area_program_name_by_sim_id,
         program_meta=program_meta,
+        parent_program_ids=parent_program_ids,
     )
 
 
@@ -1384,12 +1394,18 @@ def landing():
                 for item in program.get('area_items', [])
                 if item['name'].casefold() != program['name'].casefold()
             }
+            parent_program_names = {
+                p['name'].casefold()
+                for p in programs
+                if any(area.casefold() != p['name'].casefold() for area in (p.get('areas') or []))
+            }
+            fallback_mark_all_as_parent = len(parent_program_names) == 0
             course_cards = [
                 {
                     'name': p['name'],
                     'segment': p.get('segment', 'ingreso'),
                     'program_id': p.get('id'),
-                    'is_parent': any(area.casefold() != p['name'].casefold() for area in (p.get('areas') or [])),
+                    'is_parent': any(area.casefold() != p['name'].casefold() for area in (p.get('areas') or [])) or fallback_mark_all_as_parent,
                 }
                 for p in programs
                 if p['name'].casefold() not in child_area_names

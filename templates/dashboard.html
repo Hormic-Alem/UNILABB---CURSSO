@@ -190,7 +190,7 @@
 
         <h5 class="mt-4">Programas principales (catálogo)</h5>
         <ul class="list-unstyled">
-        {% for program in programs if program_meta.get(program.id, {}).get('is_parent') %}
+        {% for program in programs if program.id in parent_program_ids %}
           <li class="d-flex align-items-center justify-content-between gap-2 mb-2 flex-wrap">
             <span>
               {{ program.name }}
