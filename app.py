@@ -1408,6 +1408,37 @@ def toggle_user(username):
     return redirect(url_for('admin_users'))
 
 
+@app.route('/set_user_role/<username>', methods=['POST'])
+def set_user_role(username):
+    if 'username' not in session or not is_admin_session():
+        return redirect(url_for('login'))
+
+    validate_csrf_or_abort()
+
+    new_role = (request.form.get('role') or '').strip().lower()
+    if new_role not in ('admin', 'user'):
+        flash('Rol inválido.', 'warning')
+        return redirect(url_for('admin_users'))
+
+    users = load_users()
+    target_user = next((u for u in users if u.get('username') == username), None)
+    if not target_user:
+        flash('Usuario no encontrado.', 'warning')
+        return redirect(url_for('admin_users'))
+
+    if username == session.get('username') and new_role != 'admin':
+        flash('No puedes quitarte el rol admin a ti mismo desde esta sesión.', 'warning')
+        return redirect(url_for('admin_users'))
+
+    target_user['role'] = new_role
+    if new_role == 'admin':
+        target_user['active'] = True
+
+    save_users(users)
+    flash(f'Rol actualizado para {username}: {new_role}.', 'success')
+    return redirect(url_for('admin_users'))
+
+
 @app.route('/reset/<category>', methods=['POST'])
 def reset_category(category):
     if 'username' not in session:
