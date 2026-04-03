@@ -104,7 +104,7 @@
     <div class="row g-5 justify-content-center mx-0 mb-4">
         {% for course in ingreso_cards %}
         <div class="col-lg-4 col-md-6">
-            <div class="course-card-modern">
+            <div class="course-card-modern{% if course.is_parent %} border border-warning border-2{% endif %}">
 
                 <div class="course-img-wrapper">
                     <img src="{{ url_for('static', filename='img/cursos/' ~ course.name|lower ~ '.jpg') }}"
@@ -114,6 +114,9 @@
 
                 <div class="course-info p-4">
                     <h4 class="course-title">Curso de {{ course.name }}</h4>
+                    {% if course.is_parent %}
+                    <p class="course-sub text-warning mb-1">Curso principal</p>
+                    {% endif %}
                     <p class="course-sub">
                         Simulador tipo examen + práctica interactiva
                     </p>
@@ -136,7 +139,7 @@
     <div class="row g-5 justify-content-center mx-0">
         {% for course in egreso_cards %}
         <div class="col-lg-4 col-md-6">
-            <div class="course-card-modern">
+            <div class="course-card-modern{% if course.is_parent %} border border-warning border-2{% endif %}">
 
                 <div class="course-img-wrapper">
                     <img src="{{ url_for('static', filename='img/cursos/' ~ course.name|lower ~ '.jpg') }}"
@@ -146,6 +149,9 @@
 
                 <div class="course-info p-4">
                     <h4 class="course-title">Curso de {{ course.name }}</h4>
+                    {% if course.is_parent %}
+                    <p class="course-sub text-warning mb-1">Curso principal</p>
+                    {% endif %}
                     <p class="course-sub">
                         Simulador tipo examen + práctica interactiva
                     </p>
@@ -166,7 +172,7 @@
     <div class="row g-5 justify-content-center mx-0">
         {% for course in course_cards %}
         <div class="col-lg-4 col-md-6">
-            <div class="course-card-modern">
+            <div class="course-card-modern{% if course.is_parent %} border border-warning border-2{% endif %}">
 
                 <div class="course-img-wrapper">
                     <img src="{{ url_for('static', filename='img/cursos/' ~ course.name|lower ~ '.jpg') }}"
@@ -176,6 +182,9 @@
 
                 <div class="course-info p-4">
                     <h4 class="course-title">Curso de {{ course.name }}</h4>
+                    {% if course.is_parent %}
+                    <p class="course-sub text-warning mb-1">Curso principal</p>
+                    {% endif %}
                     <p class="course-sub">
                         Simulador tipo examen + práctica interactiva
                     </p>

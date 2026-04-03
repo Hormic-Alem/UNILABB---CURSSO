@@ -702,12 +702,14 @@ def home():
                 total = sum(progress_by_category.get(area, {}).get('total', 0) for area in areas)
                 percent = int((completed / total) * 100) if total > 0 else 0
                 primary_area = next((area for area in areas if progress_by_category.get(area, {}).get('total', 0) > 0), areas[0])
+                is_parent = any(area.casefold() != program['name'].casefold() for area in areas)
                 course_cards.append({
                     'program_id': program.get('id'),
                     'name': program['name'],
                     'segment': program.get('segment', 'ingreso'),
                     'areas': areas,
                     'area_count': len(areas),
+                    'is_parent': is_parent,
                     'completed': completed,
                     'total': total,
                     'percent': percent,
@@ -725,11 +727,20 @@ def home():
                 'segment': 'ingreso',
                 'areas': [category],
                 'area_count': 1,
+                'is_parent': False,
                 'completed': cat_progress.get('completed', 0),
                 'total': cat_progress.get('total', 0),
                 'percent': cat_progress.get('percent', 0),
                 'primary_area': category,
             })
+
+    course_cards.sort(
+        key=lambda card: (
+            card.get('segment', 'ingreso'),
+            0 if card.get('is_parent') else 1,
+            card.get('name', '').casefold(),
+        )
+    )
 
     return render_template(
         'home.html',
@@ -812,6 +823,15 @@ def dashboard():
         names_by_id = {program.id: program.name for program in programs}
         for sim_id, program_id in area_by_sim_id.items():
             area_program_name_by_sim_id[sim_id] = names_by_id.get(program_id, '')
+    program_meta = {}
+    for program in programs:
+        areas = ProgramArea.query.filter_by(program_id=program.id).all()
+        child_count = sum(1 for area in areas if area.name.casefold() != program.name.casefold())
+        program_meta[program.id] = {
+            'areas_count': len(areas),
+            'child_count': child_count,
+            'is_parent': child_count > 0,
+        }
     return render_template(
         'dashboard.html',
         simulators=simulators,
@@ -819,6 +839,7 @@ def dashboard():
         programs=programs,
         area_by_sim_id=area_by_sim_id,
         area_program_name_by_sim_id=area_program_name_by_sim_id,
+        program_meta=program_meta,
     )
 
 
@@ -827,6 +848,27 @@ def admin_programs_catalog():
     if 'username' not in session or not is_admin_session():
         return redirect(url_for('login'))
     return jsonify(list_programs_catalog())
+
+
+@app.route('/programs/image/<int:program_id>', methods=['POST'])
+def upload_program_image(program_id):
+    if 'username' not in session or not is_admin_session():
+        return redirect(url_for('login'))
+
+    validate_csrf_or_abort()
+
+    program = db.session.get(Program, program_id)
+    if not program:
+        flash('Programa no encontrado.', 'warning')
+        return redirect(url_for('dashboard'))
+
+    image_file = request.files.get('program_image')
+    ok, message = save_simulator_image(program.name, image_file)
+    if ok:
+        flash('Imagen del programa actualizada.', 'success')
+    else:
+        flash(message, 'warning')
+    return redirect(url_for('dashboard'))
 
 
 @app.route('/simulators/create', methods=['POST'])
@@ -1343,18 +1385,30 @@ def landing():
                 if item['name'].casefold() != program['name'].casefold()
             }
             course_cards = [
-                {'name': p['name'], 'segment': p.get('segment', 'ingreso'), 'program_id': p.get('id')}
+                {
+                    'name': p['name'],
+                    'segment': p.get('segment', 'ingreso'),
+                    'program_id': p.get('id'),
+                    'is_parent': any(area.casefold() != p['name'].casefold() for area in (p.get('areas') or [])),
+                }
                 for p in programs
                 if p['name'].casefold() not in child_area_names
             ]
         except Exception:
             course_cards = []
     if not course_cards:
-        course_cards = [{'name': category, 'segment': 'ingreso', 'program_id': None} for category in categories]
+        course_cards = [{'name': category, 'segment': 'ingreso', 'program_id': None, 'is_parent': False} for category in categories]
     if not categories:
         categories = ['Inglés a2', 'Pensamiento científico', 'Pensamiento matemático', 'Redacción indirecta']
         if not course_cards:
-            course_cards = [{'name': category, 'segment': 'ingreso', 'program_id': None} for category in categories]
+            course_cards = [{'name': category, 'segment': 'ingreso', 'program_id': None, 'is_parent': False} for category in categories]
+    course_cards.sort(
+        key=lambda card: (
+            card.get('segment', 'ingreso'),
+            0 if card.get('is_parent') else 1,
+            card.get('name', '').casefold(),
+        )
+    )
     return render_template('landing.html', categories=categories, course_cards=course_cards, use_segmented_catalog=use_segmented_catalog)
 
 

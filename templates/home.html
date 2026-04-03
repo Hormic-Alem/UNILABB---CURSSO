@@ -48,7 +48,7 @@
 
 {% for card in ingreso_cards %}
     <div class="col-md-6 col-lg-4">
-        <div class="course-card-modern">
+        <div class="course-card-modern{% if card.is_parent %} border border-warning border-2{% endif %}">
 
             <!-- ========== IMAGEN AUTOMÁTICA DEL CURSO ========== -->
             <div class="course-img-wrapper">
@@ -60,6 +60,9 @@
 
             <div class="course-info p-4">
                 <h5 class="course-title">Curso de {{ card.name|capitalize }}</h5>
+                {% if card.is_parent %}
+                <p class="course-sub text-warning mb-1">Curso principal</p>
+                {% endif %}
                 <p class="course-sub">Práctica interactiva tipo examen</p>
                 {% if use_segmented_catalog and card.area_count > 1 %}
                 <p class="course-sub mb-1">Áreas incluidas: {{ card.area_count }}</p>
@@ -107,7 +110,7 @@
 
 {% for card in egreso_cards %}
     <div class="col-md-6 col-lg-4">
-        <div class="course-card-modern">
+        <div class="course-card-modern{% if card.is_parent %} border border-warning border-2{% endif %}">
 
             <!-- ========== IMAGEN AUTOMÁTICA DEL CURSO ========== -->
             <div class="course-img-wrapper">
@@ -119,6 +122,9 @@
 
             <div class="course-info p-4">
                 <h5 class="course-title">Curso de {{ card.name|capitalize }}</h5>
+                {% if card.is_parent %}
+                <p class="course-sub text-warning mb-1">Curso principal</p>
+                {% endif %}
                 <p class="course-sub">Práctica interactiva tipo examen</p>
                 {% if use_segmented_catalog and card.area_count > 1 %}
                 <p class="course-sub mb-1">Áreas incluidas: {{ card.area_count }}</p>
