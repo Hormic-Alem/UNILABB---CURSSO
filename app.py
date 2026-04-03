@@ -1714,30 +1714,38 @@ with app.app_context():
         print(f'⚠️ No se pudo restaurar imágenes de simuladores: {e}')
 
     try:
-        admin = User.query.filter_by(username="Apolo96").first()
-        if admin:
-            admin.password = generate_password_hash("MiataMx5")
-            admin.role = "admin"
-            admin.active = True
-            if not admin.email:
-                admin.email = "apolo96@admin.local"
-            db.session.commit()
-            print("✅ Admin actualizado automáticamente: Apolo96")
+        bootstrap_username = (os.environ.get("BOOTSTRAP_ADMIN_USERNAME") or "").strip()
+        bootstrap_password = (os.environ.get("BOOTSTRAP_ADMIN_PASSWORD") or "").strip()
+        bootstrap_email = (os.environ.get("BOOTSTRAP_ADMIN_EMAIL") or "").strip()
+
+        if bootstrap_username and bootstrap_password:
+            admin = User.query.filter_by(username=bootstrap_username).first()
+            if admin:
+                admin.role = "admin"
+                admin.active = True
+                if bootstrap_email and (not admin.email or admin.email.endswith("@admin.local")):
+                    admin.email = bootstrap_email
+                if not admin.password:
+                    admin.password = generate_password_hash(bootstrap_password)
+                db.session.commit()
+                print(f"✅ Admin bootstrap validado: {bootstrap_username}")
+            else:
+                db.session.add(User(
+                    username=bootstrap_username,
+                    email=bootstrap_email or f"{bootstrap_username.lower()}@admin.local",
+                    password=generate_password_hash(bootstrap_password),
+                    active=True,
+                    role="admin",
+                    progress={"completed_questions": [], "by_category": {}},
+                    avatar_url=None,
+                ))
+                db.session.commit()
+                print(f"✅ Admin bootstrap creado: {bootstrap_username}")
         else:
-            db.session.add(User(
-                username="Apolo96",
-                email="apolo96@admin.local",
-                password=generate_password_hash("MiataMx5"),
-                active=True,
-                role="admin",
-                progress={"completed_questions": [], "by_category": {}},
-                avatar_url=None,
-            ))
-            db.session.commit()
-            print("✅ Admin creado automáticamente: Apolo96")
+            print("ℹ️ Bootstrap admin deshabilitado: define BOOTSTRAP_ADMIN_USERNAME y BOOTSTRAP_ADMIN_PASSWORD para habilitarlo.")
     except Exception as e:
         db.session.rollback()
-        print(f"⚠️ No se pudo crear/actualizar admin automático: {e}")
+        print(f"⚠️ No se pudo aplicar bootstrap de admin por entorno: {e}")
 
 if __name__ == "__main__":
     app.run(debug=os.getenv("FLASK_DEBUG", "false").lower() == "true")
