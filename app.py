@@ -1,4 +1,5 @@
 from datetime import datetime
+import base64
 import csv
 import io
 import os
@@ -81,6 +82,13 @@ class ProgramArea(db.Model):
     program_id = db.Column(db.Integer, db.ForeignKey('program.id'), nullable=False, index=True)
     name = db.Column(db.String(255), nullable=False, index=True)
     simulator_id = db.Column(db.Integer, db.ForeignKey('simulator.id'), nullable=True, index=True)
+
+
+class SimulatorImage(db.Model):
+    simulator_key = db.Column(db.String(255), primary_key=True)
+    filename = db.Column(db.String(255), nullable=False)
+    image_b64 = db.Column(db.Text, nullable=False)
+    updated_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
 
 
 class User(db.Model):
@@ -188,6 +196,43 @@ def simulator_image_filename(simulator_name):
     return f"{safe}.jpg" if safe else ''
 
 
+def simulator_image_key(simulator_name):
+    return normalize_simulator_name(simulator_name).casefold()
+
+
+def persist_simulator_image(simulator_name, filename, image_bytes):
+    key = simulator_image_key(simulator_name)
+    if not key or not image_bytes:
+        return
+
+    payload = base64.b64encode(image_bytes).decode('ascii')
+    row = db.session.get(SimulatorImage, key)
+    if row is None:
+        row = SimulatorImage(simulator_key=key, filename=filename, image_b64=payload, updated_at=datetime.utcnow())
+        db.session.add(row)
+    else:
+        row.filename = filename
+        row.image_b64 = payload
+        row.updated_at = datetime.utcnow()
+    db.session.commit()
+
+
+def restore_simulator_images_from_db():
+    target_dir = os.path.join(app.root_path, 'static', 'img', 'cursos')
+    os.makedirs(target_dir, exist_ok=True)
+
+    for row in SimulatorImage.query.all():
+        target_path = os.path.join(target_dir, row.filename)
+        if os.path.exists(target_path):
+            continue
+        try:
+            image_bytes = base64.b64decode(row.image_b64.encode('ascii'))
+            with open(target_path, 'wb') as fp:
+                fp.write(image_bytes)
+        except Exception:
+            continue
+
+
 def save_simulator_image(simulator_name, file_storage):
     if not file_storage or not file_storage.filename:
         return False, 'No se envió imagen.'
@@ -204,7 +249,12 @@ def save_simulator_image(simulator_name, file_storage):
     target_dir = os.path.join(app.root_path, 'static', 'img', 'cursos')
     os.makedirs(target_dir, exist_ok=True)
     target_path = os.path.join(target_dir, target_name)
-    file_storage.save(target_path)
+    file_storage.stream.seek(0)
+    image_bytes = file_storage.stream.read()
+    with open(target_path, 'wb') as fp:
+        fp.write(image_bytes)
+
+    persist_simulator_image(simulator_name, target_name, image_bytes)
     return True, target_name
 
 
@@ -224,6 +274,15 @@ def rename_simulator_image(old_name, new_name):
     if os.path.exists(new_path):
         os.remove(new_path)
     os.replace(old_path, new_path)
+
+    old_key = simulator_image_key(old_name)
+    new_key = simulator_image_key(new_name)
+    row = db.session.get(SimulatorImage, old_key)
+    if row:
+        row.simulator_key = new_key
+        row.filename = new_filename
+        row.updated_at = datetime.utcnow()
+        db.session.commit()
 
 
 def verify_password(stored_password, incoming_password):
@@ -901,6 +960,20 @@ def delete_simulator(sim_id):
 
     simulator = db.session.get(Simulator, sim_id)
     if simulator:
+        image_key = simulator_image_key(simulator.name)
+        row = db.session.get(SimulatorImage, image_key)
+        if row:
+            db.session.delete(row)
+
+        image_filename = simulator_image_filename(simulator.name)
+        if image_filename:
+            image_path = os.path.join(app.root_path, 'static', 'img', 'cursos', image_filename)
+            if os.path.exists(image_path):
+                try:
+                    os.remove(image_path)
+                except OSError:
+                    pass
+
         ProgramArea.query.filter_by(simulator_id=simulator.id).delete(synchronize_session=False)
         linked_questions = Question.query.filter_by(category=simulator.name).all()
         linked_ids = [q.id for q in linked_questions]
@@ -1490,6 +1563,12 @@ with app.app_context():
     except Exception as e:
         db.session.rollback()
         print(f'⚠️ No se pudo sincronizar catálogo Program/ProgramArea: {e}')
+
+    try:
+        restore_simulator_images_from_db()
+        print('✅ Imágenes de simuladores restauradas desde base de datos')
+    except Exception as e:
+        print(f'⚠️ No se pudo restaurar imágenes de simuladores: {e}')
 
     try:
         admin = User.query.filter_by(username="Apolo96").first()
