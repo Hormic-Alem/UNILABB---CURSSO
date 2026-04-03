@@ -37,43 +37,60 @@
 <!-- ======================= CURSOS ======================= -->
 <h2 class="text-center mb-4 text-white" id="cursos">Mis cursos</h2>
 
+{% set ingreso_cards = course_cards | selectattr('segment', 'equalto', 'ingreso') | list %}
+{% set egreso_cards = course_cards | selectattr('segment', 'equalto', 'egreso') | list %}
+
+{% if use_segmented_catalog and (ingreso_cards or egreso_cards) %}
+
+{% if ingreso_cards %}
+<h4 class="text-white mb-3">🎓 Simuladores de Ingreso</h4>
 <div class="row g-4 justify-content-center">
 
-{% for category in categories %}
+{% for card in ingreso_cards %}
     <div class="col-md-6 col-lg-4">
         <div class="course-card-modern">
 
             <!-- ========== IMAGEN AUTOMÁTICA DEL CURSO ========== -->
             <div class="course-img-wrapper">
                 <img 
-                    src="{{ url_for('static', filename='img/cursos/' ~ category|lower ~ '.jpg') }}"
+                    src="{{ url_for('static', filename='img/cursos/' ~ card.name|lower ~ '.jpg') }}"
                     onerror="this.src='{{ url_for('static', filename='img/cursos/default.jpg') }}'"
                     class="course-img">
             </div>
 
             <div class="course-info p-4">
-                <h5 class="course-title">Curso de {{ category|capitalize }}</h5>
+                <h5 class="course-title">Curso de {{ card.name|capitalize }}</h5>
                 <p class="course-sub">Práctica interactiva tipo examen</p>
+                {% if use_segmented_catalog and card.area_count > 1 %}
+                <p class="course-sub mb-1">Áreas incluidas: {{ card.area_count }}</p>
+                {% endif %}
 
                 <p class="progress-text">
                     Progreso:
-                    {{ progress_by_category[category].completed }} /
-                    {{ progress_by_category[category].total }} preguntas
+                    {{ card.completed }} /
+                    {{ card.total }} preguntas
                 </p>
 
                 <div class="progress mb-3 modern-progress">
                     <div class="progress-bar"
-                         style="width: {{ progress_by_category[category].percent }}%;">
-                         {{ progress_by_category[category].percent }}%
+                         style="width: {{ card.percent }}%;">
+                         {{ card.percent }}%
                     </div>
                 </div>
 
-                <a href="{{ url_for('quiz_by_category', category=category) }}"
+                {% if use_segmented_catalog and card.area_count > 1 and card.program_id %}
+                <a href="{{ url_for('program_areas', program_id=card.program_id) }}"
+                   class="btn neon-btn w-100 mb-2">
+                   Ver áreas del programa
+                </a>
+                {% else %}
+                <a href="{{ url_for('quiz_by_category', category=card.primary_area) }}"
                    class="btn neon-btn w-100 mb-2">
                    Entrar al curso
                 </a>
+                {% endif %}
 
-                <form action="{{ url_for('reset_category', category=category) }}" method="POST">
+                <form action="{{ url_for('reset_category', category=card.primary_area) }}" method="POST">
                     <button class="btn neon-outline-btn w-100">Reiniciar curso</button>
                 </form>
             </div>
@@ -82,6 +99,110 @@
 {% endfor %}
 
 </div>
+{% endif %}
+
+{% if egreso_cards %}
+<h4 class="text-white mb-3 mt-4">⚖️ Simuladores de Egreso</h4>
+<div class="row g-4 justify-content-center">
+
+{% for card in egreso_cards %}
+    <div class="col-md-6 col-lg-4">
+        <div class="course-card-modern">
+
+            <!-- ========== IMAGEN AUTOMÁTICA DEL CURSO ========== -->
+            <div class="course-img-wrapper">
+                <img 
+                    src="{{ url_for('static', filename='img/cursos/' ~ card.name|lower ~ '.jpg') }}"
+                    onerror="this.src='{{ url_for('static', filename='img/cursos/default.jpg') }}'"
+                    class="course-img">
+            </div>
+
+            <div class="course-info p-4">
+                <h5 class="course-title">Curso de {{ card.name|capitalize }}</h5>
+                <p class="course-sub">Práctica interactiva tipo examen</p>
+                {% if use_segmented_catalog and card.area_count > 1 %}
+                <p class="course-sub mb-1">Áreas incluidas: {{ card.area_count }}</p>
+                {% endif %}
+
+                <p class="progress-text">
+                    Progreso:
+                    {{ card.completed }} /
+                    {{ card.total }} preguntas
+                </p>
+
+                <div class="progress mb-3 modern-progress">
+                    <div class="progress-bar"
+                         style="width: {{ card.percent }}%;">
+                         {{ card.percent }}%
+                    </div>
+                </div>
+
+                {% if use_segmented_catalog and card.area_count > 1 and card.program_id %}
+                <a href="{{ url_for('program_areas', program_id=card.program_id) }}"
+                   class="btn neon-btn w-100 mb-2">
+                   Ver áreas del programa
+                </a>
+                {% else %}
+                <a href="{{ url_for('quiz_by_category', category=card.primary_area) }}"
+                   class="btn neon-btn w-100 mb-2">
+                   Entrar al curso
+                </a>
+                {% endif %}
+
+                <form action="{{ url_for('reset_category', category=card.primary_area) }}" method="POST">
+                    <button class="btn neon-outline-btn w-100">Reiniciar curso</button>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endfor %}
+
+</div>
+{% endif %}
+
+{% else %}
+
+<div class="row g-4 justify-content-center">
+{% for card in course_cards %}
+    <div class="col-md-6 col-lg-4">
+        <div class="course-card-modern">
+
+            <!-- ========== IMAGEN AUTOMÁTICA DEL CURSO ========== -->
+            <div class="course-img-wrapper">
+                <img 
+                    src="{{ url_for('static', filename='img/cursos/' ~ card.name|lower ~ '.jpg') }}"
+                    onerror="this.src='{{ url_for('static', filename='img/cursos/default.jpg') }}'"
+                    class="course-img">
+            </div>
+
+            <div class="course-info p-4">
+                <h5 class="course-title">Curso de {{ card.name|capitalize }}</h5>
+                <p class="course-sub">Práctica interactiva tipo examen</p>
+                <p class="progress-text">
+                    Progreso:
+                    {{ card.completed }} /
+                    {{ card.total }} preguntas
+                </p>
+                <div class="progress mb-3 modern-progress">
+                    <div class="progress-bar"
+                         style="width: {{ card.percent }}%;">
+                         {{ card.percent }}%
+                    </div>
+                </div>
+                <a href="{{ url_for('quiz_by_category', category=card.primary_area) }}"
+                   class="btn neon-btn w-100 mb-2">
+                   Entrar al curso
+                </a>
+                <form action="{{ url_for('reset_category', category=card.primary_area) }}" method="POST">
+                    <button class="btn neon-outline-btn w-100">Reiniciar curso</button>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endfor %}
+</div>
+
+{% endif %}
 
 <!-- ======================= ESTADÍSTICAS GLOBALES ======================= -->
 <div class="card neon-card mb-5 p-4 mt-5" id="estadisticas">
