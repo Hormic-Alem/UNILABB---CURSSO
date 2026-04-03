@@ -135,11 +135,23 @@
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
             <label class="form-label fw-semibold">Nombre del simulador</label>
             <input type="text" name="name" class="form-control mb-2" placeholder="Ej. Inglés A2" required>
+            <label class="form-label fw-semibold">Segmento</label>
+            <select name="segment" class="form-select mb-2">
+                <option value="ingreso" selected>Ingreso</option>
+                <option value="egreso">Egreso</option>
+            </select>
+            <label class="form-label fw-semibold">Programa padre (opcional)</label>
+            <input type="text" name="program_name" class="form-control mb-2" list="programsList" placeholder="Ej. Egreso Derecho">
             <label class="form-label fw-semibold">Imagen del curso (JPG/JPEG)</label>
             <input type="file" name="simulator_image" class="form-control mb-2" accept=".jpg,.jpeg">
             <small class="text-muted d-block mb-2">Si subes imagen aquí, se reflejará automáticamente en Home/Landing para este simulador.</small>
             <button class="btn neon-btn">+ Crear simulador</button>
         </form>
+        <datalist id="programsList">
+            {% for program in programs %}
+              <option value="{{ program.name }}"></option>
+            {% endfor %}
+        </datalist>
 
         <h5>Simuladores existentes</h5>
         <ul class="list-unstyled">
@@ -147,6 +159,18 @@
           <li class="d-flex align-items-center justify-content-between gap-2 mb-2 flex-wrap">
             <span>{{ sim.name }}</span>
             <div class="d-flex align-items-center gap-2 flex-wrap">
+              <form method="POST" action="{{ url_for('edit_simulator', sim_id=sim.id) }}" class="d-flex align-items-center gap-2">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <input type="text" name="name" class="form-control form-control-sm" style="max-width: 220px;" value="{{ sim.name }}" required>
+                <select name="segment" class="form-select form-select-sm" style="max-width: 140px;">
+                    <option value="ingreso" {% if sim.segment == 'ingreso' %}selected{% endif %}>Ingreso</option>
+                    <option value="egreso" {% if sim.segment == 'egreso' %}selected{% endif %}>Egreso</option>
+                </select>
+                <input type="text" name="program_name" class="form-control form-control-sm" list="programsList" style="max-width: 220px;"
+                       value="{{ area_program_name_by_sim_id.get(sim.id, '') }}"
+                       placeholder="Programa padre">
+                <button type="submit" class="btn btn-sm btn-outline-warning">Editar nombre</button>
+              </form>
               <form method="POST" action="{{ url_for('upload_simulator_image', sim_id=sim.id) }}" enctype="multipart/form-data" class="d-flex align-items-center gap-2">
                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                 <input type="file" name="simulator_image" accept=".jpg,.jpeg" class="form-control form-control-sm" style="max-width: 220px;" required>
@@ -161,6 +185,25 @@
           </li>
         {% else %}
           <li>No hay simuladores creados todavía.</li>
+        {% endfor %}
+        </ul>
+
+        <h5 class="mt-4">Programas principales (catálogo)</h5>
+        <ul class="list-unstyled">
+        {% for program in programs if program.id in parent_program_ids %}
+          <li class="d-flex align-items-center justify-content-between gap-2 mb-2 flex-wrap">
+            <span>
+              {{ program.name }}
+              <small class="text-muted">({{ program_meta.get(program.id, {}).get('display_area_count', 0) }} áreas)</small>
+            </span>
+            <form method="POST" action="{{ url_for('upload_program_image', program_id=program.id) }}" enctype="multipart/form-data" class="d-flex align-items-center gap-2">
+              <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+              <input type="file" name="program_image" accept=".jpg,.jpeg" class="form-control form-control-sm" style="max-width: 220px;" required>
+              <button type="submit" class="btn btn-sm btn-outline-warning">Subir imagen principal</button>
+            </form>
+          </li>
+        {% else %}
+          <li class="text-muted">No hay programas principales detectados aún.</li>
         {% endfor %}
         </ul>
     </div>
