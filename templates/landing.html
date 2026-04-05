@@ -1,6 +1,14 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-JVMYZCDSZ5"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-JVMYZCDSZ5');
+    </script>
     <meta charset="UTF-8">
     <title>UNILAB APP - Aprende Fácil</title>
 
@@ -90,6 +98,24 @@
     </div>
 </section>
 
+
+<!-- ================= TEMARIO EXANI-II ================= -->
+<section class="courses-section">
+    <h2 class="section-title text-center mb-2">Temario EXANI-II (Ingreso a Universidad)</h2>
+    <div id="carouselTemario" class="carousel slide" data-bs-ride="carousel" style="max-width: 800px; margin: auto;">
+      <div class="carousel-inner">
+        <div class="carousel-item active">
+          <img src="/static/temarios/temario_exani.jpg" class="d-block w-100" alt="Temario EXANI-II">
+        </div>
+      </div>
+    </div>
+
+    <div style="text-align:center; margin-top:20px;">
+      <a href="/static/temarios/guia_exani.pdf" download class="btn btn-primary">
+        Descargar guía
+      </a>
+    </div>
+</section>
 
 <!-- ================= CURSOS ================= -->
 <section id="courses" class="courses-section">
@@ -417,5 +443,3 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
-
-
