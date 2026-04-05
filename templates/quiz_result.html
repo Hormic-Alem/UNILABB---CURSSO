@@ -39,6 +39,24 @@
 
             </div>
 
+            {% if review %}
+            <hr class="my-4">
+            <h5 class="text-start mb-3">📝 Revisión por pregunta</h5>
+
+            <div class="text-start">
+                {% for item in review %}
+                <div class="alert {% if item.is_correct %}alert-success{% else %}alert-danger{% endif %} mb-2">
+                    <p class="mb-1"><strong>Pregunta:</strong> {{ item.question }}</p>
+                    <p class="mb-1"><strong>Tu respuesta:</strong> {{ item.selected }}</p>
+                    <p class="mb-0"><strong>Respuesta correcta:</strong> {{ item.correct }}</p>
+                    <small class="fw-semibold d-block mt-1">
+                        {% if item.is_correct %}✅ Acierto{% else %}❌ Error{% endif %}
+                    </small>
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+
         </div>
     </div>
 

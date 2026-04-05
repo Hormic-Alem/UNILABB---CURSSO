@@ -8,13 +8,39 @@
 <body class="p-4">
     <h2>Administrar Usuarios</h2>
     <a href="{{ url_for('home') }}" class="btn btn-secondary my-3">🏠 Volver al inicio</a>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }}" role="alert">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    {% if locked %}
+    <div class="card p-3 mb-3" style="max-width: 520px;">
+        <h5 class="mb-3">🔒 Verificación adicional</h5>
+        <form method="POST" action="{{ url_for('admin_users_unlock') }}" class="d-flex flex-column gap-2">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <label class="form-label">Contraseña secundaria</label>
+            <input type="password" name="admin_users_password" class="form-control" required>
+            <button type="submit" class="btn btn-primary">Desbloquear</button>
+        </form>
+    </div>
+    {% else %}
+    <form method="POST" action="{{ url_for('admin_users_lock') }}" class="mb-3">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <button type="submit" class="btn btn-outline-danger">🔒 Bloquear esta sección</button>
+    </form>
+
     <table class="table table-bordered">
         <thead>
             <tr>
                 <th>Usuario</th>
                 <th>Email</th>
+                <th>Rol</th>
                 <th>Estado</th>
-                <th>Acción</th>
+                <th>Acciones</th>
             </tr>
         </thead>
         <tbody>
@@ -23,6 +49,13 @@
                     <td>{{ u.username }}</td>
                     <td>{{ u.email }}</td>
                     <td>
+                        {% if u.role == 'admin' %}
+                            <span class="badge bg-primary">Admin</span>
+                        {% else %}
+                            <span class="badge bg-dark">Usuario</span>
+                        {% endif %}
+                    </td>
+                    <td>
                         {% if u.active %}
                             <span class="badge bg-success">Activo</span>
                         {% else %}
@@ -30,16 +63,30 @@
                         {% endif %}
                     </td>
                     <td>
-                        <form method="POST" action="{{ url_for('toggle_user', username=u.username) }}">
-                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                            <button type="submit" class="btn btn-sm {% if u.active %}btn-warning{% else %}btn-success{% endif %}">
-                                {% if u.active %}Desactivar{% else %}Activar{% endif %}
-                            </button>
-                        </form>
+                        <div class="d-flex gap-2 flex-wrap">
+                            <form method="POST" action="{{ url_for('toggle_user', username=u.username) }}">
+                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                <button type="submit" class="btn btn-sm {% if u.active %}btn-warning{% else %}btn-success{% endif %}">
+                                    {% if u.active %}Desactivar{% else %}Activar{% endif %}
+                                </button>
+                            </form>
+
+                            <form method="POST" action="{{ url_for('set_user_role', username=u.username) }}">
+                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                {% if u.role == 'admin' %}
+                                    <input type="hidden" name="role" value="user">
+                                    <button type="submit" class="btn btn-sm btn-outline-secondary">Quitar admin</button>
+                                {% else %}
+                                    <input type="hidden" name="role" value="admin">
+                                    <button type="submit" class="btn btn-sm btn-primary">Hacer admin</button>
+                                {% endif %}
+                            </form>
+                        </div>
                     </td>
                 </tr>
             {% endfor %}
         </tbody>
     </table>
+    {% endif %}
 </body>
 </html>
